@@ -10,6 +10,8 @@ This documentation page aims to shortly summarize some of the most important the
     - [Docker alternatives](#docker-alternatives)
     - [Docker Networking](#docker-networking)
     - [Dockerfile Instructions](#dockerfile-instructions)
+    - [Docker Compose Instructions](#docker-compose-instructions)
+      - [Examples:](#examples)
 
 ## Docker
 
@@ -97,3 +99,143 @@ Docker supports multiple networking options, each tailored for specific use case
 8. `Regularly Scan Images for Vulnerabilities`: Integrate security scans into your CI/CD pipeline to catch vulnerabilities early.
 9. `Limit Build Context`: Use `.dockerignore` files to exclude unnecessary files from the build context to prevent accidental inclusion of sensitive files.
 10. `Keep Containers Up-to-Date`: Regularly update and rebuild containers to include security patches.
+
+---
+
+### Docker Compose Instructions
+
+Docker Compose is a tool for defining and running multi-container Docker applications. Below are the majority of instructions available in a `docker-compose.yml` file, along with examples and security tips.
+
+```yaml
+version: '3.8'  # Specify the Docker Compose version
+
+services:  # Define the services your application consists of
+  web:  # Name of the first service
+    image: nginx:alpine  # Specify the image to use
+    ports:
+      - "80:80"  # Map port 80 of the container to port 80 on the host
+    depends_on:
+      - app  # This service depends on the `app` service
+
+  app:  # Name of the second service
+    build: ./app  # Path to the directory containing Dockerfile
+    environment:
+      - DEBUG=0  # Environment variable to control debug mode
+
+volumes:  # Define volumes for persistent data
+  db-data:  # Name of the volume
+
+networks:  # Define networks for inter-service communication
+  frontend:  # Name of the network
+```
+
+#### Examples:
+
+- **Defining a Service with a Build Context and Environment Variables:**
+
+```yaml
+services:
+  example-service:
+    build:
+      context: ./dir  # Directory containing the Dockerfile
+      dockerfile: Dockerfile  # Specify an alternate Dockerfile
+    environment:
+      VARIABLE_NAME: value  # Set environment variables
+```
+
+- **Using Volumes for Persistent Data:**
+
+```yaml
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      - db-data:/var/lib/postgresql/data  # Mount the `db-data` volume
+
+volumes:
+  db-data:  # Declare the volume
+```
+
+- **Setting Up Custom Networks:**
+
+```yaml
+services:
+  web:
+    networks:
+      - frontend  # Connect to the `frontend` network
+
+networks:
+  frontend:  # Define the network
+```
+
+> [!IMPORTANT]
+> Do not forget to check this security tips for Docker Compose.
+
+1. **Use Fixed Version Tags**: Always use fixed version tags for images to ensure consistency and prevent unexpected changes. Using hash is a very recommended practice for security.
+
+  ```yaml
+  image: nginx:1.19.0-alpine
+  ```
+
+2. **Restrict Ports**: Only expose necessary ports to limit access to your services.
+
+  ```yaml
+  ports:
+    - "127.0.0.1:80:80"  # Only bind to localhost
+  ```
+
+3. **Use Environment Files**: Instead of hardcoding environment variables, especially secrets, use an environment file.
+
+  ```yaml
+  env_file:
+    - web.env
+  ```
+
+4. **Enable Logging Options**: Configure logging options to manage and rotate logs properly, preventing disk space issues.
+
+  ```yaml
+  logging:
+    driver: json-file
+    options:
+      max-size: "200k"
+      max-file: "10"
+  ```
+
+5. **Secure Networks**: Create custom networks and use them to isolate containers.
+
+  ```yaml
+  networks:
+    default:
+      driver: bridge
+  ```
+
+6. **Run as Non-Root User**: Ensure services run as a non-root user if the Dockerfile supports it.
+
+  ```yaml
+  user: "1001"
+  ```
+
+7. **Use Read-Only Volumes**: When possible, mount volumes as read-only.
+
+  ```yaml
+  volumes:
+    - type: volume
+      source: my-volume
+      target: /app/data
+      read_only: true
+  ```
+
+8. **Implement Health Checks**: Define health checks to ensure services are running as expected.
+
+  ```yaml
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost"]
+    interval: 30s
+    timeout: 10s
+    retries: 5
+  ```
+
+> [!NOTE]
+> For full details and options, take a look at [Docker compose specification](https://github.com/compose-spec/compose-spec)
+
+---
