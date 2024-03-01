@@ -4,7 +4,7 @@ This documentation page aims to shortly summarize some of the most important the
 
 - [Theoretical concepts](#theoretical-concepts)
   - [Docker](#docker)
-    - [Docker achitecture](#docker-achitecture)
+    - [Docker architecture](#docker-architecture)
       - [Docker Engine](#docker-engine)
       - [Docker Objects](#docker-objects)
     - [Docker alternatives](#docker-alternatives)
@@ -15,7 +15,7 @@ This documentation page aims to shortly summarize some of the most important the
 
 ## Docker
 
-### Docker achitecture
+### Docker architecture
 
 ![Docker architecture](docs/img/ccse-docker-architecture.png)
 

@@ -1,13 +1,13 @@
-# Auxiliar Commands & Tips
+# Auxiliary Commands & Tips
 
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
-- [Auxiliar Commands \& Tips](#auxiliar-commands--tips)
+- [Auxiliary Commands & Tips](#auxiliary-commands--tips)
   - [Linux helpers](#linux-helpers)
     - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
     - [Remove all stopped containers in the system](#remove-all-stopped-containers-in-the-system)
-    - [Retrieve running proccesses inside a container](#retrieve-running-proccesses-inside-a-container)
+    - [Retrieve running processes inside a container](#retrieve-running-processes-inside-a-container)
     - [Create a docker network](#create-a-docker-network)
     - [Save Docker Image and Container](#save-docker-image-and-container)
     - [Import Docker Image and Container](#import-docker-image-and-container)
@@ -41,7 +41,7 @@ docker rm -f $(docker ps -aq -f status=exited)
 
 Explanation:
 
-- with `$()` we are capturing the output (stdout) of the command inside the parentesis. This command is `docker ps -aq -f status=exited`. The options are:
+- with `$()` we are capturing the output (stdout) of the command inside the parenthesis. This command is `docker ps -aq -f status=exited`. The options are:
   - `docker` is the Docker CLI communicating with the Daemon.
   - `ps` gets the containers (by default only those running). There are two options for used for this command:
     - `-aq`: `a` states for all containers and `q` indicates that only the container id must be retrieved.
@@ -50,13 +50,13 @@ Explanation:
   - `rm` command for removing the containers.
   - `-f` forces container removal.
 
-### Retrieve running proccesses inside a container
+### Retrieve running processes inside a container
 
 ```bash
 docker top <container_name>
 ```
 
----
+______________________________________________________________________
 
 ### Create a docker network
 
@@ -69,7 +69,7 @@ docker network create --driver <driver_name> <network_name>
 docker network create mynetwork
 ```
 
----
+______________________________________________________________________
 
 ### Save Docker Image and Container
 
@@ -87,7 +87,7 @@ docker export -o mycontainer.tar mycontainer_id
 
 `docker save` is ideal for sharing images, preserving their history and layers, while `docker export` is for containers, flattening their filesystem into a single layer.
 
-> [!NOTE]
+> \[!NOTE\]
 > Exported images or containers can be imported back for its use.
 
 ### Import Docker Image and Container
