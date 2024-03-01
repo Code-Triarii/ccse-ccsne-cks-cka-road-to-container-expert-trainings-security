@@ -3,9 +3,32 @@
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
 - [Auxiliar Commands \& Tips](#auxiliar-commands--tips)
+  - [Linux helpers](#linux-helpers)
+    - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
     - [Remove all stopped containers in the system](#remove-all-stopped-containers-in-the-system)
     - [Retrieve running proccesses inside a container](#retrieve-running-proccesses-inside-a-container)
+    - [Create a docker network](#create-a-docker-network)
+
+## Linux helpers
+
+### Create a file inline with cat
+
+To create a file from the command line without using nano, vim or similar utilities we can leverage command `cat` and the usage of file delimiters `EOF/EOL`.
+
+```bash
+cat > <file_name> <<EOL
+<file_content>
+EOL
+
+# Example
+cat > Dockerfile <<EOL
+FROM ubuntu:20.04
+
+RUN apt install nginx
+EOL
+```
+
 
 ## Docker commands
 
@@ -30,4 +53,15 @@ Explanation:
 
 ```bash
 docker top <container_name>
+```
+
+### Create a docker network
+
+[Theory about networks](./concepts.md#docker-networking)
+
+```bash
+docker network create --driver <driver_name> <network_name>
+
+#Example using default driver bridge
+docker network create mynetwork
 ```
