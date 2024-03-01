@@ -2,13 +2,14 @@
 
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
-- [Auxiliar Commands & Tips](#auxiliar-commands--tips)
+- [Auxiliar Commands \& Tips](#auxiliar-commands--tips)
   - [Linux helpers](#linux-helpers)
     - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
     - [Remove all stopped containers in the system](#remove-all-stopped-containers-in-the-system)
     - [Retrieve running proccesses inside a container](#retrieve-running-proccesses-inside-a-container)
     - [Create a docker network](#create-a-docker-network)
+    - [Save Docker Image and Container](#save-docker-image-and-container)
 
 ## Linux helpers
 
@@ -64,3 +65,19 @@ docker network create --driver <driver_name> <network_name>
 #Example using default driver bridge
 docker network create mynetwork
 ```
+
+### Save Docker Image and Container
+
+**Docker Save**: Use `docker save` to create a tar archive of an image.
+
+```bash
+docker save -o myimage.tar myimage:latest
+```
+
+**Docker Export**: Use `docker export` to create a tar archive of a container's filesystem.
+
+```bash
+docker export -o mycontainer.tar mycontainer_id
+```
+
+`docker save` is ideal for sharing images, preserving their history and layers, while `docker export` is for containers, flattening their filesystem into a single layer.
