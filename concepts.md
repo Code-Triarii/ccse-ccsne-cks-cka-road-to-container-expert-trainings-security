@@ -8,6 +8,7 @@ This documentation page aims to shortly summarize some of the most important the
       - [Docker Engine](#docker-engine)
       - [Docker Objects](#docker-objects)
     - [Docker alternatives](#docker-alternatives)
+    - [Docker Networking](#docker-networking)
 
 ## Docker
 
@@ -44,3 +45,16 @@ The Docker Engine is the core of Docker, a lightweight and powerful open-source 
 1. [Podman](https://podman.io/) - Podman is a daemonless, open source, Linux native tool designed to make it easy to find, run, build, share and deploy applications using Open Containers Initiative (OCI) Containers and Container Images.
 2. [CRI-O:](https://cri-o.io/) - Container management solution optimized for Kubernetes compliant with OCI specification.
 3. [Linux Containers - LXC](https://linuxcontainers.org/lxc/getting-started/)
+
+---
+
+### Docker Networking
+
+Docker supports multiple networking options, each tailored for specific use cases:
+
+- **Bridge:** The default network driver, suitable for containers' communication on the same host.
+- **Host:** Removes network isolation between container and host, offering performance improvement.
+- **Overlay:** Enables network communication between containers across different hosts, crucial for Docker Swarm.
+- **Macvlan:** Allows assigning a MAC address to a container, making it appear as a physical device on the network.
+- **None:** Disables all networking, useful for containers that don't require network communication.
+

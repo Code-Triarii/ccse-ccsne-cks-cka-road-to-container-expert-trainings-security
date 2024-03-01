@@ -25,8 +25,8 @@ This project serves as a preparation for the CCSE (Certified Container Security 
 - [📝 Practical DevSecOps CCSE preparation](#-practical-devsecops-ccse-preparation)
   - [📚 Table of contents](#-table-of-contents)
   - [💡 Purpose](#-purpose)
-  - [Project structure](#project-structure)
-  - [� Roadmap](#-roadmap)
+  - [🏗️ Project structure](#️-project-structure)
+  - [📍 Roadmap](#-roadmap)
   - [📎 Contributing](#-contributing)
   - [📃 License](#-license)
   - [👥 Contact](#-contact)
@@ -40,7 +40,7 @@ The main purpose of this repository is to be guiding for anyone interested in ob
 
 If you are learning about container security and willing to obtain the CCSE certification, this is your place.
 
-## Project structure
+## 🏗️ Project structure
 
 A quick tour on how the project is organized here:
 
