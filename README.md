@@ -25,7 +25,7 @@ This project serves as a preparation for the CCSE (Certified Container Security 
 - [📝 Practical DevSecOps CCSE preparation](#-practical-devsecops-ccse-preparation)
   - [📚 Table of contents](#-table-of-contents)
   - [💡 Purpose](#-purpose)
-  - [🏗️ Project structure](#️-project-structure)
+  - [🏗️ Project structure](#%EF%B8%8F-project-structure)
   - [📍 Roadmap](#-roadmap)
   - [📎 Contributing](#-contributing)
   - [📃 License](#-license)

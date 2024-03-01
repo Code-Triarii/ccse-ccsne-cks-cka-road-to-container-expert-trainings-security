@@ -2,7 +2,7 @@
 
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
-- [Auxiliar Commands \& Tips](#auxiliar-commands--tips)
+- [Auxiliar Commands & Tips](#auxiliar-commands--tips)
   - [Linux helpers](#linux-helpers)
     - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
@@ -29,7 +29,6 @@ RUN apt install nginx
 EOL
 ```
 
-
 ## Docker commands
 
 ### Remove all stopped containers in the system
@@ -48,7 +47,7 @@ Explanation:
 - Main command `docker rm -f <list-of-containers-id>`. Options explanation:
   - `rm` command for removing the containers.
   - `-f` forces container removal.
-  
+
 ### Retrieve running proccesses inside a container
 
 ```bash
