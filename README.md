@@ -5,18 +5,20 @@
  -->
 
 <!-- PROJECT LOGO -->
+
 # 📝 Practical DevSecOps CCSE preparation
 
 <!-- TECNOLOGIES -->
+
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 This project serves as a preparation for the CCSE (Certified Container Security Expert) certification of Practical DevSecOps organization, including sample exercises, explanations, tips and more 💪
 
 [Report Bug](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues) · [Request Feature](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues)
+
 </div>
 
 <!-- TABLE OF CONTENTS -->
-
 
 ## 📚 Table of contents
 
@@ -30,11 +32,11 @@ This project serves as a preparation for the CCSE (Certified Container Security 
   - [👥 Contact](#-contact)
   - [🔍 Acknowledgments](#-acknowledgments)
 
-
 <!-- PROJECT DETAILS -->
+
 ## 💡 Purpose
 
-The main purpose of this repository is to be guiding for anyone interested in obtaining the CCSE certification. Explaining in detail exercises, including automations for quickly setting up a testing environment and more. 
+The main purpose of this repository is to be guiding for anyone interested in obtaining the CCSE certification. Explaining in detail exercises, including automations for quickly setting up a testing environment and more.
 
 If you are learning about container security and willing to obtain the CCSE certification, this is your place.
 
@@ -46,13 +48,11 @@ A quick tour on how the project is organized here:
 - `environment`: this folder includes the different automatic resources for setting up the environment required for the different exercises.
 - `modules` > `exercises`: this folder contains the module distribution based on the CCSE path and the different exercises created for preparation.
 
-
 ## 📍 Roadmap
 
 - [ ] Create automatic deployment of scenarios
 - [ ] Define the practical scenarios
 - [ ] Complete the full CCSE path with scenarios and exercises including documentation for each of them.
-
 
 See the [open issues](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues) for a full list of proposed features (and known issues).
 
@@ -61,6 +61,7 @@ For a more detailed understanding of the project progress, check the <a href="do
 [🔝 Back to top](#-practical-devsecops-ccse-preparation)
 
 <!-- CONTRIBUTING -->
+
 ## 📎 Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated** :chart:.
@@ -68,6 +69,7 @@ Contributions are what make the open source community such an amazing place to l
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 
 1. Fork the Project
+
 2. Create your Feature Branch
 
    ```sh
@@ -91,6 +93,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 [🔝 Back to top](#-practical-devsecops-ccse-preparation)
 
 <!-- LICENSE -->
+
 ## 📃 License
 
 Distributed under the `TOEDIT: LICENSE_TYPE_TO_REPLACE` License. See `LICENSE` for more information.
@@ -98,6 +101,7 @@ Distributed under the `TOEDIT: LICENSE_TYPE_TO_REPLACE` License. See `LICENSE` f
 [🔝 Back to top](#-practical-devsecops-ccse-preparation)
 
 <!-- CONTACT -->
+
 ## 👥 Contact
 
 <div align="center">
@@ -121,6 +125,7 @@ Don't forget to give the project a star if you liked it! Thanks again! :star2: :
 [🔝 Back to top](#-practical-devsecops-ccse-preparation)
 
 <!-- ACKNOWLEDGMENTS -->
+
 ## 🔍 Acknowledgments
 
 :100: :100: :100: For those that are curious about some of the resources or utilities and for sure thanking and giving credit to authors, we provide you a list of the most interesting ones (in our understanding) :100: :100: :100:

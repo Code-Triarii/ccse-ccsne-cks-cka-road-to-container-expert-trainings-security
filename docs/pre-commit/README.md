@@ -18,7 +18,7 @@ For syntax highlighting in Markdown files, we use [GitHub flavored Markdown](htt
 
 ## Pre-commit Installation and Usage
 
-> [!NOTE]
+> \[!NOTE\]
 > We do not use `pre-commit` as a security oriented tool here.
 
 To ensure consistent code quality and follow best practices, we use `pre-commit` hooks in our repository. Follow these steps to use the selected `pre-commit` hooks each time you commit code:
