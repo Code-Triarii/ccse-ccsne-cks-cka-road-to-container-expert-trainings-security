@@ -10,6 +10,7 @@ This documentation aims to provide guidance, utilities and useful commands that 
     - [Retrieve running proccesses inside a container](#retrieve-running-proccesses-inside-a-container)
     - [Create a docker network](#create-a-docker-network)
     - [Save Docker Image and Container](#save-docker-image-and-container)
+    - [Import Docker Image and Container](#import-docker-image-and-container)
 
 ## Linux helpers
 
@@ -55,6 +56,8 @@ Explanation:
 docker top <container_name>
 ```
 
+---
+
 ### Create a docker network
 
 [Theory about networks](./concepts.md#docker-networking)
@@ -65,6 +68,8 @@ docker network create --driver <driver_name> <network_name>
 #Example using default driver bridge
 docker network create mynetwork
 ```
+
+---
 
 ### Save Docker Image and Container
 
@@ -81,3 +86,22 @@ docker export -o mycontainer.tar mycontainer_id
 ```
 
 `docker save` is ideal for sharing images, preserving their history and layers, while `docker export` is for containers, flattening their filesystem into a single layer.
+
+> [!NOTE]
+> Exported images or containers can be imported back for its use.
+
+### Import Docker Image and Container
+
+**Docker Import for Images**: Use `docker import` to create an image from a tar archive previously exported with `docker export`.
+
+```bash
+docker import mycontainer.tar mynewimage:latest
+```
+
+**Docker Load for Images**: To load an image saved with `docker save`, use `docker load`.
+
+```bash
+docker load -i myimage.tar
+```
+
+`docker import` is used to create an image from a flat filesystem, while `docker load` restores an image with its history and layers.
