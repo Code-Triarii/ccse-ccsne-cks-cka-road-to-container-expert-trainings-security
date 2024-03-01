@@ -9,6 +9,7 @@ This documentation page aims to shortly summarize some of the most important the
       - [Docker Objects](#docker-objects)
     - [Docker alternatives](#docker-alternatives)
     - [Docker Networking](#docker-networking)
+    - [Dockerfile Instructions](#dockerfile-instructions)
 
 ## Docker
 
@@ -65,35 +66,34 @@ Docker supports multiple networking options, each tailored for specific use case
 
 ### Dockerfile Instructions
 
-
-- **FROM**: Initializes a new build stage and sets the base image.
-- **RUN**: Executes commands in a new layer on top of the current image and commits the results.
-- **CMD**: Provides defaults for an executing container.
-- **LABEL**: Adds metadata to an image.
-- **EXPOSE**: Informs Docker that the container listens on specific network ports at runtime.
-- **ENV**: Sets the environment variable.
-- **ADD**: Copies new files, directories, or remote file URLs and adds them to the filesystem of the image.
-- **COPY**: Copies new files or directories and adds them to the filesystem of the container.
-- **ENTRYPOINT**: Configures a container that will run as an executable.
-- **VOLUME**: Creates a mount point with the specified name and marks it as holding externally mounted volumes from the native host or other containers.
-- **USER**: Sets the username or UID to use when running the image.
-- **WORKDIR**: Sets the working directory for any RUN, CMD, ENTRYPOINT, COPY, and ADD instructions that follow it.
-- **ARG**: Defines a variable that users can pass at build-time to the builder with the docker build command.
-- **ONBUILD**: Adds a trigger instruction to be executed at a later time, when the image is used as the base for another build.
-- **STOPSIGNAL**: Sets the system call signal that will be sent to the container to exit.
-- **HEALTHCHECK**: Tells Docker how to test a container to check that it is still working.
-- **SHELL**: Allows the default shell used for the shell form of commands to be overridden.
+- `FROM`: Initializes a new build stage and sets the base image.
+- `RUN`: Executes commands in a new layer on top of the current image and commits the results.
+- `CMD`: Provides defaults for an executing container.
+- `LABEL`: Adds metadata to an image.
+- `EXPOSE`: Informs Docker that the container listens on specific network ports at runtime.
+- `ENV`: Sets the environment variable.
+- `ADD`: Copies new files, directories, or remote file URLs and adds them to the filesystem of the image.
+- `COPY`: Copies new files or directories and adds them to the filesystem of the container.
+- `ENTRYPOINT`: Configures a container that will run as an executable.
+- `VOLUME`: Creates a mount point with the specified name and marks it as holding externally mounted volumes from the native host or other containers.
+- `USER`: Sets the username or UID to use when running the image.
+- `WORKDIR`: Sets the working directory for any RUN, CMD, ENTRYPOINT, COPY, and ADD instructions that follow it.
+- `ARG`: Defines a variable that users can pass at build-time to the builder with the docker build command.
+- `ONBUILD`: Adds a trigger instruction to be executed at a later time, when the image is used as the base for another build.
+- `STOPSIGNAL`: Sets the system call signal that will be sent to the container to exit.
+- `HEALTHCHECK`: Tells Docker how to test a container to check that it is still working.
+- `SHELL`: Allows the default shell used for the shell form of commands to be overridden.
 
 > [!IMPORTANT]
 > Do not forget this security tips to define more secure images to proper Dockerfile quality.
 
-1. **Use Official Images**: Stick to official or verified images to reduce the risk of vulnerabilities.
-2. **Minimize Base Images**: Use minimal base images like Alpine to reduce attack surface.
-3. **Avoid Running as Root**: Use `USER` to switch to a non-root user for running applications.
-4. **Use Multi-Stage Builds**: Separate the build environment from the runtime environment to minimize the final image size and reduce risk.
-5. **Specify Exact Versions**: In the `FROM` instruction, specify exact versions of images to avoid unexpected changes.
-6. **Keep Secrets Out**: Never hard-code secrets in your Dockerfile. Use secrets management tools or Docker secrets.
-7. **Use `COPY` Over `ADD`**: Prefer `COPY` for copying local files, use `ADD` for URLs and tar extraction.
-8. **Regularly Scan Images for Vulnerabilities**: Integrate security scans into your CI/CD pipeline to catch vulnerabilities early.
-9. **Limit Build Context**: Use `.dockerignore` files to exclude unnecessary files from the build context to prevent accidental inclusion of sensitive files.
-10. **Keep Containers Up-to-Date**: Regularly update and rebuild containers to include security patches.
+1. `Use Official Images`: Stick to official or verified images to reduce the risk of vulnerabilities.
+2. `Minimize Base Images`: Use minimal base images like Alpine to reduce attack surface.
+3. `Avoid Running as Root`: Use `USER` to switch to a non-root user for running applications.
+4. `Use Multi-Stage Builds`: Separate the build environment from the runtime environment to minimize the final image size and reduce risk.
+5. `Specify Exact Versions`: In the `FROM` instruction, specify exact versions of images to avoid unexpected changes.
+6. `Keep Secrets Out`: Never hard-code secrets in your Dockerfile. Use secrets management tools or Docker secrets.
+7. `Use COPY Over ADD`: Prefer `COPY` for copying local files, use `ADD` for URLs and tar extraction.
+8. `Regularly Scan Images for Vulnerabilities`: Integrate security scans into your CI/CD pipeline to catch vulnerabilities early.
+9. `Limit Build Context`: Use `.dockerignore` files to exclude unnecessary files from the build context to prevent accidental inclusion of sensitive files.
+10. `Keep Containers Up-to-Date`: Regularly update and rebuild containers to include security patches.
