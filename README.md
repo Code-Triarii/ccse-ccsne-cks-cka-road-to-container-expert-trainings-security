@@ -5,169 +5,60 @@
  -->
 
 <!-- PROJECT LOGO -->
-# 📝 Project Name
-
-[![contributors-shield]][contributors-url]
-[![forks-shield]][forks-url]
-[![stars-shield]][stars-url]
-[![issues-shield]][issues-url]
-[![license-shield]][license-url]
+# 📝 Practical DevSecOps CCSE preparation
 
 <!-- TECNOLOGIES -->
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Selenium](https://img.shields.io/badge/Selenium-43B02A?style=for-the-badge&logo=Selenium&logoColor=white)
-![Brave](https://img.shields.io/badge/Brave-FB542B?style=for-the-badge&logo=Brave&logoColor=white)
-![Chromium](https://img.shields.io/badge/Chromium-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. In purus nulla, consectetur nec justo id, mattis venenatis mi. Suspendisse potenti. Donec et tempus libero, in aliquam lectus. Sed volutpat, eros sit amet vulputate auctor, sem enim lacinia arcu, ac porta dolor neque a mi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse lacinia, quam quis vestibulum rutrum, justo elit bibendum magna, quis dapibus augue diam in lorem. Phasellus tristique vitae leo id sagittis.
+This project serves as a preparation for the CCSE (Certified Container Security Expert) certification of Practical DevSecOps organization, including sample exercises, explanations, tips and more 💪
 
-[View Demo](#) · [Report Bug](PROJECT_URL_TO_REPLACE/issues) · [Request Feature](PROJECT_URL_TO_REPLACE/issues)
+[Report Bug](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues) · [Request Feature](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues)
 </div>
-
-> [!CAUTION]
-> Change description Lorem ipsum for the project information
-
-> [!NOTE]
-> Do not forget to change **PROJECT_URL_TO_REPLACE** with the actual URL of the project.
-
-> [!NOTE]
-> Do not forget to edit the following links when creating the project from the template.
 
 <!-- TABLE OF CONTENTS -->
 
 
 ## 📚 Table of contents
-   * [Purpose](#-purpose)
-   * [Architecture](#-architecture)
-      * [Components](#components)
-   * [Installation and Execution](#-installation-and-execution)
-      * [Prerequisites](#-prerequisites)
-      * [Installation](#-installation)
-         * [Local-ennvironment](#local-environment)
-         * [Docker-environment](#docker-environment)
-      * [Usage](#-usage)
-   * [Roadmap](#-roadmap)
-   * [Contributing](#-contributing)
-   * [License](#-license)
-   * [Contact](#-contact)
-   * [Acknowledgments](#-acknowledgments)
 
-<!--te-->
+- [📝 Practical DevSecOps CCSE preparation](#-practical-devsecops-ccse-preparation)
+  - [📚 Table of contents](#-table-of-contents)
+  - [💡 Purpose](#-purpose)
+  - [Project structure](#project-structure)
+  - [� Roadmap](#-roadmap)
+  - [📎 Contributing](#-contributing)
+  - [📃 License](#-license)
+  - [👥 Contact](#-contact)
+  - [🔍 Acknowledgments](#-acknowledgments)
+
 
 <!-- PROJECT DETAILS -->
 ## 💡 Purpose
 
-> [!IMPORTANT]
-> Do not forget to add a picture about the Project and delete this label
-<!-- Template picture
-<div align="center">
-![Purpose](docs/img/example.png)
-</div>
--->
+The main purpose of this repository is to be guiding for anyone interested in obtaining the CCSE certification. Explaining in detail exercises, including automations for quickly setting up a testing environment and more. 
 
-> [!CAUTION]
-> Change description Lorem ipsum for the Purpose
+If you are learning about container security and willing to obtain the CCSE certification, this is your place.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. In purus nulla, consectetur nec justo id, mattis venenatis mi. Suspendisse potenti. Donec et tempus libero, in aliquam lectus. Sed volutpat, eros sit amet vulputate auctor, sem enim lacinia arcu.
+## Project structure
 
-## 🚧 Architecture
+A quick tour on how the project is organized here:
 
-> [!IMPORTANT]
-> Do not forget to change the Architecture picture/diagram and delete the label
+- `docs`: contains the main .md files for documenting the project as well as the images used in the markdown for renderization.
+- `environment`: this folder includes the different automatic resources for setting up the environment required for the different exercises.
+- `modules` > `exercises`: this folder contains the module distribution based on the CCSE path and the different exercises created for preparation.
 
-![Architecture](./docs/img/architecture.png)
 
----
-#### Components
-
-* `CLI`: All the files in this project.
-  * `main.py`: Main handler that orchestrates
-  * `dispatcher.py`: Dispatches services
-* `API Server`: serves the responses to CLI Requests. The related project can be located [TOEDIT: HERE](https://example.com)
-
-[🔝 Back to top](#-project-name)
-
-## 🚀 Installation and Execution
-
-### 🔨 Prerequisites
-
-- Docker
-- Python 3.10+
-- Node 19+
-- Selenium, BeautifulSoup, undetected_chromedriver
-- Brave Browser & Compatible WebDriver (Chromedriver/Geckodriver)
-
-[🔝 Back to top](#-project-name)
-
-### 🔧 Installation
-
-* npm:
-  ```sh
-  npm install npm@latest -g
-  ```
-
-#### Local environment
-
-1. Clone the repo
-   ```sh
-   git clone https://github.com/your_username_/Project-Name.git
-   ```
-2. Install packages
-   ```sh
-   npm install
-   ```
-3. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-
-#### Docker environment
-
-Install `Docker Engine`. Visit [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/) for more information.
-1. Build docker image:
-```bash
-docker build -t <image_name>:<tag> .
-```
-1. Run docker image:
-```bash
-docker run -it --name <container_name> -p <ports...> -v <volumes...> <image_name>:<tag>
-```
-
-[🔝 Back to top](#-project-name)
-
-<!-- USAGE EXAMPLES -->
-### 💼 Usage
-
----
-> [!TIP]
-> TOEDIT: Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-* CLI: In this case show the help and put some examples of the most interesting options
-* Web Application: if the project is a component of a broader project, link it ot the main Documentation for the project usage and especify only the specific configurations for the component. Example: if this is the front end, talk about the specific options that can be configured.
----
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-[🔝 Back to top](#-project-name)
-
-<!-- GETTING STARTED -->
-
-<!-- ROADMAP -->
 ## 📍 Roadmap
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [x] English
-    - [ ] Spanish
+- [ ] Create automatic deployment of scenarios
+- [ ] Define the practical scenarios
+- [ ] Complete the full CCSE path with scenarios and exercises including documentation for each of them.
 
-See the [open issues](PROJECT_URL_TO_REPLACE/issues) for a full list of proposed features (and known issues).
+
+See the [open issues](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues) for a full list of proposed features (and known issues).
 
 For a more detailed understanding of the project progress, check the <a href="docs/CHANGELOG.md">CHANGELOG</a>
 
-[🔝 Back to top](#-project-name)
+[🔝 Back to top](#-practical-devsecops-ccse-preparation)
 
 <!-- CONTRIBUTING -->
 ## 📎 Contributing
@@ -178,27 +69,33 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 1. Fork the Project
 2. Create your Feature Branch
+
    ```sh
    git checkout -b feature/AmazingFeature
    ```
+
 3. Commit your Changes
+
    ```sh
    git commit -m 'Add some AmazingFeature
    ```
+
 4. Push to the Branch
+
    ```sh
    git push origin feature/AmazingFeature
    ```
+
 5. Open a Pull Request
 
-[🔝 Back to top](#-project-name)
+[🔝 Back to top](#-practical-devsecops-ccse-preparation)
 
 <!-- LICENSE -->
 ## 📃 License
 
 Distributed under the `TOEDIT: LICENSE_TYPE_TO_REPLACE` License. See `LICENSE` for more information.
 
-[🔝 Back to top](#-project-name)
+[🔝 Back to top](#-practical-devsecops-ccse-preparation)
 
 <!-- CONTACT -->
 ## 👥 Contact
@@ -221,48 +118,13 @@ Do not skip it, you will like it :smirk: :smirk: :smirk: :+1:
 
 Don't forget to give the project a star if you liked it! Thanks again! :star2: :yellow_heart:
 
-[🔝 Back to top](#-project-name)
+[🔝 Back to top](#-practical-devsecops-ccse-preparation)
 
 <!-- ACKNOWLEDGMENTS -->
 ## 🔍 Acknowledgments
 
 :100: :100: :100: For those that are curious about some of the resources or utilities and for sure thanking and giving credit to authors, we provide you a list of the most interesting ones (in our understanding) :100: :100: :100:
 
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+- [Practical DevSecOps](https://www.practical-devsecops.com/) - to Practical DevSecOps for the amazing learning journey.
 
-[🔝 Back to top](#-project-name)
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: PROJECT_URL_TO_REPLACE/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: PROJECT_URL_TO_REPLACE/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: PROJECT_URL_TO_REPLACE/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: PROJECT_URL_TO_REPLACE/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: PROJECT_URL_TO_REPLACE/blob/master/LICENSE
-
-<!-- SOCIAL MEDIA -->
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=gray
-[linkedin-url]: https://example.com
-
-[youtube-shield]: https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white
-[youtube-url]: https://www.youtube.com/@CodeTriariiSM
-
-[instagram-shield]: https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&colorB=pink
-[instagram-url]: https://www.instagram.com/codetriariismig/
-
-[twitter-shield]: https://img.shields.io/twitter/follow/codetriariism
-
-<!-- PROJECT RELATED -->
-[product-brand-image]: docs/img/main.png
+[🔝 Back to top](#-practical-devsecops-ccse-preparation)
