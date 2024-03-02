@@ -133,5 +133,7 @@ Don't forget to give the project a star if you liked it! Thanks again! :star2: :
 :100: :100: :100: For those that are curious about some of the resources or utilities and for sure thanking and giving credit to authors, we provide you a list of the most interesting ones (in our understanding) :100: :100: :100:
 
 - [Practical DevSecOps](https://www.practical-devsecops.com/) - to Practical DevSecOps for the amazing learning journey.
+- [ChatGPT 4](https://chat.openai.com/) - for acceleratining the creation of scenarios and solutions.
+- [MITRE container attack matrix](https://attack.mitre.org/matrices/enterprise/containers/) - for proving good insights about how to exploit and leverage applications vulnerabilities hosted in containers.
 
 [🔝 Back to top](#-practical-devsecops-ccse-preparation)

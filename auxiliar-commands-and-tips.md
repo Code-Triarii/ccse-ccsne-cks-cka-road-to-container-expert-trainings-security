@@ -2,7 +2,7 @@
 
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
-- [Auxiliary Commands & Tips](#auxiliary-commands--tips)
+- [Auxiliary Commands \& Tips](#auxiliary-commands--tips)
   - [Linux helpers](#linux-helpers)
     - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
@@ -11,6 +11,7 @@ This documentation aims to provide guidance, utilities and useful commands that 
     - [Create a docker network](#create-a-docker-network)
     - [Save Docker Image and Container](#save-docker-image-and-container)
     - [Import Docker Image and Container](#import-docker-image-and-container)
+    - [List containers ordered by creation time](#list-containers-ordered-by-creation-time)
 
 ## Linux helpers
 
@@ -105,3 +106,17 @@ docker load -i myimage.tar
 ```
 
 `docker import` is used to create an image from a flat filesystem, while `docker load` restores an image with its history and layers.
+
+---
+
+### List containers ordered by creation time
+
+```bash
+echo '['$(docker container ls --format '{{json .}}' | paste -sd "," -)']' | jq 'sort_by(.CreatedAt) | .[] | {ID: .ID, Image: .Image, CreatedAt: .CreatedAt}'
+```
+
+For this command to run, `jq` must be installed in the system:
+
+```bash
+sudo apt-get update && sudo apt-get install -y jq
+```

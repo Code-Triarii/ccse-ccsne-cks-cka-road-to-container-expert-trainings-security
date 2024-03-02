@@ -9,6 +9,7 @@ This documentation page aims to shortly summarize some of the most important the
       - [Docker Objects](#docker-objects)
     - [Docker alternatives](#docker-alternatives)
     - [Docker Networking](#docker-networking)
+    - [Docker Layers - Dockerfile, Image, and Containers](#docker-layers---dockerfile-image-and-containers)
     - [Dockerfile Instructions](#dockerfile-instructions)
     - [Docker Compose Instructions](#docker-compose-instructions)
       - [Examples](#examples)
@@ -69,6 +70,19 @@ Docker supports multiple networking options, each tailored for specific use case
 > \[!NOTE\]
 > Docker default network is `Bridge`.
 
+---
+
+### Docker Layers - Dockerfile, Image, and Containers
+
+Docker uses a layered filesystem to build images and run containers efficiently. Here's the relationship between Dockerfile, images, and containers, as illustrated in the diagram:
+
+- ``Dockerfile``: A text document containing all the commands to build a Docker image. It starts from a base image and executes instructions that create layers.
+- ``Docker Image``: A read-only template composed of layered filesystems used to execute code in a Docker container. Each instruction in the Dockerfile creates a new layer in the image.
+- ``Docker Container``: A runnable instance of an image with an additional writable layer on top of the image's layers. Containers share the base image layers, making them lightweight and fast.
+
+``Union Layers and Reusability``: Docker images are built using union filesystems that combine multiple layers into a single view. Layers are reused across different images to save space, and changes within a running container are stored in the writable layer, keeping the underlying image unchanged for reuse.
+
+![Docker concepts relationship](docs/img/dockerfile-image-container-layers.png)
 ______________________________________________________________________
 
 ### Dockerfile Instructions
