@@ -16,6 +16,8 @@ This documentation page aims to shortly summarize some of the most important the
     - [Dockerfile Instructions](#dockerfile-instructions)
     - [Docker Compose Instructions](#docker-compose-instructions)
       - [Examples](#examples)
+    - [Docker Registry](#docker-registry)
+      - [Image Reference Formats:](#image-reference-formats)
   - [Docker Security](#docker-security)
     - [Image Security](#image-security)
     - [Container Security](#container-security)
@@ -318,6 +320,46 @@ healthcheck:
 > For full details and options, take a look at [Docker compose specification](https://github.com/compose-spec/compose-spec)
 
 ______________________________________________________________________
+
+### Docker Registry
+
+The Docker registry stores Docker images, which can be referenced in various formats depending on the registry and organizational requirements.
+
+#### Image Reference Formats:
+
+![Image formats](./docs/img/ccse-docker-registry.png)
+
+1. **Namespaced Registry Format (Used in Openshift, Harbor):**
+   Images are stored in a format that includes the registry address, project namespace, repository name, and optionally, the tag and digest.
+
+   ```
+   registry-url/project-name/repository-name:tag@sha256:digest
+   ```
+
+   Example:
+   ```bash
+   myregistry.com/myproject/nginx:1.17@sha256:25a0d4
+   ```
+
+2. **Standard Registry Format (Used in Registry V2, Docker Hub):**
+   This format includes the registry address, repository name, and optionally, the tag and digest, but omits the namespace.
+
+   ```
+   registry-url/repository-name:tag@sha256:digest
+   ```
+
+   Example:
+   ```bash
+   docker.io/nginx:1.17@sha256:25a0d4
+   ```
+
+> [!IMPORTANT]
+> These formats are used to pull specific image versions, ensuring immutability and traceability by referencing the exact image content hash. The hash is not required but really recommended as a security measure.
+
+
+In namespaces registries, separating projects or teams into namespaces can help organize and manage access controls. In standard registries, images are typically organized by repository names and tags without an additional project or namespace layer.
+
+---
 
 ## Docker Security
 
