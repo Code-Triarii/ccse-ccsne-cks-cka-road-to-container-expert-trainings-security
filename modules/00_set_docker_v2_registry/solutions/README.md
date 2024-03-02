@@ -39,7 +39,7 @@ ansible-playbook setup_secure_docker_registry.yml --ask-become-pass
 ansible-playbook setup_secure_docker_registry.yml -e "registry_domain=devsecops-box-XoIySz8L ip_address=10.1.28.228 modify_hosts=false"
 ```
 
-[!Ansible execution](../img/ansible-execution.png)
+![Ansible execution](../img/ansible-execution.png)
 
 ## Step by step - Manual
 
@@ -116,7 +116,7 @@ openssl req -new -x509 -nodes -days 365 -config san.cnf -keyout domain.key -out 
 openssl x509 -in domain.crt -text -noout
 ```
 
-[!OpenSSL output](../img/openssl-output.png)
+![OpenSSL output](../img/openssl-output.png)
 
 ### Step 2: Set up basic auth for the registry
 
@@ -208,9 +208,9 @@ sudo cp certs/domain.crt /etc/docker/certs.d/codetriarii-org.com/ca.crt
 
 **Sample output**:
 
-[!Docker login](../img/docker-login.png)
+![Docker login](../img/docker-login.png)
 
-[!Docker push](../img/docker-push.png)
+![Docker push](../img/docker-push.png)
 
 If you can push and pull the image without errors, your secure Docker Registry is correctly set up and configured!
 

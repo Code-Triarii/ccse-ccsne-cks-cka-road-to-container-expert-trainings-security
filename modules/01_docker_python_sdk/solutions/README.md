@@ -44,7 +44,7 @@ To run a container, specify the required arguments `--image` and `--name`, and o
 python main.py run --image nginx --name mynginx --env VAR1=value1,VAR2=value2 --volume /host/path:/container/path --entrypoint "/entrypoint.sh" --command "nginx -g 'daemon off;'" --ports 80:80
 ```
 
-[!Example execution](../img/cli-usage.png)
+![Example execution](../img/cli-usage.png)
 
 ### Step 3: Verify Container Operation
 
