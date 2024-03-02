@@ -13,8 +13,14 @@
     certificate_organization: "YourOrganization"
     certificate_ou: "YourDepartment"
     target_folder: "/tmp/exercise-1"
+    modify_hosts: true
 
   tasks:
+
+    - name: Check variables values
+      ansible.builtin.debug:
+        msg: "modify_hosts: {{ modify_hosts }}"
+
     - name: Ensure target folder is emptied and exists
       ansible.builtin.file:
         path: "{{ target_folder }}"
@@ -32,6 +38,7 @@
         path: /etc/hosts
         line: "{{ ip_address }} {{ registry_domain }}"
         state: present
+      when: modify_hosts | bool
 
     - name: Create directories for certs and auth
       ansible.builtin.file:
@@ -109,6 +116,36 @@
           REGISTRY_HTTP_ADDR: "0.0.0.0:443"
           REGISTRY_HTTP_TLS_CERTIFICATE: "/certs/domain.crt"
           REGISTRY_HTTP_TLS_KEY: "/certs/domain.key"
+
+    - name: Ensure Docker certs directory is emptied
+      ansible.builtin.file:
+        path: "/etc/docker/certs.d/{{ registry_domain }}"
+        state: absent
+      failed_when: false
+
+    - name: Ensure Docker certs directory exists
+      ansible.builtin.file:
+        path: "/etc/docker/certs.d/{{ registry_domain }}"
+        state: directory
+        mode: '0755'
+
+    - name: Ensure Docker certs directory is emptied
+      ansible.builtin.file:
+        path: "/etc/docker/certs.d/{{ ip_address }}"
+        state: absent
+      failed_when: false
+
+    - name: Ensure Docker certs directory exists
+      ansible.builtin.file:
+        path: "/etc/docker/certs.d/{{ ip_address }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy domain.crt to Docker certs directory
+      ansible.builtin.copy:
+        src: "{{ target_folder }}/certs/domain.crt"
+        dest: "/etc/docker/certs.d/{{ ip_address }}/ca.crt"
+        mode: '0644'
 
     - name: Copy domain.crt to Docker certs directory
       ansible.builtin.copy:

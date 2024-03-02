@@ -32,6 +32,13 @@ All challenges come with an ansible playbook that allows to set-up the solution 
 ansible-playbook setup_secure_docker_registry.yml --ask-become-pass
 ```
 
+> [!NOTE]
+> You can override the variables as neeeded. The following execution is a sample for the practical devsecops machine in labs.
+
+```bash
+ansible-playbook setup_secure_docker_registry.yml -e "registry_domain=devsecops-box-XoIySz8L ip_address=10.1.28.228 modify_hosts=false"
+```
+
 [!Ansible execution](../img/ansible-execution.png)
 
 ## Step by step - Manual
