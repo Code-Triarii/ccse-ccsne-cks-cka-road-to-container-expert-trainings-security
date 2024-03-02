@@ -18,6 +18,7 @@ This documentation page aims to shortly summarize some of the most important the
         - [Cgroup Namespace (Resource Limitation View)](#cgroup-namespace-resource-limitation-view)
       - [cgroups (Control Groups)](#cgroups-control-groups)
       - [Capabilities](#capabilities)
+      - [Modifying Capabilities](#modifying-capabilities)
       - [Security Considerations](#security-considerations)
     - [Docker alternatives](#docker-alternatives)
     - [Docker Networking](#docker-networking)
@@ -146,16 +147,40 @@ cgroups limit, account for, and isolate the resource usage (CPU, memory, disk I/
 
 #### Capabilities
 
-Linux capabilities divide the privileges traditionally associated with the superuser into distinct units, which can be independently enabled or disabled. Docker uses capabilities to provide the least privilege necessary for a container to run.
+Linux capabilities partition the privileges of the superuser into distinct, smaller privilege sets that can be independently enabled or disabled for Docker containers. This granularity ensures containers operate with the least privilege required, enhancing security.
 
-- ``Dropping Capabilities:`` Run a container without certain capabilities.
-  
+Here's an overview of some key Linux capabilities and their purposes:
+
+| Capability | Purpose |
+|------------|---------|
+| `CAP_CHOWN` | Allows changing the owner of files and directories. |
+| `CAP_DAC_OVERRIDE` | Bypasses file read, write, and execute permission checks. |
+| `CAP_DAC_READ_SEARCH` | Bypasses file read permission checks and directory read and execute permission checks. |
+| `CAP_FOWNER` | Bypasses permission checks on operations that require the filesystem UID of the process to match the UID of the file. |
+| `CAP_FSETID` | Allows setting file UID and GID to arbitrary values. |
+| `CAP_KILL` | Allows sending signals to processes owned by other users. |
+| `CAP_NET_BIND_SERVICE` | Allows binding to TCP/UDP sockets below 1024. |
+| `CAP_NET_RAW` | Allows using RAW and PACKET sockets, enabling ping and other network diagnostics. |
+| `CAP_SETGID` | Allows changing the GID of processes. |
+| `CAP_SETUID` | Allows changing the UID of processes. |
+| `CAP_SETPCAP` | Allows transferring or removing any capability in the calling process's permitted capability set to or from any other process. |
+| `CAP_SYS_ADMIN` | Provides a broad set of administrative operations like mounting filesystems, configuring network interfaces, and more. |
+| `CAP_SYS_CHROOT` | Allows changing the root directory of the calling process. |
+| `CAP_SYS_PTRACE` | Allows tracing arbitrary processes using ptrace. |
+| `CAP_SYS_TIME` | Allows setting the system clock. |
+
+For more information check [Docker security official documentation page](https://docs.docker.com/engine/security/).
+
+#### Modifying Capabilities
+
+- **Dropping Capabilities:** You can remove specific or all default capabilities from a container to minimize its privileges further.
+
   ```bash
   docker run --cap-drop ALL --cap-add NET_BIND_SERVICE ...
   ```
 
-- ``Adding Capabilities:`` Grant specific capabilities to a container.
-  
+- **Adding Capabilities:** Conversely, you can grant additional capabilities to a container if required for its operation.
+
   ```bash
   docker run --cap-add SYS_TIME ...
   ```
