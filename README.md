@@ -135,5 +135,6 @@ Don't forget to give the project a star if you liked it! Thanks again! :star2: :
 - [Practical DevSecOps](https://www.practical-devsecops.com/) - to Practical DevSecOps for the amazing learning journey.
 - [ChatGPT 4](https://chat.openai.com/) - for acceleratining the creation of scenarios and solutions.
 - [MITRE container attack matrix](https://attack.mitre.org/matrices/enterprise/containers/) - for proving good insights about how to exploit and leverage applications vulnerabilities hosted in containers.
+- [Excalidraw](https://excalidraw.com/) - for creating amazing diagrams in minutes.
 
 [🔝 Back to top](#-practical-devsecops-ccse-preparation)
