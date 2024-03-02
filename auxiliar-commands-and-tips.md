@@ -12,6 +12,7 @@ This documentation aims to provide guidance, utilities and useful commands that 
     - [Save Docker Image and Container](#save-docker-image-and-container)
     - [Import Docker Image and Container](#import-docker-image-and-container)
     - [List containers ordered by creation time](#list-containers-ordered-by-creation-time)
+    - [Inspect docker image layers and filesystem with Dive](#inspect-docker-image-layers-and-filesystem-with-dive)
 
 ## Linux helpers
 
@@ -120,3 +121,22 @@ For this command to run, `jq` must be installed in the system:
 ```bash
 sudo apt-get update && sudo apt-get install -y jq
 ```
+
+### Inspect docker image layers and filesystem with Dive
+
+[GitHub dive project](https://github.com/wagoodman/dive)
+
+```bash
+docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive <your_image>
+
+#Example
+docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive nginx:latest
+```
+
+> [!NOTE]
+> Following instruction helps to analyze an image that is in `tar` not loaded to the docker images pool. **The tar must be present in the directory you are executing the command**
+
+```bash
+docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$(pwd)"/nginx.tar:/app/nginx.tar wagoodman/dive docker-archive://app/nginx.tar
+```
+
