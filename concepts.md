@@ -67,7 +67,7 @@ The Docker Engine is the core of Docker, a lightweight and powerful open-source 
 
 - `Networks:` Enable isolated networks to be defined and managed by Docker. They provide connectivity between containers on the same host or across different hosts.
 
----
+______________________________________________________________________
 
 ### Container Low Level
 
@@ -80,7 +80,7 @@ Namespaces are a feature of the Linux kernel that partitions kernel resources su
 ##### PID Namespace (Process Isolation)
 
 - **Purpose:** Isolates the process ID number space, meaning processes in a container can have the same PID as the host system but are treated independently. This ensures process isolation and management within containers.
-  
+
   ```bash
   docker run --pid=host ...
   ```
@@ -133,14 +133,14 @@ Namespaces are a feature of the Linux kernel that partitions kernel resources su
 
 cgroups limit, account for, and isolate the resource usage (CPU, memory, disk I/O, network, etc.) of a collection of processes. Docker uses cgroups to prevent containers from consuming too many resources and affecting other containers on the host.
 
-- ``Memory Limit:`` Restricts a container's memory usage.
-  
+- `Memory Limit:` Restricts a container's memory usage.
+
   ```bash
   docker run -m 512m ...
   ```
 
-- ``CPU Limit:`` Restricts a container's CPU usage.
-  
+- `CPU Limit:` Restricts a container's CPU usage.
+
   ```bash
   docker run --cpus=1.5 ...
   ```
@@ -151,23 +151,23 @@ Linux capabilities partition the privileges of the superuser into distinct, smal
 
 Here's an overview of some key Linux capabilities and their purposes:
 
-| Capability | Purpose |
-|------------|---------|
-| `CAP_CHOWN` | Allows changing the owner of files and directories. |
-| `CAP_DAC_OVERRIDE` | Bypasses file read, write, and execute permission checks. |
-| `CAP_DAC_READ_SEARCH` | Bypasses file read permission checks and directory read and execute permission checks. |
-| `CAP_FOWNER` | Bypasses permission checks on operations that require the filesystem UID of the process to match the UID of the file. |
-| `CAP_FSETID` | Allows setting file UID and GID to arbitrary values. |
-| `CAP_KILL` | Allows sending signals to processes owned by other users. |
-| `CAP_NET_BIND_SERVICE` | Allows binding to TCP/UDP sockets below 1024. |
-| `CAP_NET_RAW` | Allows using RAW and PACKET sockets, enabling ping and other network diagnostics. |
-| `CAP_SETGID` | Allows changing the GID of processes. |
-| `CAP_SETUID` | Allows changing the UID of processes. |
-| `CAP_SETPCAP` | Allows transferring or removing any capability in the calling process's permitted capability set to or from any other process. |
-| `CAP_SYS_ADMIN` | Provides a broad set of administrative operations like mounting filesystems, configuring network interfaces, and more. |
-| `CAP_SYS_CHROOT` | Allows changing the root directory of the calling process. |
-| `CAP_SYS_PTRACE` | Allows tracing arbitrary processes using ptrace. |
-| `CAP_SYS_TIME` | Allows setting the system clock. |
+| Capability             | Purpose                                                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `CAP_CHOWN`            | Allows changing the owner of files and directories.                                                                            |
+| `CAP_DAC_OVERRIDE`     | Bypasses file read, write, and execute permission checks.                                                                      |
+| `CAP_DAC_READ_SEARCH`  | Bypasses file read permission checks and directory read and execute permission checks.                                         |
+| `CAP_FOWNER`           | Bypasses permission checks on operations that require the filesystem UID of the process to match the UID of the file.          |
+| `CAP_FSETID`           | Allows setting file UID and GID to arbitrary values.                                                                           |
+| `CAP_KILL`             | Allows sending signals to processes owned by other users.                                                                      |
+| `CAP_NET_BIND_SERVICE` | Allows binding to TCP/UDP sockets below 1024.                                                                                  |
+| `CAP_NET_RAW`          | Allows using RAW and PACKET sockets, enabling ping and other network diagnostics.                                              |
+| `CAP_SETGID`           | Allows changing the GID of processes.                                                                                          |
+| `CAP_SETUID`           | Allows changing the UID of processes.                                                                                          |
+| `CAP_SETPCAP`          | Allows transferring or removing any capability in the calling process's permitted capability set to or from any other process. |
+| `CAP_SYS_ADMIN`        | Provides a broad set of administrative operations like mounting filesystems, configuring network interfaces, and more.         |
+| `CAP_SYS_CHROOT`       | Allows changing the root directory of the calling process.                                                                     |
+| `CAP_SYS_PTRACE`       | Allows tracing arbitrary processes using ptrace.                                                                               |
+| `CAP_SYS_TIME`         | Allows setting the system clock.                                                                                               |
 
 For more information check [Docker security official documentation page](https://docs.docker.com/engine/security/).
 
@@ -187,11 +187,11 @@ For more information check [Docker security official documentation page](https:/
 
 #### Security Considerations
 
-- ``Namespace Isolation:`` While namespaces provide isolation, they are not foolproof. Processes with sufficient privileges can still interact with other namespaces, potentially leading to security breaches.
-  
-- ``cgroups Limitations:`` cgroups help with resource isolation but do not control all types of resource consumption. For example, they don't directly limit the total file system cache.
+- `Namespace Isolation:` While namespaces provide isolation, they are not foolproof. Processes with sufficient privileges can still interact with other namespaces, potentially leading to security breaches.
 
-- ``Capabilities Precautions:`` Granting unnecessary capabilities can increase the attack surface of the container. Always adhere to the principle of least privilege, granting only the capabilities required for the container to function.
+- `cgroups Limitations:` cgroups help with resource isolation but do not control all types of resource consumption. For example, they don't directly limit the total file system cache.
+
+- `Capabilities Precautions:` Granting unnecessary capabilities can increase the attack surface of the container. Always adhere to the principle of least privilege, granting only the capabilities required for the container to function.
 
 By combining namespaces, cgroups, and capabilities, Docker provides a powerful and flexible system for managing containerized applications while maintaining a strong security posture. However, understanding these mechanisms and their implications is crucial for securing container environments.
 
@@ -218,7 +218,7 @@ Docker supports multiple networking options, each tailored for specific use case
 > \[!NOTE\]
 > Docker default network is `Bridge`.
 
----
+______________________________________________________________________
 
 ### Docker Volume Management
 
@@ -226,35 +226,39 @@ Docker volumes are essential for persisting data generated by and used within Do
 
 #### Understanding Docker Volumes:
 
-1. ``Bind Mounts (Host Volumes):``
+1. `Bind Mounts (Host Volumes):`
    Bind mounts link a directory on the host's filesystem to a container, allowing direct access and modification of files from both the host and the container. It's specified using an absolute path on the host.
 
    Example:
+
    ```bash
    docker run -v /path/on/host:/path/in/container some-image
    ```
 
-2. ``Anonymous Volumes:``
+2. `Anonymous Volumes:`
    Anonymous volumes are not named and are created to hold data temporarily until the container is deleted. They are ideal for non-persistent, ephemeral data.
 
    Example:
+
    ```bash
    docker run -v /path/in/container some-image
    ```
 
-3. ``Named Volumes (Volume Mounts):``
+3. `Named Volumes (Volume Mounts):`
    Named volumes, or volume mounts, offer a more durable and portable way to store container data compared to bind mounts. They are easy to backup, restore, and can be used by multiple containers.
 
    Example:
+
    ```bash
    docker volume create my-named-volume
    docker run -v my-named-volume:/path/in/container some-image
    ```
 
-4. ``tmpfs Mounts (Temporary Volumes):``
+4. `tmpfs Mounts (Temporary Volumes):`
    `tmpfs` mounts allow you to create temporary volumes that are stored in the host's memory only. This is particularly useful when you want to store sensitive information that you don't want to persist on disk.
 
    Example:
+
    ```bash
    docker run --tmpfs /path/in/container some-image
    ```
@@ -263,30 +267,31 @@ Docker volumes are essential for persisting data generated by and used within Do
 
 #### Key Points to Remember:
 
-- ``Volume Location:`` Volumes exist on the Docker host. When using Docker in a client-server model, remember that paths specified for volumes refer to the host where the Docker daemon runs, not necessarily the local client machine.
+- `Volume Location:` Volumes exist on the Docker host. When using Docker in a client-server model, remember that paths specified for volumes refer to the host where the Docker daemon runs, not necessarily the local client machine.
 
-- ``Persistent Storage:`` Docker volumes are designed to persist data, separate from the container's lifecycle. Even when a container is removed, the volume remains until explicitly deleted.
+- `Persistent Storage:` Docker volumes are designed to persist data, separate from the container's lifecycle. Even when a container is removed, the volume remains until explicitly deleted.
 
-- ``Data Isolation:`` Using volumes can help to isolate your data, allowing containers to remain lightweight and stateless, which is a best practice for containerized applications.
+- `Data Isolation:` Using volumes can help to isolate your data, allowing containers to remain lightweight and stateless, which is a best practice for containerized applications.
 
 Leveraging these various types of volumes effectively ensures data persistence, security, and efficiency in managing the state of Dockerized applications. Always plan your data management strategy according to the needs of your application and the environment in which your containers run.
 
-> [!IMPORTANT]
-> ``Misconceptions:`` For beginners, it can be misleading when the Docker CLI and Daemon are on the same host, as it appears as if you're directly mapping a local host folder to a container folder. However, **the binding is actually taking place on the host where the Docker daemon runs**.
+> \[!IMPORTANT\]
+> `Misconceptions:` For beginners, it can be misleading when the Docker CLI and Daemon are on the same host, as it appears as if you're directly mapping a local host folder to a container folder. However, **the binding is actually taking place on the host where the Docker daemon runs**.
 
----
+______________________________________________________________________
 
 ### Docker Layers - Dockerfile, Image, and Containers
 
 Docker uses a layered filesystem to build images and run containers efficiently. Here's the relationship between Dockerfile, images, and containers, as illustrated in the diagram:
 
-- ``Dockerfile``: A text document containing all the commands to build a Docker image. It starts from a base image and executes instructions that create layers.
-- ``Docker Image``: A read-only template composed of layered filesystems used to execute code in a Docker container. Each instruction in the Dockerfile creates a new layer in the image.
-- ``Docker Container``: A runnable instance of an image with an additional writable layer on top of the image's layers. Containers share the base image layers, making them lightweight and fast.
+- `Dockerfile`: A text document containing all the commands to build a Docker image. It starts from a base image and executes instructions that create layers.
+- `Docker Image`: A read-only template composed of layered filesystems used to execute code in a Docker container. Each instruction in the Dockerfile creates a new layer in the image.
+- `Docker Container`: A runnable instance of an image with an additional writable layer on top of the image's layers. Containers share the base image layers, making them lightweight and fast.
 
-``Union Layers and Reusability``: Docker images are built using union filesystems that combine multiple layers into a single view. Layers are reused across different images to save space, and changes within a running container are stored in the writable layer, keeping the underlying image unchanged for reuse.
+`Union Layers and Reusability`: Docker images are built using union filesystems that combine multiple layers into a single view. Layers are reused across different images to save space, and changes within a running container are stored in the writable layer, keeping the underlying image unchanged for reuse.
 
 ![Docker concepts relationship](docs/img/dockerfile-image-container-layers.png)
+
 ______________________________________________________________________
 
 ### Dockerfile Instructions
@@ -479,6 +484,7 @@ The Docker registry stores Docker images, which can be referenced in various for
    ```
 
    Example:
+
    ```bash
    myregistry.com/myproject/nginx:1.17@sha256:25a0d4
    ```
@@ -491,78 +497,77 @@ The Docker registry stores Docker images, which can be referenced in various for
    ```
 
    Example:
+
    ```bash
    docker.io/nginx:1.17@sha256:25a0d4
    ```
 
-> [!IMPORTANT]
+> \[!IMPORTANT\]
 > These formats are used to pull specific image versions, ensuring immutability and traceability by referencing the exact image content hash. The hash is not required but really recommended as a security measure.
 
-
 In namespaces registries, separating projects or teams into namespaces can help organize and manage access controls. In standard registries, images are typically organized by repository names and tags without an additional project or namespace layer.
-
 
 #### Hosted vs Cloud-Based Repositories
 
 Hosted and cloud-based Docker repositories provide storage solutions for Docker images with varying features and security options. Here's a comparison from both functional and security perspectives:
 
-| Feature / Security | Hosted Repository | Cloud-Based Repository |
-|-------------------|------------------|-----------------------|
-| ``Deployment`` | On-premises infrastructure, manual setup and maintenance. | Provided as a service, managed by a third-party provider. |
-| ``Accessibility`` | Typically within an internal network or VPN. | Accessible over the internet with proper credentials. |
-| ``Scalability`` | Limited by on-premises hardware. | Highly scalable, on-demand resources. |
-| ``Redundancy`` | Dependent on local infrastructure setup. | Multiple regions and zones for high availability. |
-| ``Compliance`` | Must be manually enforced and audited. | Often provides compliance certifications out-of-the-box. |
-| ``Security Updates`` | Manually applied, requires internal processes. | Managed by the service provider, automatically applied. |
-| ``Access Control`` | Managed internally, can integrate with existing systems. | Provided by the platform, with options for integration. |
-| ``Image Scanning`` | Can be configured with third-party tools. | Often included as a service feature. |
-| ``Backup and Recovery`` | Managed by internal IT policies. | Handled by the provider, with varying backup options. |
+| Feature / Security    | Hosted Repository                                         | Cloud-Based Repository                                    |
+| --------------------- | --------------------------------------------------------- | --------------------------------------------------------- |
+| `Deployment`          | On-premises infrastructure, manual setup and maintenance. | Provided as a service, managed by a third-party provider. |
+| `Accessibility`       | Typically within an internal network or VPN.              | Accessible over the internet with proper credentials.     |
+| `Scalability`         | Limited by on-premises hardware.                          | Highly scalable, on-demand resources.                     |
+| `Redundancy`          | Dependent on local infrastructure setup.                  | Multiple regions and zones for high availability.         |
+| `Compliance`          | Must be manually enforced and audited.                    | Often provides compliance certifications out-of-the-box.  |
+| `Security Updates`    | Manually applied, requires internal processes.            | Managed by the service provider, automatically applied.   |
+| `Access Control`      | Managed internally, can integrate with existing systems.  | Provided by the platform, with options for integration.   |
+| `Image Scanning`      | Can be configured with third-party tools.                 | Often included as a service feature.                      |
+| `Backup and Recovery` | Managed by internal IT policies.                          | Handled by the provider, with varying backup options.     |
 
 Hosted repositories offer more control but require more management overhead, while cloud-based repositories provide ease of use and managed services at the cost of less direct control. The choice between the two depends on organizational requirements, resources, and preferences.
 
----
+______________________________________________________________________
 
 ## Docker Security
 
 Ensuring the security of Docker containers involves a multi-faceted approach, covering image security, container runtime security, Docker daemon/host security measures, and Docker registry security. The Center for Internet Security (CIS) Docker Benchmark provides a comprehensive set of practices designed to safeguard your Docker environment. Below is a summary tailored for a Docker security markdown section, highlighting key measures based on the CIS benchmark:
 
-> [!CAUTION]
+> \[!CAUTION\]
 > This is not an exhaustive list of all possible controls but serves as a solid starting point for securing your Docker environment. Delve deeper into each area for a more secure and robust configuration.
 
 ### Image Security
 
-- ``Use Trusted Base Images:`` Only use official or trusted base images for your containers. Regularly scan these images for vulnerabilities and ensure they are up to date.
-- ``Minimize Image Layers:`` Reduce the number of layers in your images to minimize complexity and potential attack surface.
-- ``Avoid Storing Secrets:`` Do not store secrets in Docker images. Use Docker secrets or other secure mechanisms for managing sensitive information.
-- ``Static Analysis:`` Regularly perform static analysis of your container images to detect vulnerabilities or misconfigurations.
+- `Use Trusted Base Images:` Only use official or trusted base images for your containers. Regularly scan these images for vulnerabilities and ensure they are up to date.
+- `Minimize Image Layers:` Reduce the number of layers in your images to minimize complexity and potential attack surface.
+- `Avoid Storing Secrets:` Do not store secrets in Docker images. Use Docker secrets or other secure mechanisms for managing sensitive information.
+- `Static Analysis:` Regularly perform static analysis of your container images to detect vulnerabilities or misconfigurations.
 
 ### Container Security
 
-- ``Use Non-Root Users:`` Run containers as a non-root user whenever possible to limit the potential impact of exploits.
-- ``Limit Container Resources:`` Use Docker's resource constraints (CPU, memory, etc.) to prevent denial-of-service (DoS) attacks.
-- ``Network Segmentation:`` Apply network segmentation principles to container networking. Use custom bridge networks and avoid using the host network mode.
-- ``Read-Only Filesystems:`` Where possible, run containers with read-only filesystems using the `--read-only` flag to prevent tampering.
-- ``Logging and Monitoring:`` Implement logging and monitoring to detect suspicious activities or security incidents within containers.
+- `Use Non-Root Users:` Run containers as a non-root user whenever possible to limit the potential impact of exploits.
+- `Limit Container Resources:` Use Docker's resource constraints (CPU, memory, etc.) to prevent denial-of-service (DoS) attacks.
+- `Network Segmentation:` Apply network segmentation principles to container networking. Use custom bridge networks and avoid using the host network mode.
+- `Read-Only Filesystems:` Where possible, run containers with read-only filesystems using the `--read-only` flag to prevent tampering.
+- `Logging and Monitoring:` Implement logging and monitoring to detect suspicious activities or security incidents within containers.
 
 ### Docker Daemon/Host Security
 
-- ``Secure the Docker Daemon:`` Ensure the Docker daemon is configured securely, using TLS for authentication and encrypting network traffic.
-- ``Regular Updates:`` Keep the Docker engine and host operating system up to date with the latest security patches.
-- ``Host Hardening:`` Apply general host hardening guidelines to the Docker host to minimize vulnerabilities and reduce the attack surface.
-- ``Control Docker Daemon Access:`` Restrict access to the Docker daemon and use role-based access control (RBAC) where applicable.
-- ``Audit Docker Host and Daemon:`` Regularly audit the Docker host and daemon configurations and logs for any security issues or misconfigurations.
+- `Secure the Docker Daemon:` Ensure the Docker daemon is configured securely, using TLS for authentication and encrypting network traffic.
+- `Regular Updates:` Keep the Docker engine and host operating system up to date with the latest security patches.
+- `Host Hardening:` Apply general host hardening guidelines to the Docker host to minimize vulnerabilities and reduce the attack surface.
+- `Control Docker Daemon Access:` Restrict access to the Docker daemon and use role-based access control (RBAC) where applicable.
+- `Audit Docker Host and Daemon:` Regularly audit the Docker host and daemon configurations and logs for any security issues or misconfigurations.
 
 ### Docker Registry Security
 
-- ``Use TLS:`` Ensure communication with your Docker registry is encrypted using TLS.
-- ``Authentication:`` Implement robust authentication mechanisms to control who can push and pull images.
-- ``Access Control:`` Use role-based access controls to limit user capabilities based on their role.
-- ``Registry Scanning:`` Integrate vulnerability scanning to detect security issues before images are deployed.
-- ``Audit Logs:`` Enable and monitor audit logs to keep track of activities performed on the registry.
+- `Use TLS:` Ensure communication with your Docker registry is encrypted using TLS.
+- `Authentication:` Implement robust authentication mechanisms to control who can push and pull images.
+- `Access Control:` Use role-based access controls to limit user capabilities based on their role.
+- `Registry Scanning:` Integrate vulnerability scanning to detect security issues before images are deployed.
+- `Audit Logs:` Enable and monitor audit logs to keep track of activities performed on the registry.
 
 ### Additional Measures
 
-- ``Security Scanning:`` Utilize tools for continuous security scanning of images and containers to detect vulnerabilities early.
-- ``Implement Docker Bench for Security:`` Use the Docker Bench for Security script to automatically check for dozens of common best-practices around deploying Docker containers in production.
+- `Security Scanning:` Utilize tools for continuous security scanning of images and containers to detect vulnerabilities early.
+- `Implement Docker Bench for Security:` Use the Docker Bench for Security script to automatically check for dozens of common best-practices around deploying Docker containers in production.
 
 By implementing these security measures, you will significantly enhance the security posture of your Docker environment, ensuring that containerized applications are protected against various threats.

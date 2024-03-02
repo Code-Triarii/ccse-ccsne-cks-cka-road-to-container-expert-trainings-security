@@ -25,7 +25,7 @@ This project serves as a preparation for the CCSE (Certified Container Security 
 - [📝 Practical DevSecOps CCSE preparation](#-practical-devsecops-ccse-preparation)
   - [📚 Table of contents](#-table-of-contents)
   - [💡 Purpose](#-purpose)
-  - [🏗️ Project structure](#️-project-structure)
+  - [🏗️ Project structure](#%EF%B8%8F-project-structure)
   - [📍 Roadmap](#-roadmap)
   - [📎 Contributing](#-contributing)
   - [📃 License](#-license)
@@ -54,9 +54,9 @@ A quick tour on how the project is organized here:
 
 - [ ] Create automatic deployment of scenarios
 - [ ] Complete the full CCSE path with scenarios and exercises including documentation for each of them.
-  - [X] Set docker registry V2 securely
-  - [X] Interact with docker API server using python Docker SDK
-  - [ ] How to create a container from scratch. 
+  - [x] Set docker registry V2 securely
+  - [x] Interact with docker API server using python Docker SDK
+  - [ ] How to create a container from scratch.
 
 See the [open issues](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues) for a full list of proposed features (and known issues).
 

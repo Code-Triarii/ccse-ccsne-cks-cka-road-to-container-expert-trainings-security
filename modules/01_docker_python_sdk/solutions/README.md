@@ -16,6 +16,7 @@ This guide provides detailed steps to utilize the Python script for Docker manag
 ### Step 1: Understanding the Python Script
 
 The provided Python script `main.py` includes functionality for:
+
 - Listing all Docker images.
 - Listing all Docker containers.
 - Running a new Docker container with options for environment variables, volume mappings, container name, image, entrypoint, command, and port mappings.

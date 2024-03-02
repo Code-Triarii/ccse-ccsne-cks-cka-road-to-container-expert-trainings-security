@@ -16,7 +16,6 @@
     modify_hosts: true
 
   tasks:
-
     - name: Check variables values
       ansible.builtin.debug:
         msg: "modify_hosts: {{ modify_hosts }}"
@@ -31,7 +30,7 @@
       ansible.builtin.file:
         path: "{{ target_folder }}"
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Ensure /etc/hosts contains the domain
       ansible.builtin.lineinfile:
@@ -44,7 +43,7 @@
       ansible.builtin.file:
         path: "{{ target_folder }}/{{ item }}"
         state: directory
-        mode: '0755'
+        mode: "0755"
       loop:
         - "certs"
         - "auth"
@@ -76,7 +75,7 @@
           keyUsage = nonRepudiation, digitalSignature, keyEncipherment
           extendedKeyUsage = serverAuth
           subjectAltName = @alt_names
-        mode: '0644'
+        mode: "0644"
 
     - name: Generate self-signed certificate and private key
       ansible.builtin.shell: |
@@ -127,7 +126,7 @@
       ansible.builtin.file:
         path: "/etc/docker/certs.d/{{ registry_domain }}"
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Ensure Docker certs directory is emptied
       ansible.builtin.file:
@@ -139,19 +138,19 @@
       ansible.builtin.file:
         path: "/etc/docker/certs.d/{{ ip_address }}"
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Copy domain.crt to Docker certs directory
       ansible.builtin.copy:
         src: "{{ target_folder }}/certs/domain.crt"
         dest: "/etc/docker/certs.d/{{ ip_address }}/ca.crt"
-        mode: '0644'
+        mode: "0644"
 
     - name: Copy domain.crt to Docker certs directory
       ansible.builtin.copy:
         src: "{{ target_folder }}/certs/domain.crt"
         dest: "/etc/docker/certs.d/{{ registry_domain }}/ca.crt"
-        mode: '0644'
+        mode: "0644"
       notify:
         - Restart docker
 

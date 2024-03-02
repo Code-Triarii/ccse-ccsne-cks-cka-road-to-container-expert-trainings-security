@@ -16,15 +16,14 @@ This guide provides step-by-step instructions to set up a Docker Registry V2 sec
     - [Step 5: Test Your Setup](#step-5-test-your-setup)
   - [Requirements for this exercise](#requirements-for-this-exercise)
 
-
 ## Step by step - Ansible
 
 All challenges come with an ansible playbook that allows to set-up the solution straight forward. For being able to use it there are a list of requirements to be met.
 
 ### Requirements
 
-- [X] Ansible installed in the system.
-- [X] Docker pip installed in the system.
+- [x] Ansible installed in the system.
+- [x] Docker pip installed in the system.
 
 ### Step 1: Execute ansible playbook
 
@@ -32,8 +31,8 @@ All challenges come with an ansible playbook that allows to set-up the solution 
 ansible-playbook setup_secure_docker_registry.yml --ask-become-pass
 ```
 
-> [!NOTE]
-> You can override the variables as neeeded. The following execution is a sample for the practical devsecops machine in labs.
+> \[!NOTE\]
+> You can override the variables as needed. The following execution is a sample for the practical devsecops machine in labs.
 
 ```bash
 ansible-playbook setup_secure_docker_registry.yml -e "registry_domain=devsecops-box-XoIySz8L ip_address=10.1.28.228 modify_hosts=false"
@@ -57,7 +56,7 @@ mkdir -p certs
 cd certs
 ```
 
-3. If you are in a local system without domain, ensure to handle the name resolution for compliance with SANs. I am using an ubuntu evironment:
+3. If you are in a local system without domain, ensure to handle the name resolution for compliance with SANs. I am using an ubuntu environment:
 
 ```bash
 # Define the line to be added
@@ -171,40 +170,39 @@ sudo mkdir -p /etc/docker/certs.d/codetriarii-org.com
 sudo cp certs/domain.crt /etc/docker/certs.d/codetriarii-org.com/ca.crt
 ```
 
-> [!CAUTION]
+> \[!CAUTION\]
 > If you want to use a different port than 443, you must include it in the structure.
 > Example: /etc/docker/certs.d/`ip-or-dns`:`port`
 
-
 1. Restart the Docker daemon to apply the changes.
 
-    - On Linux:
+   - On Linux:
 
-        ```bash
-        sudo systemctl restart docker
-        ```
+     ```bash
+     sudo systemctl restart docker
+     ```
 
-    - On Windows or Mac, restart Docker from the Docker Desktop menu.
+   - On Windows or Mac, restart Docker from the Docker Desktop menu.
 
 ### Step 5: Test Your Setup
 
 1. Tag a local image for your registry.
 
-    ```bash
-    docker tag myimage codetriarii-org.com:443/myimage:latest
-    ```
+   ```bash
+   docker tag myimage codetriarii-org.com:443/myimage:latest
+   ```
 
 2. Push the image to your registry.
 
-    ```bash
-    docker push codetriarii-org.com:443/myimage:latest
-    ```
+   ```bash
+   docker push codetriarii-org.com:443/myimage:latest
+   ```
 
 3. Pull the image back from the registry.
 
-    ```bash
-    docker pull codetriarii-org.com:443/myimage:latest
-    ```
+   ```bash
+   docker pull codetriarii-org.com:443/myimage:latest
+   ```
 
 **Sample output**:
 
@@ -214,7 +212,7 @@ sudo cp certs/domain.crt /etc/docker/certs.d/codetriarii-org.com/ca.crt
 
 If you can push and pull the image without errors, your secure Docker Registry is correctly set up and configured!
 
-> [!CAUTION]
+> \[!CAUTION\]
 > Do not forget to follow best security practices in production, although registry:2 is not recommended for production set-up.
 
 - Rotate your certificates periodically.
@@ -228,4 +226,4 @@ Congratulations on setting up your secure Docker Registry! 🎉
 - You have sudo access and docker installed.
 - Installation of dnsutils.
 - Openssl available.
-- For automatic installation of the solution, install also ansible must be installed as well in the system. Inlcuding `pip install docker`
+- For automatic installation of the solution, install also ansible must be installed as well in the system. Including `pip install docker`

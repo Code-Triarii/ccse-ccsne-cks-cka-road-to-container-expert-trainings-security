@@ -28,8 +28,8 @@ For detailed steps on how to complete this challenge, including example code and
 ### Sample Script Overview
 
 - **list_images.sh:** Lists all Docker images.
-- 
-  ```bash
+
+- ```bash
   ./list_images.sh http://localhost:2375
   ```
 
@@ -39,15 +39,14 @@ For detailed steps on how to complete this challenge, including example code and
   ./list_containers.sh https://localhost:2376
   ```
 
-
 - **create_container.sh:** Creates a new Docker container.
-  
+
   ```bash
   ./create_container.sh http://localhost:2375 my-container nginx:latest "/bin/bash"
   ```
 
 - **get_container_logs.sh:** Retrieves logs from a specified container.
-  
+
   ```bash
   ./get_container_logs.sh https://localhost:2376 my-container
   ```

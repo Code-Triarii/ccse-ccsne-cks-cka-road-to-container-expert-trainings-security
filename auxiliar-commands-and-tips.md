@@ -2,7 +2,7 @@
 
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
-- [Auxiliary Commands \& Tips](#auxiliary-commands--tips)
+- [Auxiliary Commands & Tips](#auxiliary-commands--tips)
   - [Linux helpers](#linux-helpers)
     - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
@@ -115,7 +115,7 @@ docker load -i myimage.tar
 
 `docker import` is used to create an image from a flat filesystem, while `docker load` restores an image with its history and layers.
 
----
+______________________________________________________________________
 
 ### List containers ordered by creation time
 
@@ -129,7 +129,7 @@ For this command to run, `jq` must be installed in the system:
 sudo apt-get update && sudo apt-get install -y jq
 ```
 
----
+______________________________________________________________________
 
 ### Inspect docker image layers and filesystem
 
@@ -144,7 +144,7 @@ docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive 
 docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive nginx:latest
 ```
 
-> [!NOTE]
+> \[!NOTE\]
 > Following instruction helps to analyze an image that is in `tar` not loaded to the docker images pool. **The tar must be present in the directory you are executing the command**
 
 ```bash
@@ -155,14 +155,14 @@ docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$(pwd)"/ngi
 
 [Whaler github repository](https://github.com/P3GLEG/Whaler)
 
-> [!CAUTION]
-> This project is no longer actively mantained and therefore its use is more for testing or complementary purposes.
+> \[!CAUTION\]
+> This project is no longer actively maintained and therefore its use is more for testing or complementary purposes.
 
 ```bash
 docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock:ro pegleg/whaler <your_image>
 ```
 
----
+______________________________________________________________________
 
 ### Attack surface - understand if i am in a container
 
@@ -176,7 +176,7 @@ find / -name "*.docker*"
 ```
 
 ```bash
-# Check cgroups proccesses
+# Check cgroups processes
 cat /proc/1/cgroup
 cat /proc/self/cgroup
 ```
@@ -191,13 +191,13 @@ hostname
 ![Container hostname](./docs/img/ccse-hostname.png)
 
 ```bash
-# Check the cgroup of init proccess
+# Check the cgroup of init process
 cat /proc/self/mountinfo
 ```
 
-![Container cgroup blueprint](./docs/img/ccse-mountinfo-self-proccess.png)
+![Container cgroup blueprint](./docs/img/ccse-mountinfo-self-process.png)
 
----
+______________________________________________________________________
 
 ### Interact with Remote Docker Daemon
 
@@ -217,24 +217,25 @@ Replace `<REMOTE_HOST>` with the IP address or hostname of your remote Docker ho
 
 When enabling remote access to the Docker daemon, it's crucial to secure the communication channel to prevent unauthorized access:
 
-1. ``Basic Authentication:`` Not directly supported for Docker daemon remote access. You would need to set up a reverse proxy (e.g., Nginx) in front of the Docker daemon to handle basic authentication.
+1. `Basic Authentication:` Not directly supported for Docker daemon remote access. You would need to set up a reverse proxy (e.g., Nginx) in front of the Docker daemon to handle basic authentication.
 
-2. ``Token-Based Authentication:`` Similar to basic authentication, Docker does not natively support token-based authentication for remote daemon access. Implementing this requires a reverse proxy or a third-party authentication mechanism.
+2. `Token-Based Authentication:` Similar to basic authentication, Docker does not natively support token-based authentication for remote daemon access. Implementing this requires a reverse proxy or a third-party authentication mechanism.
 
-3. ``TLS Certificates:`` Docker supports mutual TLS to secure remote daemon access. Both the client and the server verify each other's identities through certificates.
+3. `TLS Certificates:` Docker supports mutual TLS to secure remote daemon access. Both the client and the server verify each other's identities through certificates.
 
-    - Generate CA, server, and client certificates.
-    - Configure the Docker daemon with `--tlsverify`, `--tlscacert`, `--tlscert`, and `--tlskey` flags pointing to the respective certificates.
-    - Use the Docker CLI with `--tlsverify`, `--tlscacert`, `--tlscert`, and `--tlskey` options, or set the equivalent environment variables (`DOCKER_TLS_VERIFY`, `DOCKER_CERT_PATH`).
+   - Generate CA, server, and client certificates.
+   - Configure the Docker daemon with `--tlsverify`, `--tlscacert`, `--tlscert`, and `--tlskey` flags pointing to the respective certificates.
+   - Use the Docker CLI with `--tlsverify`, `--tlscacert`, `--tlscert`, and `--tlskey` options, or set the equivalent environment variables (`DOCKER_TLS_VERIFY`, `DOCKER_CERT_PATH`).
 
 #### Tips for Remote Interaction
 
-- ``Firewall Configuration:`` Ensure your firewall rules allow traffic on the Docker daemon port only from trusted sources.
-- ``Docker Context:`` Docker 19.03 and later support the `docker context` command, allowing you to easily switch between different Docker daemons, including remote ones, without manually changing environment variables each time.
-  
+- `Firewall Configuration:` Ensure your firewall rules allow traffic on the Docker daemon port only from trusted sources.
+
+- `Docker Context:` Docker 19.03 and later support the `docker context` command, allowing you to easily switch between different Docker daemons, including remote ones, without manually changing environment variables each time.
+
   ```bash
   docker context create remote --docker "host=tcp://<REMOTE_HOST>:2376"
   docker context use remote
   ```
 
-- ``Monitoring and Logging:`` Implement monitoring and logging for access to the remote Docker daemon to detect and respond to unauthorized access attempts.
+- `Monitoring and Logging:` Implement monitoring and logging for access to the remote Docker daemon to detect and respond to unauthorized access attempts.

@@ -66,7 +66,7 @@ curl -s -X GET "$API_ENDPOINT/containers/$CONTAINER_NAME/logs?stdout=true&stderr
 To execute these scripts, follow these steps:
 
 1. Make the script executable:
-  
+
    ```bash
    chmod +x *.sh
    ```
