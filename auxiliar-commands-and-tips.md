@@ -12,9 +12,15 @@ This documentation aims to provide guidance, utilities and useful commands that 
     - [Save Docker Image and Container](#save-docker-image-and-container)
     - [Import Docker Image and Container](#import-docker-image-and-container)
     - [List containers ordered by creation time](#list-containers-ordered-by-creation-time)
-    - [Inspect docker image layers and filesystem with Dive](#inspect-docker-image-layers-and-filesystem-with-dive)
+    - [Inspect docker image layers and filesystem](#inspect-docker-image-layers-and-filesystem)
+      - [With Dive](#with-dive)
+      - [With Whaler](#with-whaler)
     - [Attack surface - understand if i am in a container](#attack-surface---understand-if-i-am-in-a-container)
       - [Docker general](#docker-general)
+    - [Interact with Remote Docker Daemon](#interact-with-remote-docker-daemon)
+      - [Configuring the Docker CLI for Remote Access](#configuring-the-docker-cli-for-remote-access)
+      - [Security Considerations](#security-considerations)
+      - [Tips for Remote Interaction](#tips-for-remote-interaction)
 
 ## Linux helpers
 
@@ -125,7 +131,9 @@ sudo apt-get update && sudo apt-get install -y jq
 
 ---
 
-### Inspect docker image layers and filesystem with Dive
+### Inspect docker image layers and filesystem
+
+#### With Dive
 
 [GitHub dive project](https://github.com/wagoodman/dive)
 
@@ -143,6 +151,17 @@ docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive 
 docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$(pwd)"/nginx.tar:/app/nginx.tar wagoodman/dive docker-archive://app/nginx.tar
 ```
 
+#### With Whaler
+
+[Whaler github repository](https://github.com/P3GLEG/Whaler)
+
+> [!CAUTION]
+> This project is no longer actively mantained and therefore its use is more for testing or complementary purposes.
+
+```bash
+docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock:ro pegleg/whaler <your_image>
+```
+
 ---
 
 ### Attack surface - understand if i am in a container
@@ -154,10 +173,68 @@ There are several checks that could indicate if we are inside a container or not
 ```bash
 # Search for .dockerenv or other docker related files
 find / -name "*.docker*"
+```
 
+```bash
 # Check cgroups proccesses
 cat /proc/1/cgroup
 cat /proc/self/cgroup
 ```
 
 ![Container cgroup blueprint](./docs/img/ccse-container-proc.png)
+
+```bash
+# Check the host name for strange id (e.g., 07f90a194e6a)
+hostname
+```
+
+![Container hostname](./docs/img/ccse-hostname.png)
+
+```bash
+# Check the cgroup of init proccess
+cat /proc/self/mountinfo
+```
+
+![Container cgroup blueprint](./docs/img/ccse-mountinfo-self-proccess.png)
+
+---
+
+### Interact with Remote Docker Daemon
+
+Interacting with a remote Docker daemon allows you to manage Docker containers and images on a different host from your local machine. This capability is particularly useful for managing multiple Docker hosts or for situations where Docker needs to be controlled from a centralized location.
+
+#### Configuring the Docker CLI for Remote Access
+
+To interact with a remote Docker daemon, you need to configure the Docker CLI on your local machine. You can achieve this by setting the `DOCKER_HOST` environment variable to point to the remote Docker daemon.
+
+```bash
+export DOCKER_HOST="tcp://<REMOTE_HOST>:2375"
+```
+
+Replace `<REMOTE_HOST>` with the IP address or hostname of your remote Docker host and `2375` with the port configured for remote access.
+
+#### Security Considerations
+
+When enabling remote access to the Docker daemon, it's crucial to secure the communication channel to prevent unauthorized access:
+
+1. ``Basic Authentication:`` Not directly supported for Docker daemon remote access. You would need to set up a reverse proxy (e.g., Nginx) in front of the Docker daemon to handle basic authentication.
+
+2. ``Token-Based Authentication:`` Similar to basic authentication, Docker does not natively support token-based authentication for remote daemon access. Implementing this requires a reverse proxy or a third-party authentication mechanism.
+
+3. ``TLS Certificates:`` Docker supports mutual TLS to secure remote daemon access. Both the client and the server verify each other's identities through certificates.
+
+    - Generate CA, server, and client certificates.
+    - Configure the Docker daemon with `--tlsverify`, `--tlscacert`, `--tlscert`, and `--tlskey` flags pointing to the respective certificates.
+    - Use the Docker CLI with `--tlsverify`, `--tlscacert`, `--tlscert`, and `--tlskey` options, or set the equivalent environment variables (`DOCKER_TLS_VERIFY`, `DOCKER_CERT_PATH`).
+
+#### Tips for Remote Interaction
+
+- ``Firewall Configuration:`` Ensure your firewall rules allow traffic on the Docker daemon port only from trusted sources.
+- ``Docker Context:`` Docker 19.03 and later support the `docker context` command, allowing you to easily switch between different Docker daemons, including remote ones, without manually changing environment variables each time.
+  
+  ```bash
+  docker context create remote --docker "host=tcp://<REMOTE_HOST>:2376"
+  docker context use remote
+  ```
+
+- ``Monitoring and Logging:`` Implement monitoring and logging for access to the remote Docker daemon to detect and respond to unauthorized access attempts.
