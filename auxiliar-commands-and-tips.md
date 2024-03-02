@@ -13,6 +13,8 @@ This documentation aims to provide guidance, utilities and useful commands that 
     - [Import Docker Image and Container](#import-docker-image-and-container)
     - [List containers ordered by creation time](#list-containers-ordered-by-creation-time)
     - [Inspect docker image layers and filesystem with Dive](#inspect-docker-image-layers-and-filesystem-with-dive)
+    - [Attack surface - understand if i am in a container](#attack-surface---understand-if-i-am-in-a-container)
+      - [Docker general](#docker-general)
 
 ## Linux helpers
 
@@ -121,6 +123,8 @@ For this command to run, `jq` must be installed in the system:
 sudo apt-get update && sudo apt-get install -y jq
 ```
 
+---
+
 ### Inspect docker image layers and filesystem with Dive
 
 [GitHub dive project](https://github.com/wagoodman/dive)
@@ -139,3 +143,21 @@ docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive 
 docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$(pwd)"/nginx.tar:/app/nginx.tar wagoodman/dive docker-archive://app/nginx.tar
 ```
 
+---
+
+### Attack surface - understand if i am in a container
+
+There are several checks that could indicate if we are inside a container or not:
+
+#### Docker general
+
+```bash
+# Search for .dockerenv or other docker related files
+find / -name "*.docker*"
+
+# Check cgroups proccesses
+cat /proc/1/cgroup
+cat /proc/self/cgroup
+```
+
+![Container cgroup blueprint](./docs/img/ccse-container-proc.png)
