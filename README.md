@@ -47,6 +47,8 @@ A quick tour on how the project is organized here:
 - `docs`: contains the main .md files for documenting the project as well as the images used in the markdown for renderization.
 - `environment`: this folder includes the different automatic resources for setting up the environment required for the different exercises.
 - `modules` > `exercises`: this folder contains the module distribution based on the CCSE path and the different exercises created for preparation.
+- `theorical concepts`: including important theory that supports the foundations understanding and good comprehension of the practical exercises [here](./concepts.md).
+- `auxiliar commands and tips`: section that contains one liners, useful executions and more [here](./auxiliar-commands-and-tips.md).
 
 ## 📍 Roadmap
 
@@ -98,7 +100,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 ## 📃 License
 
-Distributed under the `TOEDIT: LICENSE_TYPE_TO_REPLACE` License. See `LICENSE` for more information.
+Distributed under the `Apache 2.0` License. See `LICENSE` for more information.
 
 [🔝 Back to top](#-practical-devsecops-ccse-preparation)
 
