@@ -17,6 +17,7 @@ This documentation page aims to shortly summarize some of the most important the
     - [Image Security](#image-security)
     - [Container Security](#container-security)
     - [Docker Daemon/Host Security](#docker-daemonhost-security)
+    - [Docker Registry Security](#docker-registry-security)
     - [Additional Measures](#additional-measures)
 
 ## Docker
@@ -261,15 +262,15 @@ ______________________________________________________________________
 
 ## Docker Security
 
-Ensuring the security of Docker containers involves a multi-faceted approach, covering image security, container runtime security, and Docker daemon/host security measures. The Center for Internet Security (CIS) Docker Benchmark provides a comprehensive set of practices designed to safeguard your Docker environment. Below is a summary tailored for a Docker security markdown section, highlighting key measures based on the CIS benchmark:
+Ensuring the security of Docker containers involves a multi-faceted approach, covering image security, container runtime security, Docker daemon/host security measures, and Docker registry security. The Center for Internet Security (CIS) Docker Benchmark provides a comprehensive set of practices designed to safeguard your Docker environment. Below is a summary tailored for a Docker security markdown section, highlighting key measures based on the CIS benchmark:
 
 > [!CAUTION]
-> This is not an extended list of all possible controls that can be applied but serves as a good starting point for making it more secure. Deep dive for more secure and robust configuration!
+> This is not an exhaustive list of all possible controls but serves as a solid starting point for securing your Docker environment. Delve deeper into each area for a more secure and robust configuration.
 
 ### Image Security
 
 - ``Use Trusted Base Images:`` Only use official or trusted base images for your containers. Regularly scan these images for vulnerabilities and ensure they are up to date.
-- ``Minimize Image Layers:`` Reduce the number of layers in your images to the minimum necessary to reduce complexity and potential attack surface.
+- ``Minimize Image Layers:`` Reduce the number of layers in your images to minimize complexity and potential attack surface.
 - ``Avoid Storing Secrets:`` Do not store secrets in Docker images. Use Docker secrets or other secure mechanisms for managing sensitive information.
 - ``Static Analysis:`` Regularly perform static analysis of your container images to detect vulnerabilities or misconfigurations.
 
@@ -289,9 +290,17 @@ Ensuring the security of Docker containers involves a multi-faceted approach, co
 - ``Control Docker Daemon Access:`` Restrict access to the Docker daemon and use role-based access control (RBAC) where applicable.
 - ``Audit Docker Host and Daemon:`` Regularly audit the Docker host and daemon configurations and logs for any security issues or misconfigurations.
 
+### Docker Registry Security
+
+- ``Use TLS:`` Ensure communication with your Docker registry is encrypted using TLS.
+- ``Authentication:`` Implement robust authentication mechanisms to control who can push and pull images.
+- ``Access Control:`` Use role-based access controls to limit user capabilities based on their role.
+- ``Registry Scanning:`` Integrate vulnerability scanning to detect security issues before images are deployed.
+- ``Audit Logs:`` Enable and monitor audit logs to keep track of activities performed on the registry.
+
 ### Additional Measures
 
 - ``Security Scanning:`` Utilize tools for continuous security scanning of images and containers to detect vulnerabilities early.
 - ``Implement Docker Bench for Security:`` Use the Docker Bench for Security script to automatically check for dozens of common best-practices around deploying Docker containers in production.
 
-This summary encapsulates the essential security measures based on the CIS Docker Benchmark, providing a foundation for securing your Docker environment. Adhering to these guidelines will significantly enhance the security posture of your containerized applications.
+By implementing these security measures, you will significantly enhance the security posture of your Docker environment, ensuring that containerized applications are protected against various threats.
