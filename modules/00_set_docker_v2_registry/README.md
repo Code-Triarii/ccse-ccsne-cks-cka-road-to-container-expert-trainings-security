@@ -19,6 +19,6 @@ Your task is to set up Docker Registry V2 in a Docker container, ensuring it is 
 
 ## 🛠 Solution
 
-For detailed steps on how to complete this challenge, refer to the [solutions.md](.solutions/solutions.md) file in the same folder.
+For detailed steps on how to complete this challenge, refer to the [solutions.md](.solutions/README.md) file in the same folder.
 
 Good luck with your challenge! Remember, the goal is to learn and apply Docker security best practices 🚀.
