@@ -87,10 +87,9 @@ docker save -o myimage.tar myimage:latest
 docker export -o mycontainer.tar mycontainer_id
 ```
 
-`docker save` is ideal for sharing images, preserving their history and layers, while `docker export` is for containers, flattening their filesystem into a single layer.
-
 > \[!NOTE\]
-> Exported images or containers can be imported back for its use.
+> Be aware of the limitations when using `docker export` for containers. This command does not preserve the history, container creation metadata, layered information, or volume data associated with the container. For a complete backup or migration, consider using `docker save` for images or Docker's volume backup methods for data persistence.
+> `docker save` is ideal for sharing images, preserving their history and layers, while `docker export` is for containers, flattening their filesystem into a single layer.
 
 ### Import Docker Image and Container
 
