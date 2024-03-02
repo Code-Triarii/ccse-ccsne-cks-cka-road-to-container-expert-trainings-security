@@ -1,0 +1,125 @@
+---
+- name: Secure Docker Registry Setup
+  hosts: localhost
+  become: true
+  vars:
+    registry_domain: "codetriarii-org.com"
+    ip_address: "172.20.140.18"
+    user: "testuser"
+    password: "testpassword"
+    certificate_country: "ES"
+    certificate_state: "Madrid"
+    certificate_locality: "Madrid"
+    certificate_organization: "YourOrganization"
+    certificate_ou: "YourDepartment"
+    target_folder: "/tmp/exercise-1"
+
+  tasks:
+    - name: Ensure target folder is emptied and exists
+      ansible.builtin.file:
+        path: "{{ target_folder }}"
+        state: absent
+      failed_when: false
+
+    - name: Create target folder
+      ansible.builtin.file:
+        path: "{{ target_folder }}"
+        state: directory
+        mode: '0755'
+
+    - name: Ensure /etc/hosts contains the domain
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: "{{ ip_address }} {{ registry_domain }}"
+        state: present
+
+    - name: Create directories for certs and auth
+      ansible.builtin.file:
+        path: "{{ target_folder }}/{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "certs"
+        - "auth"
+
+    - name: Generate san.cnf file for OpenSSL
+      ansible.builtin.copy:
+        dest: "{{ target_folder }}/certs/san.cnf"
+        content: |
+          [req]
+          default_bits = 4096
+          prompt = no
+          default_md = sha256
+          req_extensions = req_ext
+          distinguished_name = dn
+          [dn]
+          C = {{ certificate_country }}
+          ST = {{ certificate_state }}
+          L = {{ certificate_locality }}
+          O = {{ certificate_organization }}
+          OU = {{ certificate_ou }}
+          CN = {{ registry_domain }}
+          [req_ext]
+          subjectAltName = @alt_names
+          [alt_names]
+          IP.1 = {{ ip_address }}
+          DNS.1 = {{ registry_domain }}
+          [v3_req]
+          basicConstraints = CA:FALSE
+          keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+          extendedKeyUsage = serverAuth
+          subjectAltName = @alt_names
+        mode: '0644'
+
+    - name: Generate self-signed certificate and private key
+      ansible.builtin.shell: |
+        openssl req -new -x509 -nodes -days 365 -config {{ target_folder }}/certs/san.cnf \
+        -keyout {{ target_folder }}/certs/domain.key -out {{ target_folder }}/certs/domain.crt -extensions v3_req
+      args:
+        chdir: "{{ target_folder }}/certs"
+        creates: "{{ target_folder }}/certs/domain.crt"
+
+    - name: Create a htpasswd file for Docker Registry auth
+      ansible.builtin.shell: |
+        docker run --entrypoint htpasswd httpd:2 -Bbn {{ user }} {{ password }} > {{ target_folder }}/auth/htpasswd
+      args:
+        creates: "{{ target_folder }}/auth/htpasswd"
+
+    - name: Remove existing Docker Registry container if exists
+      community.docker.docker_container:
+        name: registry
+        state: absent
+      failed_when: false
+
+    - name: Run Docker Registry container
+      community.docker.docker_container:
+        name: registry
+        image: "registry:2"
+        restart_policy: always
+        state: started
+        ports:
+          - "443:443"
+        volumes:
+          - "{{ target_folder }}/auth:/auth"
+          - "{{ target_folder }}/certs:/certs"
+        env:
+          REGISTRY_AUTH: "htpasswd"
+          REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
+          REGISTRY_AUTH_HTPASSWD_PATH: "/auth/htpasswd"
+          REGISTRY_HTTP_ADDR: "0.0.0.0:443"
+          REGISTRY_HTTP_TLS_CERTIFICATE: "/certs/domain.crt"
+          REGISTRY_HTTP_TLS_KEY: "/certs/domain.key"
+
+    - name: Copy domain.crt to Docker certs directory
+      ansible.builtin.copy:
+        src: "{{ target_folder }}/certs/domain.crt"
+        dest: "/etc/docker/certs.d/{{ registry_domain }}/ca.crt"
+        mode: '0644'
+      notify:
+        - Restart docker
+
+  handlers:
+    - name: Restart docker
+      ansible.builtin.service:
+        name: docker
+        state: restarted
