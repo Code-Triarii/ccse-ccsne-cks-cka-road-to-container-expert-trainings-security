@@ -18,6 +18,7 @@ This documentation page aims to shortly summarize some of the most important the
       - [Examples](#examples)
     - [Docker Registry](#docker-registry)
       - [Image Reference Formats:](#image-reference-formats)
+      - [Hosted vs Cloud-Based Repositories](#hosted-vs-cloud-based-repositories)
   - [Docker Security](#docker-security)
     - [Image Security](#image-security)
     - [Container Security](#container-security)
@@ -358,6 +359,25 @@ The Docker registry stores Docker images, which can be referenced in various for
 
 
 In namespaces registries, separating projects or teams into namespaces can help organize and manage access controls. In standard registries, images are typically organized by repository names and tags without an additional project or namespace layer.
+
+
+#### Hosted vs Cloud-Based Repositories
+
+Hosted and cloud-based Docker repositories provide storage solutions for Docker images with varying features and security options. Here's a comparison from both functional and security perspectives:
+
+| Feature / Security | Hosted Repository | Cloud-Based Repository |
+|-------------------|------------------|-----------------------|
+| ``Deployment`` | On-premises infrastructure, manual setup and maintenance. | Provided as a service, managed by a third-party provider. |
+| ``Accessibility`` | Typically within an internal network or VPN. | Accessible over the internet with proper credentials. |
+| ``Scalability`` | Limited by on-premises hardware. | Highly scalable, on-demand resources. |
+| ``Redundancy`` | Dependent on local infrastructure setup. | Multiple regions and zones for high availability. |
+| ``Compliance`` | Must be manually enforced and audited. | Often provides compliance certifications out-of-the-box. |
+| ``Security Updates`` | Manually applied, requires internal processes. | Managed by the service provider, automatically applied. |
+| ``Access Control`` | Managed internally, can integrate with existing systems. | Provided by the platform, with options for integration. |
+| ``Image Scanning`` | Can be configured with third-party tools. | Often included as a service feature. |
+| ``Backup and Recovery`` | Managed by internal IT policies. | Handled by the provider, with varying backup options. |
+
+Hosted repositories offer more control but require more management overhead, while cloud-based repositories provide ease of use and managed services at the cost of less direct control. The choice between the two depends on organizational requirements, resources, and preferences.
 
 ---
 
