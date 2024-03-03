@@ -52,7 +52,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
       - [Network visibility to the API](#network-visibility-to-the-api)
         - [Docker sock](#docker-sock)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -291,7 +291,7 @@ ______________________________________________________________________
 
 ### Ensure authenticated users in the host
 
-Avoid any system/integration accounts. All users must be nominal. Ideally use PAM or other authentication services (unique sessions with SSH, etc.) so any user accesing the host system is properly authenticated.
+Avoid any system/integration accounts. All users must be nominal. Ideally use PAM or other authentication services (unique sessions with SSH, etc.) so any user accessing the host system is properly authenticated.
 
 ______________________________________________________________________
 
