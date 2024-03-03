@@ -50,30 +50,30 @@ To establish a trusted connection between the Docker daemon and clients, you wil
 1. **Create a CA (Certificate Authority):**
    Generate a private key and a CA certificate that will be used to sign the server and client certificates.
 
-    ```bash
-    openssl genrsa -aes256 -out ca-key.pem 4096
-    openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem -subj "/CN=<DOCKER_HOST>"
-    ```
+   ```bash
+   openssl genrsa -aes256 -out ca-key.pem 4096
+   openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem -subj "/CN=<DOCKER_HOST>"
+   ```
 
 2. **Create a Server Key and Certificate:**
    Generate a private key for the server, create a certificate signing request (CSR), and sign it with the CA certificate.
 
-    ```bash
-    openssl genrsa -out server-key.pem 4096
-    openssl req -subj "/CN=<DOCKER_HOST>" -new -key server-key.pem -out server.csr
-    # Prepare the san.cnf file for server certificate (Adjust the san.cnf content as needed)
-    openssl x509 -req -days 365 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile san.cnf -extensions v3_req
-    ```
+   ```bash
+   openssl genrsa -out server-key.pem 4096
+   openssl req -subj "/CN=<DOCKER_HOST>" -new -key server-key.pem -out server.csr
+   # Prepare the san.cnf file for server certificate (Adjust the san.cnf content as needed)
+   openssl x509 -req -days 365 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile san.cnf -extensions v3_req
+   ```
 
 3. **Create a Client Key and Certificate:**
    Generate a private key for the client, create a CSR, and sign it with the CA certificate. Ensure the client certificate is configured for client authentication.
 
-    ```bash
-    openssl genrsa -out client-key.pem 4096
-    openssl req -subj "/CN=client" -new -key client-key.pem -out client.csr
-    # Prepare the san.cnf file for client certificate (Adjust the client_san.cnf content as needed)
-    openssl x509 -req -days 365 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out client-cert.pem -extfile client_san.cnf -extensions v3_req
-    ```
+   ```bash
+   openssl genrsa -out client-key.pem 4096
+   openssl req -subj "/CN=client" -new -key client-key.pem -out client.csr
+   # Prepare the san.cnf file for client certificate (Adjust the client_san.cnf content as needed)
+   openssl x509 -req -days 365 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out client-cert.pem -extfile client_san.cnf -extensions v3_req
+   ```
 
 ### Step 2: Configure the Docker Daemon
 
@@ -82,30 +82,30 @@ Configure the Docker daemon to use the generated certificates, requiring TLS for
 1. **Update Docker Daemon Configuration:**
    Modify the `/etc/docker/daemon.json` file to include the TLS configuration and specify the host option to listen on TCP port 2376.
 
-    ```json
-    {
-      "tlsverify": true,
-      "tlscacert": "/path/to/ca.pem",
-      "tlscert": "/path/to/server-cert.pem",
-      "tlskey": "/path/to/server-key.pem",
-      "hosts": ["tcp://0.0.0.0:2376"]
-    }
-    ```
+   ```json
+   {
+     "tlsverify": true,
+     "tlscacert": "/path/to/ca.pem",
+     "tlscert": "/path/to/server-cert.pem",
+     "tlskey": "/path/to/server-key.pem",
+     "hosts": ["tcp://0.0.0.0:2376"]
+   }
+   ```
 
 2. **Modify the Docker Service File:**
    Edit `/lib/systemd/system/docker.service` to remove the `-H fd://` option from the `ExecStart` line and ensure Docker listens on the configured TCP port.
 
-    ```bash
-    ExecStart=/usr/bin/dockerd
-    ```
+   ```bash
+   ExecStart=/usr/bin/dockerd
+   ```
 
 3. **Reload Systemd and Restart Docker:**
    Apply the changes by reloading the systemd daemon and restarting the Docker service.
 
-    ```bash
-    sudo systemctl daemon-reload
-    sudo systemctl restart docker
-    ```
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl restart docker
+   ```
 
 ### Step 3: Securely Connect Docker CLI
 
@@ -113,18 +113,18 @@ Set environment variables to use the client certificates when connecting to the 
 
 1. **Set Environment Variables:**
 
-    ```bash
-    export DOCKER_TLS_VERIFY="1"
-    export DOCKER_HOST="tcp://<DOCKER_HOST>:2376"
-    export DOCKER_CERT_PATH="/path/to/certificates"
-    ```
+   ```bash
+   export DOCKER_TLS_VERIFY="1"
+   export DOCKER_HOST="tcp://<DOCKER_HOST>:2376"
+   export DOCKER_CERT_PATH="/path/to/certificates"
+   ```
 
 2. **Create a Docker Context:**
    This step simplifies the process of switching between different Docker daemon configurations.
 
-    ```bash
-    docker context create secure-context --docker "host=tcp://<DOCKER_HOST>:2376,ca=<path_to_ca.pem>,cert=<path_to_client-cert.pem>,key=<path_to_client-key.pem>"
-    ```
+   ```bash
+   docker context create secure-context --docker "host=tcp://<DOCKER_HOST>:2376,ca=<path_to_ca.pem>,cert=<path_to_client-cert.pem>,key=<path_to_client-key.pem>"
+   ```
 
 ### Step 4: Test Your Setup
 

@@ -54,7 +54,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
         - [Docker sock](#docker-sock)
         - [Docker over TLS](#docker-over-tls)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -353,9 +353,6 @@ There are some things to consider:
 - Avoid using the most common ports `2375` and `2376`.
 - Ensure the certificates are rotated.
 - Ensure using secure crypto algorithms for certificate creation.
-
-
-
 
 #### Docker group protection
 

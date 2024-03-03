@@ -131,7 +131,6 @@
         creates: "{{ target_folder }}/server/server-cert.pem"
       changed_when: false
 
-
     - name: Generate client key
       ansible.builtin.command: |
         openssl genrsa -out "{{ target_folder }}/client/client-key.pem" 4096
@@ -214,7 +213,6 @@
       when: prompt_result.user_input | lower == 'n'
       become: true
 
-
     - name: Copy client certificates for Docker CLI to root
       ansible.builtin.copy:
         src: "{{ item }}"
@@ -260,8 +258,8 @@
     - name: Remove '-H fd://' option from Docker service file
       ansible.builtin.lineinfile:
         path: /lib/systemd/system/docker.service
-        regexp: '^ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock'
-        line: 'ExecStart=/usr/bin/dockerd'
+        regexp: "^ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock"
+        line: "ExecStart=/usr/bin/dockerd"
         backrefs: true
       become: true
       when: prompt_result.user_input | lower == 'y'
@@ -271,7 +269,6 @@
         daemon_reload: true
       become: true
       when: prompt_result.user_input | lower == 'y'
-
 
     - name: Restart Docker service to apply new configuration
       ansible.builtin.service:
