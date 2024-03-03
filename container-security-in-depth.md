@@ -54,7 +54,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
         - [Docker sock](#docker-sock)
         - [Docker over TLS](#docker-over-tls)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -249,7 +249,7 @@ ______________________________________________________________________
 
 Containers are isolated by default using the `Bridge` network. It is a good practice to keep those things that way to avoid expanding the capability of an attacker to perform lateral movement if the container is compromised.
 
-As you can see in the following ilustration, sharing the host network automatically provides visibility with all host interfaces that could potentially increase the resources that an attacker can exploit.
+As you can see in the following illustration, sharing the host network automatically provides visibility with all host interfaces that could potentially increase the resources that an attacker can exploit.
 
 ![Container with host network](./docs/img/csid-container-host-network.png)
 
@@ -342,7 +342,7 @@ grep -i 'sudo' /etc/group | cut -d ':' -f 4 | tr ',' '\n'
 ##### Docker over TLS
 
 There are some use cases in which the Docker Daemon API needs to be exposed over HTTP(s) instead of using the `/var/run/docker.sock`.
-This could happen, for example, for allowing centralized management of the containers that are distributed accross different hosts.
+This could happen, for example, for allowing centralized management of the containers that are distributed across different hosts.
 
 In case this is a functional requirement, the Docker Daemon API must be properly secured over TLS using certificates.
 
