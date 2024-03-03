@@ -31,6 +31,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
     - [Avoid root users](#avoid-root-users)
     - [Utilize only required kernel capabilities](#utilize-only-required-kernel-capabilities)
       - [Do Not Permit Privileged Containers](#do-not-permit-privileged-containers)
+      - [Restrict SecComp unconfined](#restrict-seccomp-unconfined)
     - [Ensure network segmentation and enforce isolation practices](#ensure-network-segmentation-and-enforce-isolation-practices)
     - [Manage volumes securely](#manage-volumes-securely)
       - [Use read-only file systems](#use-read-only-file-systems)
@@ -48,7 +49,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
     - [Limit Docker daemon exposition](#limit-docker-daemon-exposition)
       - [Network visibility to the API](#network-visibility-to-the-api)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -83,14 +84,14 @@ Limiting what is available in your environment and reducing it to only a valid s
 
 #### Allowed sources
 
----
+______________________________________________________________________
 
 ### Minimize Image Layers
 
 A valid generalization in security space is that the more utilities, resources, assets and libraries are available in a system, the more likely is the system to be able to be compromised.
 In other words, if there are more elements, it is more likely to find an exploitable path due to increase in the attack surface.
 
-Therefore, it is critical to be able to reduce it and limit only to the bare minimum required elements in the build image to avoild explotation, lateral movement and privilege escalation among other issues.
+Therefore, it is critical to be able to reduce it and limit only to the bare minimum required elements in the build image to avoild exploitation, lateral movement and privilege escalation among other issues.
 
 #### Multi-Stage Builds
 
@@ -102,7 +103,7 @@ Therefore, it is critical to be able to reduce it and limit only to the bare min
 
 Mention to Docker-Slim
 
----
+______________________________________________________________________
 
 ### Protect sensitive content - Secrets
 
@@ -116,13 +117,13 @@ Mention to Docker-Slim
 
 #### Files and directory permissions
 
----
+______________________________________________________________________
 
 ### Verify security in images
 
 #### Lint Dockerfile
 
-Hadolint 
+Hadolint
 
 #### Perform SCA (CVE search) for image dependencies
 
@@ -130,7 +131,6 @@ Clair
 Trivy
 Grype
 Syft
-
 
 #### Search for malware
 
@@ -140,21 +140,21 @@ Syft
 
 By following these controls and implementing the examples provided, you can significantly enhance the security of your Docker images, creating a more secure foundation for your containerized applications.
 
----
+______________________________________________________________________
 
 ### Keep components updated
 
 Define a policy of maximum created time for an image and alert for a new build when threshold is reached.
 
----
+______________________________________________________________________
 
 ## Container Security
 
-This section focuses on the controls and proactive actions that can be performed in a Docker environment, to improve the security posture overall by targetting container security best practices.
+This section focuses on the controls and proactive actions that can be performed in a Docker environment, to improve the security posture overall by targeting container security best practices.
 
 ### Avoid root users
 
----
+______________________________________________________________________
 
 ### Utilize only required kernel capabilities
 
@@ -183,32 +183,43 @@ Other important considerations:
 
 - **Security Policies**: Implement security policies within your organization that restrict the use of privileged containers. Use tools like Pod Security Policies in Kubernetes or Docker Bench for Security that enforce these policies and scan for configurations that deviate from security best practices.
 
----
+#### Restrict SecComp unconfined
+
+Another important check for your containers, is to ensure the proper SecComp profile is applied or at least the default.
+
+This one liner checks the security options for all the containers to showcase those that have a non-default behavior.
+
+```bash
+docker ps -aq | xargs docker inspect  | jq -c '.[] | select(.HostConfig.SecurityOpt != null) |{id: .Id, name: .Name, security_options: .HostConfig.SecurityOpt}'
+```
+
+![Check security options](./docs/img/csid-check-securityoptions.png)
+
+______________________________________________________________________
 
 ### Ensure network segmentation and enforce isolation practices
 
----
+______________________________________________________________________
 
 ### Manage volumes securely
 
----
+______________________________________________________________________
 
 #### Use read-only file systems
 
-
 #### Manage mounts permissions
 
----
+______________________________________________________________________
 
 ### Limit container resources
 
----
+______________________________________________________________________
 
 ### Use security profiles
 
 Seccomp
 
----
+______________________________________________________________________
 
 ### Monitor container activities
 
@@ -226,13 +237,13 @@ DOS --> healthcheck
 
 #### Utilize logging systems
 
----
+______________________________________________________________________
 
 ## Daemon/Host Security
 
 ### Verify Docker CIS benchmark for daemon
 
----
+______________________________________________________________________
 
 ### Limit Docker daemon exposition
 
@@ -242,11 +253,11 @@ DOS --> healthcheck
 
 #### Implement A&A protection for Docker
 
----
+______________________________________________________________________
 
 ### Monitor processes
 
----
+______________________________________________________________________
 
 ### Apply hardening techniques to host
 
@@ -258,11 +269,11 @@ DOS --> healthcheck
 
 #### Ansible DevSec Hardening framework
 
----
+______________________________________________________________________
 
 ### Regularly update and patch host and its technologies
 
----
+______________________________________________________________________
 
 ## Docker Registry security
 
@@ -274,18 +285,18 @@ DOS --> healthcheck
 
 #### Limit network connectivity and sources
 
----
+______________________________________________________________________
 
 ### Differentiate environments - tenants
 
----
+______________________________________________________________________
 
 ### Restrict access to registry - approval pipelines
 
----
+______________________________________________________________________
 
 ### Monitor registry - audit logs
 
----
+______________________________________________________________________
 
 ### Actively scan the registry
