@@ -30,6 +30,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
   - [Container Security](#container-security)
     - [Avoid root users](#avoid-root-users)
     - [Utilize only required kernel capabilities](#utilize-only-required-kernel-capabilities)
+      - [Do Not Permit Privileged Containers](#do-not-permit-privileged-containers)
     - [Ensure network segmentation and enforce isolation practices](#ensure-network-segmentation-and-enforce-isolation-practices)
     - [Manage volumes securely](#manage-volumes-securely)
       - [Use read-only file systems](#use-read-only-file-systems)
@@ -156,6 +157,31 @@ This section focuses on the controls and proactive actions that can be performed
 ---
 
 ### Utilize only required kernel capabilities
+
+#### Do Not Permit Privileged Containers
+
+Privileged containers are granted nearly unrestricted access to host resources, bypassing the security mechanisms of the container runtime, such as SELinux, AppArmor, and seccomp profiles. Running a container in `--privileged` mode effectively disables the security boundaries normally provided by Docker, making it equivalent to running processes directly on the host system. This level of access includes but is not limited to manipulating the host’s network stack, accessing the host’s devices, and modifying kernel configurations. Consequently, if a privileged container is compromised, the attacker could gain control over the entire host system, leading to a significant security breach.
+
+To identify containers running in privileged mode, you can use the following command. This allows administrators to audit existing containers and assess their security posture.
+
+```bash
+docker ps --quiet --all | xargs docker inspect --format '{{.Id}}: Privileged={{.HostConfig.Privileged}} - Running={{.State.Running}}'
+```
+
+```bash
+## Using jq
+docker ps --quiet --all | xargs docker inspect | jq -c '.[] | select(.State.Running == true and .HostConfig.Privileged == true) | {id: .Id, name: .Name, running: .State.Running}'
+```
+
+This one-liner iterates over all containers, inspecting each to report whether it is running in privileged mode. Containers with "Privileged=true" are running in privileged mode and require further inspection to justify their configuration.
+
+Other important considerations:
+
+- **Justification**: Ensure that the use of privileged containers is justified and documented. For each case where a privileged container is deemed necessary, document the specific requirements that lead to this decision.
+
+- **Alternatives**: Explore alternatives to privileged containers. Docker provides various fine-grained capabilities that can be enabled individually with the `--cap-add` flag. By granting specific capabilities required by your application instead of enabling privileged mode, you can adhere to the principle of least privilege.
+
+- **Security Policies**: Implement security policies within your organization that restrict the use of privileged containers. Use tools like Pod Security Policies in Kubernetes or Docker Bench for Security that enforce these policies and scan for configurations that deviate from security best practices.
 
 ---
 
