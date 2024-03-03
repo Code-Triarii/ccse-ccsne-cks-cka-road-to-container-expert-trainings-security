@@ -389,11 +389,3 @@
       args:
         chdir: "{{ target_folder }}/harbor"
       become: true
-
-
-  handlers:
-    - name: Restart docker
-      ansible.builtin.service:
-        name: docker
-        state: restarted
-      become: true
