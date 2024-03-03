@@ -32,6 +32,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
     - [Utilize only required kernel capabilities](#utilize-only-required-kernel-capabilities)
       - [Do Not Permit Privileged Containers](#do-not-permit-privileged-containers)
       - [Restrict SecComp unconfined](#restrict-seccomp-unconfined)
+      - [Restrict AppArmor unconfined](#restrict-apparmor-unconfined)
     - [Ensure network segmentation and enforce isolation practices](#ensure-network-segmentation-and-enforce-isolation-practices)
     - [Manage volumes securely](#manage-volumes-securely)
       - [Use read-only file systems](#use-read-only-file-systems)
@@ -46,8 +47,10 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
       - [Utilize logging systems](#utilize-logging-systems)
   - [Daemon/Host Security](#daemonhost-security)
     - [Verify Docker CIS benchmark for daemon](#verify-docker-cis-benchmark-for-daemon)
+    - [Ensure authenticated users in the host](#ensure-authenticated-users-in-the-host)
     - [Limit Docker daemon exposition](#limit-docker-daemon-exposition)
       - [Network visibility to the API](#network-visibility-to-the-api)
+        - [Docker sock](#docker-sock)
       - [Docker group protection](#docker-group-protection)
       - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
@@ -216,6 +219,26 @@ for pid in "${!pid_container_map[@]}"; do
 done
 ```
 
+#### Restrict AppArmor unconfined
+
+Similar a SecComp check, AppArmor unsecure disabling of a profile must be checked in order to ensure there is no such.
+
+In order to do so, check all the containers labeled as `apparmor=unconfined`.
+
+This command does the trick:
+
+```bash
+docker ps -aq | xargs docker inspect  | jq -c '.[] | select(.HostConfig.SecurityOpt != null and (.HostConfig.SecurityOpt | contains(["apparmor=unconfined"]))) | {id: .Id, name: .Name, security_options: .HostConfig.SecurityOpt}'
+```
+
+Another important check - specially for production environments - is to check if the container has an AppArmor profile applied.
+
+```bash
+docker ps -aq | xargs docker inspect | jq -c '.[] | select(.AppArmorProfile=="") | {id: .Id, name: .Name, apparmor_profile: .AppArmorProfile, running: State.Running}'
+```
+
+![Empty AppArmor profile](./docs/img/csid-empty-apparmor-profile.png)
+
 ______________________________________________________________________
 
 ### Ensure network segmentation and enforce isolation practices
@@ -264,11 +287,41 @@ ______________________________________________________________________
 
 ### Verify Docker CIS benchmark for daemon
 
+---
+
+### Ensure authenticated users in the host
+
+Avoid any system/integration accounts. All users must be nominal. Ideally use PAM or other authentication services (unique sessions with SSH, etc.) so any user accesing the host system is properly authenticated.
+
 ______________________________________________________________________
 
 ### Limit Docker daemon exposition
 
 #### Network visibility to the API
+
+##### Docker sock
+
+By default Docker Daemon is listening in UNIX socket `/var/run/docker.sock` and not exposed to external sources.
+If fact, by default installation only `root` user can interact with the socket.
+
+There are many environments where the developer is granted with the `Docker` group, that allows connectivity to the socket and interaction with the Daemon is not limited.
+
+While this feature gives more agility to the developers, it also brings an inherent risk if other security measures are not imposed and could potentially represent the possibility for the developer to obtain root access (e.g., mounting the file system.)
+
+> [!CAUTION]
+> Never grant access to QA, Pre and Production environments to developers including them in the Docker security group. It is critical to have this really controlled.
+
+This bash command allows to quickly identify the users that are part of the `Docker` group. This users must be a very reduced group of people carefully controled (if neccesary at all).
+
+```bash
+grep -i 'docker' /etc/group | cut -d ':' -f 4 | tr ',' '\n'
+```
+
+Same for sudo.
+
+```bash
+grep -i 'sudo' /etc/group | cut -d ':' -f 4 | tr ',' '\n'
+```
 
 #### Docker group protection
 
