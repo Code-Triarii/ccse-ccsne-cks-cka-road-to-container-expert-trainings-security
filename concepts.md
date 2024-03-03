@@ -541,10 +541,8 @@ Ensuring the security of Docker containers involves a multi-faceted approach, co
 > \[!CAUTION\]
 > This is not an exhaustive list of all possible controls but serves as a solid starting point for securing your Docker environment. Delve deeper into each area for a more secure and robust configuration.
 
-<br>
-
 > \[!IMPORTANT\]
-> **For more detailed information about security measures in depth check [Container Security in depth documentation in this repo](./container-security-in-depth.md)**
+> **For more detailed information about security measures in depth check [Container Security in depth documentation.](./container-security-in-depth.md)**
 
 ### Image Security
 
