@@ -56,11 +56,11 @@ A quick tour on how the project is organized here:
 - [ ] Complete the full CCSE path with scenarios and exercises including documentation for each of them.
   - [x] Set docker registry V2 securely
   - [x] Interact with docker API server using python Docker SDK
+  - [x] Samples of interaction with Docker daemon through API rest.
   - [ ] How to create a container from scratch.
+  - [ ] Holistic container analysis.
 
 See the [open issues](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues) for a full list of proposed features (and known issues).
-
-For a more detailed understanding of the project progress, check the <a href="docs/CHANGELOG.md">CHANGELOG</a>
 
 [🔝 Back to top](#-practical-devsecops-ccse-preparation)
 

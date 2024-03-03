@@ -21,7 +21,8 @@ This documentation page aims to shortly summarize some of the most important the
       - [Modifying Capabilities](#modifying-capabilities)
       - [Security Considerations](#security-considerations)
     - [Docker alternatives](#docker-alternatives)
-    - [Docker Networking](#docker-networking)
+    - [Docker Networking - Host](#docker-networking---host)
+    - [Docker Networking - Containers](#docker-networking---containers)
     - [Docker Volume Management](#docker-volume-management)
       - [Understanding Docker Volumes:](#understanding-docker-volumes)
       - [Key Points to Remember:](#key-points-to-remember)
@@ -205,7 +206,13 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Docker Networking
+### Docker Networking - Host
+
+By default, if docker CLI and docker daemon are located in the same host machine they communicate over the `/var/run/docker.sock` linux socket.
+
+______________________________________________________________________
+
+### Docker Networking - Containers
 
 Docker supports multiple networking options, each tailored for specific use cases:
 
@@ -479,7 +486,7 @@ The Docker registry stores Docker images, which can be referenced in various for
 1. **Namespaced Registry Format (Used in Openshift, Harbor):**
    Images are stored in a format that includes the registry address, project namespace, repository name, and optionally, the tag and digest.
 
-   ```
+   ```bash
    registry-url/project-name/repository-name:tag@sha256:digest
    ```
 
@@ -492,7 +499,7 @@ The Docker registry stores Docker images, which can be referenced in various for
 2. **Standard Registry Format (Used in Registry V2, Docker Hub):**
    This format includes the registry address, repository name, and optionally, the tag and digest, but omits the namespace.
 
-   ```
+   ```bash
    registry-url/repository-name:tag@sha256:digest
    ```
 
@@ -534,6 +541,11 @@ Ensuring the security of Docker containers involves a multi-faceted approach, co
 > \[!CAUTION\]
 > This is not an exhaustive list of all possible controls but serves as a solid starting point for securing your Docker environment. Delve deeper into each area for a more secure and robust configuration.
 
+<br>
+
+> \[!IMPORTANT\]
+> **For more detailed information about security measures in depth check [Container Security in depth documentation in this repo](./container-security-in-depth.md)**
+
 ### Image Security
 
 - `Use Trusted Base Images:` Only use official or trusted base images for your containers. Regularly scan these images for vulnerabilities and ensure they are up to date.
@@ -571,3 +583,5 @@ Ensuring the security of Docker containers involves a multi-faceted approach, co
 - `Implement Docker Bench for Security:` Use the Docker Bench for Security script to automatically check for dozens of common best-practices around deploying Docker containers in production.
 
 By implementing these security measures, you will significantly enhance the security posture of your Docker environment, ensuring that containerized applications are protected against various threats.
+
+______________________________________________________________________
