@@ -1,0 +1,16 @@
+---
+ansible_user: "perico"
+harbor:
+  host: "codetriarii-org.com"
+  ip: "172.20.140.18"
+  version: "v2.9.2"
+  # This could be either online or offline
+  installer: "online"
+  https: true
+certificate:
+  country: "ES"
+  state: "Madrid"
+  locality: "Madrid"
+  organization: "Code Triarii"
+  ou: "Hackers"
+target_folder: "/home/perico/harbor_set_up"

@@ -5,7 +5,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
 - [Security](#security)
   - [Image Security](#image-security)
     - [Use Trusted Base Images](#use-trusted-base-images)
-      - [Docker content trust](#docker-content-trust)
+      - [Docker Content Trust](#docker-content-trust)
       - [Image hash](#image-hash)
       - [Digital signature](#digital-signature)
       - [Allowed sources](#allowed-sources)
@@ -81,7 +81,23 @@ Ensuring the security of Docker images is crucial to the overall security postur
 Trusting the sources of the images that you can use in your environment is highly important. There are infinity of container sources and millions of vulnerable or malicious images.
 Limiting what is available in your environment and reducing it to only a valid source of trust is critical enabling security and reducing the overall risk of using containers and its features.
 
-#### Docker content trust
+#### Docker Content Trust
+
+Docker Content Trust (DCT) enhances the security of your containerized applications by ensuring the integrity and publisher of all the data received over the network. Leveraging The Update Framework (TUF) and Notary, DCT provides a strong guarantee that your Docker images are exactly what the publisher intended, free from any tampering or unwanted modifications. By signing images and verifying signatures upon pulling, DCT prevents the deployment of unauthorized or altered images.
+
+**Example:** Enable DCT by setting the `DOCKER_CONTENT_TRUST` environment variable before pulling or pushing images.
+
+```bash
+export DOCKER_CONTENT_TRUST=1
+docker pull <image_name>
+```
+
+This command ensures that only signed images are pulled from the registry, significantly reducing the risk of malicious content.
+
+This configuration reduces our exposition to malicious images. However, what happens with our own images in our private repository?
+To ensure we are able to work with `DOCKER_CONTENT_TRUST` enabled, our own images muy be digitaly signed with `Notary` server.
+
+TODO: Link with 05_sign_docker_images challenge when done.
 
 #### Image hash
 
@@ -374,6 +390,8 @@ ______________________________________________________________________
 
 #### Ubnutu hardening
 
+OpenSCAP
+
 #### Ansible DevSec Hardening framework
 
 ______________________________________________________________________
@@ -383,6 +401,8 @@ ______________________________________________________________________
 ______________________________________________________________________
 
 ## Docker Registry security
+
+Harbor
 
 ### Harden the registry
 
