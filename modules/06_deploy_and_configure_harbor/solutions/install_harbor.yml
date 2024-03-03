@@ -174,8 +174,6 @@
         - "{{ harbor.host }}.key"
         - "{{ harbor.host }}.cert"
       become: true
-      notify:
-        - Restart docker
 
     # Ideally this image must be checked since it is mounting the whole host filesystem
     # This is potentially dangerous
@@ -187,13 +185,6 @@
         volumes:
           - "/:/hostfs"
         state: started
-
-    - name: Chown the directory to ansible user
-      ansible.builtin.file:
-        path: "{{ target_folder }}/internal_certs"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        recurse: true
 
     - name: Create Harbor configuration file
       ansible.builtin.blockinfile:
@@ -374,6 +365,23 @@
             expire_hours: 24
         mode: "0644"
 
+    - name: Chown the directory to ansible user
+      ansible.builtin.file:
+        path: "{{ target_folder }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        recurse: true
+      become: true
+
+    - name: Ensure certificates are generated
+      ansible.builtin.command: sleep 20
+
+    - name: Restart docker
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+      become: true
+
     - name: Install harbor
       ansible.builtin.command:
         cmd: >
@@ -382,8 +390,10 @@
         chdir: "{{ target_folder }}/harbor"
       become: true
 
+
   handlers:
     - name: Restart docker
       ansible.builtin.service:
         name: docker
         state: restarted
+      become: true
