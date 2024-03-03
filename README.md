@@ -25,7 +25,7 @@ This project serves as a preparation for the CCSE (Certified Container Security 
 - [📝 Practical DevSecOps CCSE preparation](#-practical-devsecops-ccse-preparation)
   - [📚 Table of contents](#-table-of-contents)
   - [💡 Purpose](#-purpose)
-  - [🏗️ Project structure](#%EF%B8%8F-project-structure)
+  - [🏗️ Project structure](#️-project-structure)
   - [📍 Roadmap](#-roadmap)
   - [📎 Contributing](#-contributing)
   - [📃 License](#-license)
@@ -52,11 +52,14 @@ A quick tour on how the project is organized here:
 
 ## 📍 Roadmap
 
-- [ ] Create automatic deployment of scenarios
+- [ ] Create automatic deployment of scenarios.
+- [x] Include theory and useful tips.
+- [ ] Create comprehensive guide with security measures for holistic container protection.
 - [ ] Complete the full CCSE path with scenarios and exercises including documentation for each of them.
-  - [x] Set docker registry V2 securely
+  - [x] Set docker registry V2 securely.
   - [x] Interact with docker API server using python Docker SDK
   - [x] Samples of interaction with Docker daemon through API rest.
+  - [x] How to configure Docker Daemon over HTTPS.
   - [ ] How to create a container from scratch.
   - [ ] Holistic container analysis.
 
