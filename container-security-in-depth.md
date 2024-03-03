@@ -49,7 +49,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
     - [Limit Docker daemon exposition](#limit-docker-daemon-exposition)
       - [Network visibility to the API](#network-visibility-to-the-api)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -194,6 +194,27 @@ docker ps -aq | xargs docker inspect  | jq -c '.[] | select(.HostConfig.Security
 ```
 
 ![Check security options](./docs/img/csid-check-securityoptions.png)
+
+Other way of finding the `SecComp` profile applied to a container is to get the `/proc/<PID-OF-CONTAINER>/status` content.
+
+We can combine both actions with the following:
+
+```bash
+declare -A pid_container_map
+for container_id in $(docker ps -aq); do
+  pid=$(ps aux | grep ${container_id} | grep containerd | awk '{print $2}')
+  if [ ! -z "$pid" ]; then
+    pid_container_map[$pid]=$container_id
+  fi
+done
+
+for pid in "${!pid_container_map[@]}"; do
+  seccomp=$(grep -w 'Seccomp:' /proc/${pid}/status | awk '{print $2}')
+  if [ "$seccomp" == "0" ]; then
+    echo "Alert: Insecure configuration detected for PID $pid (Container ID: ${pid_container_map[$pid]}). Seccomp value is 0."
+  fi
+done
+```
 
 ______________________________________________________________________
 

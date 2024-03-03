@@ -2,12 +2,13 @@
 
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
-- [Auxiliary Commands & Tips](#auxiliary-commands--tips)
+- [Auxiliary Commands \& Tips](#auxiliary-commands--tips)
   - [Linux helpers](#linux-helpers)
     - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
     - [Remove all stopped containers in the system](#remove-all-stopped-containers-in-the-system)
     - [Retrieve running processes inside a container](#retrieve-running-processes-inside-a-container)
+    - [Get a container by id](#get-a-container-by-id)
     - [Create a docker network](#create-a-docker-network)
     - [Save Docker Image and Container](#save-docker-image-and-container)
     - [Import Docker Image and Container](#import-docker-image-and-container)
@@ -64,6 +65,12 @@ Explanation:
 
 ```bash
 docker top <container_name>
+```
+
+### Get a container by id
+
+```bash
+docker container ls -f id=<id_container>
 ```
 
 ______________________________________________________________________
