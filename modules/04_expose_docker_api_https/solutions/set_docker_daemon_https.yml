@@ -1,0 +1,291 @@
+---
+- name: Securely Exposing Docker Daemon over HTTPS
+  hosts: localhost
+  vars:
+    docker_host: "codetriarii-org.com"
+    ip_address: "172.20.140.18"
+    certificate_country: "ES"
+    certificate_state: "Madrid"
+    certificate_locality: "Madrid"
+    certificate_organization: "YourOrganization"
+    certificate_ou: "YourDepartment"
+    docker_daemon_port: "2376"
+    target_folder: "/home/perico/docker_daemon_certs"
+    backup_folder: "/home/perico/docker_daemon_backup"
+  tasks:
+    - name: Ensure backup folder exists
+      ansible.builtin.file:
+        path: "{{ backup_folder }}"
+        state: directory
+        mode: "0755"
+
+    - name: Clean up target folder
+      ansible.builtin.command: "rm -rf {{ target_folder }}"
+
+    - name: Ensure target folder exists
+      ansible.builtin.file:
+        path: "{{ target_folder }}"
+        state: directory
+        mode: "0755"
+
+    - name: Generate directories for certificates
+      ansible.builtin.file:
+        path: "{{ target_folder }}/{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "ca"
+        - "server"
+        - "client"
+
+    - name: Generate san.cnf file for OpenSSL
+      ansible.builtin.copy:
+        dest: "{{ target_folder }}/san.cnf"
+        content: |
+          [req]
+          default_bits = 4096
+          prompt = no
+          default_md = sha256
+          req_extensions = req_ext
+          distinguished_name = dn
+          [dn]
+          C = {{ certificate_country }}
+          ST = {{ certificate_state }}
+          L = {{ certificate_locality }}
+          O = {{ certificate_organization }}
+          OU = {{ certificate_ou }}
+          CN = {{ docker_host }}
+          [req_ext]
+          subjectAltName = @alt_names
+          [alt_names]
+          IP.1 = {{ ip_address }}
+          DNS.1 = {{ docker_host }}
+          DNS.2 = localhost
+          [v3_req]
+          basicConstraints = CA:FALSE
+          keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+          extendedKeyUsage = serverAuth
+          subjectAltName = @alt_names
+        mode: "0644"
+
+    - name: Generate san.cnf file for OpenSSL (Client)
+      ansible.builtin.copy:
+        dest: "{{ target_folder }}/client_san.cnf"
+        content: |
+          [req]
+          default_bits = 4096
+          prompt = no
+          default_md = sha256
+          req_extensions = req_ext
+          distinguished_name = dn
+          [dn]
+          C = {{ certificate_country }}
+          ST = {{ certificate_state }}
+          L = {{ certificate_locality }}
+          O = {{ certificate_organization }}
+          OU = {{ certificate_ou }}
+          CN = client
+          [req_ext]
+          subjectAltName = @alt_names
+          [alt_names]
+          IP.1 = {{ ip_address }}
+          DNS.1 = {{ docker_host }}
+          [v3_req]
+          basicConstraints = CA:FALSE
+          keyUsage = digitalSignature
+          extendedKeyUsage = clientAuth
+          subjectAltName = @alt_names
+        mode: "0644"
+
+    - name: Generate CA key
+      ansible.builtin.command: |
+        openssl genrsa -out "{{ target_folder }}/ca/ca-key.pem" 4096
+      changed_when: false
+
+    - name: Generate CA certificate
+      ansible.builtin.command: |
+        openssl req -x509 -new -nodes -key "{{ target_folder }}/ca/ca-key.pem"
+        -days 365 -out "{{ target_folder }}/ca/ca.pem" -subj "/CN={{ docker_host }}"
+      changed_when: false
+
+    - name: Generate server key
+      ansible.builtin.command: |
+        openssl genrsa -out "{{ target_folder }}/server/server-key.pem" 4096
+      changed_when: false
+
+    - name: Generate server CSR
+      ansible.builtin.command: |
+        openssl req -new -key "{{ target_folder }}/server/server-key.pem" \
+        -out "{{ target_folder }}/server/server.csr" -config {{ target_folder }}/san.cnf
+      args:
+        creates: "{{ target_folder }}/server/server.csr"
+      changed_when: false
+
+    - name: Sign server CSR with CA
+      ansible.builtin.command: |
+        openssl x509 -req -in "{{ target_folder }}/server/server.csr" \
+        -CA "{{ target_folder }}/ca/ca.pem" -CAkey "{{ target_folder }}/ca/ca-key.pem" \
+        -CAcreateserial -out "{{ target_folder }}/server/server-cert.pem" -days 365 \
+        -extensions v3_req -extfile {{ target_folder }}/san.cnf
+      args:
+        creates: "{{ target_folder }}/server/server-cert.pem"
+      changed_when: false
+
+
+    - name: Generate client key
+      ansible.builtin.command: |
+        openssl genrsa -out "{{ target_folder }}/client/client-key.pem" 4096
+      changed_when: false
+
+    - name: Generate client CSR
+      ansible.builtin.command: |
+        openssl req -new -key "{{ target_folder }}/client/client-key.pem" \
+        -out "{{ target_folder }}/client/client.csr" -config {{ target_folder }}/client_san.cnf
+      args:
+        creates: "{{ target_folder }}/client/client.csr"
+      changed_when: false
+
+    - name: Sign client CSR with CA (using client SAN configuration)
+      ansible.builtin.command: |
+        openssl x509 -req -in "{{ target_folder }}/client/client.csr" \
+        -CA "{{ target_folder }}/ca/ca.pem" -CAkey "{{ target_folder }}/ca/ca-key.pem" \
+        -CAcreateserial -out "{{ target_folder }}/client/client-cert.pem" -days 365 \
+        -extensions v3_req -extfile {{ target_folder }}/client_san.cnf
+      args:
+        creates: "{{ target_folder }}/client/client-cert.pem"
+      changed_when: false
+
+    - name: Check if daemon.json exists
+      ansible.builtin.stat:
+        path: "/etc/docker/daemon.json"
+      register: daemon_json
+
+    - name: Create empty daemon.json if it does not exist
+      ansible.builtin.copy:
+        content: "{}"
+        dest: "/etc/docker/daemon.json"
+        mode: "0644"
+      when: not daemon_json.stat.exists
+      become: true
+
+    - name: Backup existing Docker daemon configuration
+      ansible.builtin.copy:
+        src: "/etc/docker/daemon.json"
+        dest: "{{ backup_folder }}/daemon.json.backup"
+        remote_src: true
+        mode: "0644"
+      failed_when: false
+      become: true
+
+    - name: Update Docker daemon configuration for TLS
+      ansible.builtin.command: |
+        jq '. + {
+        "tlsverify": true,
+         "tlscacert": "{{ target_folder }}/ca/ca.pem",
+         "tlscert": "{{ target_folder }}/server/server-cert.pem",
+         "tlskey": "{{ target_folder }}/server/server-key.pem",
+         "hosts": ["tcp://0.0.0.0:{{ docker_daemon_port }}"]}' /etc/docker/daemon.json
+      register: daemon_json
+      changed_when: false
+      become: true
+
+    - name: Write new daemon.json
+      ansible.builtin.copy:
+        content: "{{ daemon_json.stdout }}"
+        dest: "/etc/docker/daemon.json"
+        mode: "0644"
+      changed_when: false
+      become: true
+
+    - name: Pause for manual confirmation
+      ansible.builtin.pause:
+        prompt: |
+          Here is the new daemon.json:
+          {{ daemon_json.stdout }}
+          If the changes look okay, press Y to continue. To abort and restore the backup, press N.
+      register: prompt_result
+
+    - name: Restore backup if N was pressed
+      ansible.builtin.copy:
+        src: "{{ backup_folder }}/daemon.json.backup"
+        dest: "/etc/docker/daemon.json"
+        remote_src: true
+        mode: "0644"
+      when: prompt_result.user_input | lower == 'n'
+      become: true
+
+
+    - name: Copy client certificates for Docker CLI to root
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "/root/.docker/"
+        mode: "0644"
+        remote_src: true
+      loop:
+        - "{{ target_folder }}/ca/ca.pem"
+        - "{{ target_folder }}/client/client-cert.pem"
+        - "{{ target_folder }}/client/client-key.pem"
+      become: true
+      when: prompt_result.user_input | lower == 'y'
+
+    - name: Copy client certificates for Docker CLI to user
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "/home/{{ ansible_user }}/.docker/"
+        mode: "0644"
+        remote_src: true
+      loop:
+        - "{{ target_folder }}/ca/ca.pem"
+        - "{{ target_folder }}/client/client-cert.pem"
+        - "{{ target_folder }}/client/client-key.pem"
+      when: prompt_result.user_input | lower == 'y'
+
+    - name: Change owner of .docker directory to user
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user }}/.docker/"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        recurse: true
+      become: true
+      when: prompt_result.user_input | lower == 'y'
+
+    - name: Backup existing Docker service file
+      ansible.builtin.copy:
+        src: /lib/systemd/system/docker.service
+        dest: "{{ backup_folder }}/docker.service.backup"
+        remote_src: true
+        mode: "0644"
+      become: true
+
+    - name: Remove '-H fd://' option from Docker service file
+      ansible.builtin.lineinfile:
+        path: /lib/systemd/system/docker.service
+        regexp: '^ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock'
+        line: 'ExecStart=/usr/bin/dockerd'
+        backrefs: true
+      become: true
+      when: prompt_result.user_input | lower == 'y'
+
+    - name: Reload systemd daemon to apply changes
+      ansible.builtin.systemd:
+        daemon_reload: true
+      become: true
+      when: prompt_result.user_input | lower == 'y'
+
+
+    - name: Restart Docker service to apply new configuration
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+      become: true
+      when: prompt_result.user_input | lower == 'y'
+
+    - name: Prepare fact
+      ansible.builtin.set_fact:
+        docker_local_folder: "/home/{{ ansible_user }}/.docker"
+
+    - name: Create the docker context
+      ansible.builtin.command: |
+        docker context create secure-context --docker \
+        "host=tcp://172.20.140.18:2376,ca={{ docker_local_folder }}/ca.pem,cert={{ docker_local_folder }}/client-cert.pem,key={{ docker_local_folder }}/client-key.pem"
+      when: prompt_result.user_input | lower == 'y'
