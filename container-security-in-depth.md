@@ -54,7 +54,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
         - [Docker sock](#docker-sock)
         - [Docker over TLS](#docker-over-tls)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -353,7 +353,7 @@ There are some things to consider:
 - Ensure the certificates are rotated.
 - Ensure using secure crypto algorithms for certificate creation.
 
-> [!NOTE]
+> \[!NOTE\]
 > Check [Challenge - Expose Docker API HTTPS](./modules/04_expose_docker_api_https/solutions/README.md) for an example implementation. It is important to note that the PKI generation is self-signed. In a production/enterprise environment, certificates must be managed with internal PKI or signed by a world-wide trusted CA.
 
 #### Docker group protection
