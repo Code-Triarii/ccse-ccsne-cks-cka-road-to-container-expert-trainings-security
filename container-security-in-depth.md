@@ -221,7 +221,7 @@ done
 
 #### Restrict AppArmor unconfined
 
-Similar a SecComp check, AppArmor unsecure disabling of a profile must be checked in order to ensure there is no such.
+Similar a SecComp check, AppArmor insecure disabling of a profile must be checked in order to ensure there is no such.
 
 In order to do so, check all the containers labeled as `apparmor=unconfined`.
 
@@ -287,7 +287,7 @@ ______________________________________________________________________
 
 ### Verify Docker CIS benchmark for daemon
 
----
+______________________________________________________________________
 
 ### Ensure authenticated users in the host
 
@@ -308,10 +308,10 @@ There are many environments where the developer is granted with the `Docker` gro
 
 While this feature gives more agility to the developers, it also brings an inherent risk if other security measures are not imposed and could potentially represent the possibility for the developer to obtain root access (e.g., mounting the file system.)
 
-> [!CAUTION]
+> \[!CAUTION\]
 > Never grant access to QA, Pre and Production environments to developers including them in the Docker security group. It is critical to have this really controlled.
 
-This bash command allows to quickly identify the users that are part of the `Docker` group. This users must be a very reduced group of people carefully controled (if neccesary at all).
+This bash command allows to quickly identify the users that are part of the `Docker` group. This users must be a very reduced group of people carefully controlled (if necessary at all).
 
 ```bash
 grep -i 'docker' /etc/group | cut -d ':' -f 4 | tr ',' '\n'
