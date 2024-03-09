@@ -90,6 +90,11 @@ By completing this challenge, you've leveraged powerful tools to uncover vulnera
 > For quickly deploying the gitlab with docker executor runner, use [Gitlab testing set-up](../../../environment/gitlab/README.md).
 
 ```yaml
+image: docker:latest
+
+services:
+  - docker:dind
+
 stages:
   - build
   - test
@@ -98,63 +103,69 @@ stages:
   - integration
   - prod
 
-build:
-  stage: build
-  image: python:3.11.0b1-buster
-  before_script:
-   - pip3 install --upgrade virtualenv
-  script:
-   - virtualenv env
-   - source env/bin/activate
-   - pip install -r requirements.txt
-   - python manage.py check
+# build:
+#   stage: build
+#   image: python:3.11.0b1-buster
+#   before_script:
+#    - pip3 install --upgrade virtualenv
+#   script:
+#    - virtualenv env
+#    - source env/bin/activate
+#    - pip install -r requirements.txt
+#    - python manage.py check
+
 
 build_and_push:
   stage: build
   before_script:
     - export DOCKER_HOST="unix:///var/run/docker.sock"
   script:
-   - docker build . -f Dockerfile -t ${harbor_url}/pygoat/pygoat:${CI_JOB_ID}
+   - docker build . -f Dockerfile -t ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
    - docker login ${harbor_url} -u ${harbor_user} -p ${harbor_password}
-   - docker push ${harbor_url}/pygoat/pygoat:${CI_JOB_ID}
+   - docker push ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
 
 image_testing_grype:
   stage: test
   before_script:
+    - apk add --update && apk add curl
     - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-    - mkdir /opt/${CI_JOB_ID}
+    - mkdir /opt/${CI_PIPELINE_ID}
   script:
-    - grype ${harbor_url}/pygoat/pygoat:${CI_JOB_ID} -o json -f high > /opt/${CI_JOB_ID}/grype.json
+    - docker login ${harbor_url} -u ${harbor_user} -p ${harbor_password}
+    - docker pull ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
+    - grype ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID} -o json -f high > grype.json
   artifacts:
     paths:
-      - /opt/${CI_JOB_ID}/grype.json
+      - grype.json
   allow_failure: true
 
 image_testing_trivy:
   stage: test
   before_script:
-    - mkdir /opt/${CI_JOB_ID}
+    - mkdir /opt/${CI_PIPELINE_ID}
   script:
-    - docker save ${harbor_url}/pygoat/pygoat:${CI_JOB_ID} -o /opt/${CI_JOB_ID}/pygoat.tar
-    - docker run --rm -v /opt/${CI_JOB_ID}/pygoat.tar:/opt/${CI_JOB_ID}/pygoat.tar aquasec/trivy:0.49.1 image --input /opt/${CI_JOB_ID}/pygoat.tar -f json 1> /opt/${CI_JOB_ID}/trivy.json
+    - docker login ${harbor_url} -u ${harbor_user} -p ${harbor_password}
+    - docker pull ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
+    - docker save ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID} -o pygoat.tar
+    - docker run --rm -v $(pwd):/opt/${CI_PIPELINE_ID} aquasec/trivy:0.49.1 image --input /opt/${CI_PIPELINE_ID}/pygoat.tar -f json 1> trivy.json
   artifacts:
     paths:
-      - /opt/${CI_JOB_ID}/trivy.json
+      - trivy.json
   allow_failure: true
 
-image_testing_clair:
-  stage: test
-  image: quay.io/projectquay/golang:1.20
-  before_script:
-    - go install github.com/quay/clair/v4/cmd/clairctl@latest
-    - |
-      cat > config.yaml <<EOL
-      ${clairctl_config}
-      EOL
-  script:
-    - clairctl --config config.yaml report --host ${clair_host} ${harbor_url}/pygoat/pygoat:${CI_JOB_ID}
-    - clairctl -h
-  allow_failure: true 
+# image_testing_clair:
+#   stage: test
+#   image: quay.io/projectquay/golang:1.20
+#   before_script:
+#     - go install github.com/quay/clair/v4/cmd/clairctl@latest
+#     - |
+#       cat > config.yaml <<EOL
+#       ${clairctl_config}
+#       EOL
+#   script:
+#     - clairctl --config config.yaml report --host ${clair_host} ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
+#     - clairctl -h
+#   allow_failure: true 
 
 
 integration:
