@@ -22,9 +22,8 @@
           gitlab_database: {{ gitlab_database }}
           gitlab_root_password: {{ gitlab_root_password }}
           gitlab_runner_token: {{ gitlab_runner_token }}
-        mode: '0644'
+        mode: "0644"
         force: true
-
 
     - name: Ensure target folder exists
       ansible.builtin.file:
@@ -110,17 +109,17 @@
                 - |
                   export CI_SERVER_URL="http://{{ gitlab.ip }}:{{ gitlab.port }}"
                   export REGISTRATION_TOKEN="{{ gitlab_runner_token }}"
-                  
+
 
                   if [ ! -f /etc/gitlab-runner/first ]; then
                     sleep 300
                     touch /etc/gitlab-runner/first
                   fi
-                  
+
                   until [[ "$(curl -s -o /dev/null -w %{http_code} http://{{ gitlab.ip }}:{{ gitlab.port }}/-/health)" -eq 200 ]]; do
                     sleep 5
                     curl -s -o /dev/null -w "%{http_code}" "http://{{ gitlab.ip }}:{{ gitlab.port }}/-/health"
-                  done     
+                  done
                   /usr/bin/dumb-init /entrypoint register  \
                   --url http://{{ gitlab.ip }}:{{ gitlab.port }} --registration-token {{ gitlab_runner_token }} \
                   --non-interactive \
@@ -128,6 +127,7 @@
                   --docker-image docker:20.10.16-dind \
                   --docker-privileged  \
                   --description "docker-runner" \
+                  --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" \
                   --maintenance-note "Free-form maintainer notes about this runner" \
                   --tag-list "docker,aws" \
                   --run-untagged="true" \
@@ -159,7 +159,6 @@
 
           networks:
             gitlab:
-
 
     - name: Bring down Docker Compose project if force is true
       ansible.builtin.command: docker compose down -v

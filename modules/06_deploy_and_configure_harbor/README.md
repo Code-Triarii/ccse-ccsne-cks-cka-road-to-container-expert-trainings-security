@@ -1,5 +1,7 @@
 # Exercise 6: Deploy and Configure Harbor with HTTPS and Trivy Scanner
+
 ## 🎯 Challenge
+
 Your objective in this exercise is to deploy Harbor, an open-source container image registry that secures images with role-based access control, scans images for vulnerabilities, and signs images as trusted. You will configure Harbor to use HTTPS for secure communication, set up authentication, and integrate Trivy for automated vulnerability scanning of images. Completing this challenge will deepen your understanding of container image security, registry management, and the application of best practices in securing Docker images.
 
 ## ✅ Success Criteria

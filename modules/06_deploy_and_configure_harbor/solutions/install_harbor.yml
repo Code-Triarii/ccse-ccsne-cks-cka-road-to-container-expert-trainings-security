@@ -1,5 +1,4 @@
 ---
-
 - name: Install and configure Harbor
   hosts: localhost
   vars_files:
@@ -36,14 +35,14 @@
       ansible.builtin.get_url:
         url: "https://github.com/goharbor/harbor/releases/download/{{ harbor.version }}/harbor-{{ harbor.installer }}-installer-{{ harbor.version }}.tgz"
         dest: "{{ target_folder }}/harbor-{{ harbor.installer }}-installer-{{ harbor.version }}.tgz"
-        mode: '0644'
+        mode: "0644"
       when: not (harbor_installer.stat.exists | bool)
 
     - name: Download Harbor signature verifier .asc
       ansible.builtin.get_url:
         url: "https://github.com/goharbor/harbor/releases/download/{{ harbor.version }}/harbor-{{ harbor.installer }}-installer-{{ harbor.version }}.tgz.asc"
         dest: "{{ target_folder }}/harbor-{{ harbor.installer }}-installer-{{ harbor.version }}.tgz.asc"
-        mode: '0644'
+        mode: "0644"
       when: not (harbor_installer.stat.exists | bool)
 
     - name: Download public key for Harbor
@@ -121,7 +120,6 @@
           -out "{{ target_folder }}/certs/{{ harbor.host }}.crt"
       args:
         creates: "{{ target_folder }}/certs/{{ harbor.host }}.crt"
-
 
     - name: Create the certificate version for Docker of Harbor server
       ansible.builtin.command:

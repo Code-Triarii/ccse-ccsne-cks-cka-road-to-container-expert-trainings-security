@@ -13,6 +13,9 @@ Your objective in this exercise is to perform static analysis on Docker images t
 - [ ] Compare and analyze the results obtained from Grype, Trivy, and Clair to understand the unique capabilities and coverage of each tool.
 - [ ] Document the setup process, scan commands, and findings for each tool. Include any troubleshooting steps for common issues encountered during the scanning process.
 
+> \[!IMPORTANT\]
+> If you want to include those steps in a CICD pipeline, you can utilize the [Gitlab Set-up from environment](../../environment/gitlab/README.md).
+
 ## 📚 References
 
 - Grype GitHub repository: [https://github.com/anchore/grype](https://github.com/anchore/grype)

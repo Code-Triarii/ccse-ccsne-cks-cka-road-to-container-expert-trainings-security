@@ -64,9 +64,8 @@ Sign your Docker image using the previously generated key pair. Ensure to replac
 docker run -v $(pwd)/docker:/root/.docker -v /var/run/docker.sock:/var/run/docker.sock --network host -v $(pwd):/app -w /app -e COSIGN_PASSWORD="CHANGE_WITH_PASSWORD"  cosign:1.0 sign --key cosign.key  --allow-insecure-registry=true 172.20.140.18/library/alpine@sha256:cb64bbe7fa613666c234e1090e91427314ee18ec6420e9426cf4e7f314056813
 ```
 
-> [!NOTE]
+> \[!NOTE\]
 > We need to set `--allow-insecure-registry=true` because the registry is self signed. Also, do not forget to include the hash of the docker image for signing since this ensures unique instance of the image.
-
 
 ![Harbor signed](../img/harbor-signed.png)
 
@@ -77,7 +76,6 @@ docker run -v $(pwd)/docker:/root/.docker -v /var/run/docker.sock:/var/run/docke
 We upload another image that is not signed to the Harbor registry:
 
 ![Other image not signed](../img/upload-other.png)
-
 
 ### Step 5: Configure Harbor to Require Signed Images
 
