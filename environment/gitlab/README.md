@@ -45,8 +45,7 @@ Please replace `.vault_pass.txt` with your actual vault password file.
 
 ![Gitlab Runner](img/gitlab-runner.png)
 
-
-> [!IMPORTANT]
+> \[!IMPORTANT\]
 > The runner is configured to share the volume of `/var/run/docker.sock` for connecting with the daemon and also `/builds` for being able to mount -v volumes in the pipeline.
 > If this was not done, the bind volumes won't be useful in the pipeline because the path will be different when mounting any volume. This is required for bind mounts
 > in the pipelines when running docker containers using the docker dind executor.

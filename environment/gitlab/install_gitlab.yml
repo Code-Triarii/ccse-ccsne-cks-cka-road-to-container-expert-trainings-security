@@ -41,7 +41,7 @@
 
           #####################################################
           # This Docker Compose file contains three services
-          #    A Postgress Database
+          #    A Postgresql Database
           #    Gitlab Repository
           #    Gitlab Runner
           #####################################################

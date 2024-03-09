@@ -76,11 +76,11 @@ services:
       - matcher
       - indexer
     ports:
-      - '6060:6060'
-      - '8080:8080'
-      - '8443'
-      - '5432'
+      - "6060:6060"
+      - "8080:8080"
+      - "8443"
+      - "5432"
     volumes:
-      - './local-dev/traefik/:/etc/traefik/:ro'
+      - "./local-dev/traefik/:/etc/traefik/:ro"
     networks:
       - clair-network

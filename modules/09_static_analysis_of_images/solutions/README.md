@@ -86,7 +86,7 @@ By completing this challenge, you've leveraged powerful tools to uncover vulnera
 - Refer to the provided CI configuration examples to integrate these scanning tools into your GitLab CI/CD pipeline.
 - Adjust the `.gitlab-ci.yml` file according to your project's requirements and ensure all necessary environment variables are correctly set.
 
-> [!IMPORTANT]
+> \[!IMPORTANT\]
 > For quickly deploying the gitlab with docker executor runner, use [Gitlab testing set-up](../../../environment/gitlab/README.md).
 
 ```yaml
@@ -165,7 +165,7 @@ image_testing_trivy:
 #   script:
 #     - clairctl --config config.yaml report --host ${clair_host} ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
 #     - clairctl -h
-#   allow_failure: true 
+#   allow_failure: true
 
 
 integration:
