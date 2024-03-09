@@ -1,0 +1,7 @@
+FROM alpine:3.18.6
+
+RUN wget -O /usr/local/bin/cosign https://github.com/sigstore/cosign/releases/download/v2.1.1/cosign-linux-amd64 && \
+    chmod +x /usr/local/bin/cosign
+
+ENTRYPOINT [ "/usr/local/bin/cosign" ]
+CMD [ "--help" ]
