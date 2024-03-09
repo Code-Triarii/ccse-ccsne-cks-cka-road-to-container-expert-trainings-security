@@ -1,0 +1,11 @@
+vendor/
+book/
+clairctl
+!clairctl/
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!docker-compose.yml
+!Dockerfile.clairctl

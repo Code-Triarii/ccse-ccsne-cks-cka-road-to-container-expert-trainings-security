@@ -1,0 +1,7 @@
+FROM quay.io/projectquay/golang:1.20
+
+RUN go install github.com/quay/clair/v4/cmd/clairctl@latest
+
+COPY ./local-dev/clair/config.yaml /etc/clair/config.yaml
+
+ENTRYPOINT ["clairctl","--config","/etc/clair/config.yaml"]

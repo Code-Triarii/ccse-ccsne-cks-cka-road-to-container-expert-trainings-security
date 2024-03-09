@@ -1,0 +1,86 @@
+version: "3.7"
+
+networks:
+  clair-network:
+    driver: bridge
+
+services:
+  clair-database:
+    container_name: clair-database
+    image: docker.io/library/postgres:12
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - type: bind
+        source: ./local-dev/clair/init.sql
+        target: /docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "pg_isready -U postgres"
+      interval: 5s
+      timeout: 4s
+      retries: 12
+      start_period: 10s
+    networks:
+      - clair-network
+
+  indexer:
+    container_name: clair-indexer
+    image: quay.io/projectquay/golang:1.20
+    depends_on:
+      clair-database:
+        condition: service_healthy
+    volumes:
+      - "./local-dev/clair:/etc/clair:ro"
+      - ".:/src"
+    command:
+      - go
+      - run
+      - .
+      - -conf
+      - /etc/clair/${CLAIR_CONFIG:-config.yaml}
+    restart: unless-stopped
+    environment:
+      CLAIR_MODE: "indexer"
+    working_dir: /src/cmd/clair
+    networks:
+      - clair-network
+
+  matcher:
+    container_name: clair-matcher
+    image: quay.io/projectquay/golang:1.20
+    depends_on:
+      clair-database:
+        condition: service_healthy
+    volumes:
+      - "./local-dev/clair:/etc/clair:ro"
+      - ".:/src"
+    command:
+      - go
+      - run
+      - .
+      - -conf
+      - /etc/clair/${CLAIR_CONFIG:-config.yaml}
+    restart: unless-stopped
+    environment:
+      CLAIR_MODE: "matcher"
+    working_dir: /src/cmd/clair
+    networks:
+      - clair-network
+
+  traefik:
+    container_name: clair-traefik
+    image: docker.io/library/traefik:v2.2
+    depends_on:
+      - matcher
+      - indexer
+    ports:
+      - '6060:6060'
+      - '8080:8080'
+      - '8443'
+      - '5432'
+    volumes:
+      - './local-dev/traefik/:/etc/traefik/:ro'
+    networks:
+      - clair-network
