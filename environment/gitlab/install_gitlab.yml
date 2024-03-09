@@ -1,0 +1,173 @@
+- name: Install and configure Gitlab CE
+  hosts: localhost
+  vars_files:
+    - env_vars.yml
+    - secret_vars.yml
+  tasks:
+    - name: Prepare random credentials
+      ansible.builtin.set_fact:
+        gitlab_user: "{{ lookup('community.general.random_string', length=12, special=false) }}"
+        gitlab_password: "{{ lookup('community.general.random_string', length=12, special=false) }}"
+        gitlab_database: "{{ lookup('community.general.random_string', length=12, special=false) }}"
+        gitlab_root_password: "{{ lookup('community.general.random_string', length=12, special=false) }}"
+        gitlab_runner_token: "{{ lookup('community.general.random_string', length=12, special=false) }}"
+      when: random_credentials | bool
+
+    - name: Write credentials to .creds file
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/.creds"
+        content: |
+          gitlab_user: {{ gitlab_user }}
+          gitlab_password: {{ gitlab_password }}
+          gitlab_database: {{ gitlab_database }}
+          gitlab_root_password: {{ gitlab_root_password }}
+          gitlab_runner_token: {{ gitlab_runner_token }}
+        mode: '0644'
+        force: true
+
+
+    - name: Ensure target folder exists
+      ansible.builtin.file:
+        path: "{{ target_folder }}"
+        state: directory
+        mode: "0755"
+
+    - name: Create Gitlab configuration file
+      ansible.builtin.blockinfile:
+        path: "{{ target_folder }}/docker-compose.yml"
+        create: true
+        mode: "0644"
+        block: |
+          version: '3.8'
+
+          #####################################################
+          # This Docker Compose file contains three services
+          #    A Postgress Database
+          #    Gitlab Repository
+          #    Gitlab Runner
+          #####################################################
+
+          services:
+            postgres:
+              # Ref: https://docs.gitlab.com/ee/administration/package_information/postgresql_versions.html
+              image:  postgres:13.6@sha256:e146bef8299920090b550f010957965c9ad2dfb676e228a491f6e33d92580b73
+              hostname: postgres
+              environment:
+                - POSTGRES_PASSWORD={{ gitlab_password }}
+                - POSTGRES_USER={{ gitlab_user }}
+                - POSTGRES_DB={{ gitlab_database }}
+                - PGDATA=/var/lib/postgresql/data/gitlab
+              networks:
+                - gitlab
+
+              volumes:
+              # Optional volume mount to override default notification publisher templates
+              # - "/host/path/to/template/base/dir:/data/templates"
+                - 'gitlab-db:/var/lib/postgresql/data'
+
+            gitlab:
+              image: 'gitlab/gitlab-ce:{{ gitlab.version }}'
+              restart: always
+              hostname: 'gitlab'
+              environment:
+                # Ref: https://gitlab.com/gitlab-org/omnibus-gitlab/-/raw/master/files/gitlab-config-template/gitlab.rb.template
+                GITLAB_OMNIBUS_CONFIG: |
+                  external_url 'http://{{ gitlab.ip }}:{{ gitlab.port }}'
+                  gitlab_rails['gitlab_shell_ssh_port'] = {{ gitlab.ssh_port }}
+                  gitlab_rails['initial_root_password'] = "{{ gitlab_root_password }}"
+                  gitlab_rails['auto_migrate'] = true
+                  gitlab_rails['db_database'] = "{{ gitlab_database }}"
+                  gitlab_rails['db_username'] = "{{ gitlab_user }}"
+                  gitlab_rails['db_password'] = "{{ gitlab_password }}"
+                  gitlab_rails['db_host'] = "postgres"
+                  gitlab_rails['db_port'] = 5432
+                  gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
+                  gitlab_rails['db_sslmode'] = "disable"
+                  gitlab_rails['db_adapter'] = "postgresql"
+                  gitlab_rails['initial_shared_runners_registration_token'] = "{{ gitlab_runner_token }}"
+              ports:
+                - '{{ gitlab.port }}:{{ gitlab.port }}'
+                - '{{ gitlab.ssh_port }}:22'
+              volumes:
+                - 'config:/etc/gitlab'
+                - 'logs:/var/log/gitlab'
+                - 'data:/var/opt/gitlab'
+              shm_size: '256m'
+              networks:
+                - gitlab
+              depends_on:
+                - postgres
+
+            gitlab-runner:
+              image: 'gitlab/gitlab-runner:alpine'
+              restart: always
+              hostname: 'gitlab-runner'
+              # Ref: https://stackoverflow.com/questions/30063907/docker-compose-how-to-execute-multiple-commands
+              # We give some time for Gitlab to start to avoid errors.
+              entrypoint:
+                - /bin/sh
+                - -ec
+                - |
+                  export CI_SERVER_URL="http://{{ gitlab.ip }}:{{ gitlab.port }}"
+                  export REGISTRATION_TOKEN="{{ gitlab_runner_token }}"
+                  
+
+                  if [ ! -f /etc/gitlab-runner/first ]; then
+                    sleep 300
+                    touch /etc/gitlab-runner/first
+                  fi
+                  
+                  until [[ "$(curl -s -o /dev/null -w %{http_code} http://{{ gitlab.ip }}:{{ gitlab.port }}/-/health)" -eq 200 ]]; do
+                    sleep 5
+                    curl -s -o /dev/null -w "%{http_code}" "http://{{ gitlab.ip }}:{{ gitlab.port }}/-/health"
+                  done     
+                  /usr/bin/dumb-init /entrypoint register  \
+                  --url http://{{ gitlab.ip }}:{{ gitlab.port }} --registration-token {{ gitlab_runner_token }} \
+                  --non-interactive \
+                  --executor "docker" \
+                  --docker-image docker:20.10.16-dind \
+                  --docker-privileged  \
+                  --description "docker-runner" \
+                  --maintenance-note "Free-form maintainer notes about this runner" \
+                  --tag-list "docker,aws" \
+                  --run-untagged="true" \
+                  --locked="false" \
+                  --access-level="not_protected"
+                  sleep 5
+                  /usr/bin/dumb-init /entrypoint run --user=gitlab-runner --working-directory=/home/gitlab-runner
+
+              environment:
+                CI_SERVER_URL: "http://{{ gitlab.ip }}:{{ gitlab.port }}"
+                REGISTRATION_TOKEN: "{{ gitlab_runner_token }}"
+              volumes:
+                - 'gitlab-runner-data:/etc/gitlab-runner'
+                - '/var/run/docker.sock:/var/run/docker.sock'
+              privileged: true
+              shm_size: '256m'
+              networks:
+                - gitlab
+              depends_on:
+                - postgres
+                - gitlab
+
+          volumes:
+            config:
+            logs:
+            data:
+            gitlab-db:
+            gitlab-runner-data:
+
+          networks:
+            gitlab:
+
+
+    - name: Bring down Docker Compose project if force is true
+      ansible.builtin.command: docker compose down -v
+      args:
+        chdir: "{{ target_folder }}"
+      when: gitlab.force | bool
+
+    - name: Deploy Docker Compose project
+      ansible.builtin.command: docker compose up -d
+      args:
+        chdir: "{{ target_folder }}"
