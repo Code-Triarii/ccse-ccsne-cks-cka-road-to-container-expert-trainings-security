@@ -191,6 +191,8 @@ image_testing_snyk:
     - docker pull ${harbor_url}/pygoat/pygoat:${CI_COMMIT_SHA}
     - snyk auth ${SNYK_AUTH_TOKEN}
     - snyk container test --json docker.io/library/bash:latest > snyk.json
+    # Other option
+    # docker run --rm -e SNYK_TOKEN=${SNYK_AUTH_TOKEN} -e USER_ID=${SNYK_USER} -e SNYK_REGISTRY_USERNAME=${harbor_user} -e SNYK_REGISTRY_PASSWORD=${harbor_password} -v "$(pwd):/project" snyk/snyk-cli:docker container test --json ${harbor_url}/pygoat/pygoat:${CI_COMMIT_SHA} 1> snyk-output.json
   artifacts:
     paths:
       - snyk.json
