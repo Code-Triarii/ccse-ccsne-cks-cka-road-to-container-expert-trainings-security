@@ -41,7 +41,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
     - [Limit container resources](#limit-container-resources)
     - [Use security profiles](#use-security-profiles)
     - [Monitor container activities](#monitor-container-activities)
-      - [Detect abnormal behavior](#detect-abnormal-behavior)
+      - [Detect Abnormal Behavior](#detect-abnormal-behavior)
       - [Register container transactions - history](#register-container-transactions---history)
       - [Monitor container resource consumption](#monitor-container-resource-consumption)
       - [Ensure healthy containers](#ensure-healthy-containers)
@@ -348,9 +348,13 @@ ______________________________________________________________________
 
 ### Monitor container activities
 
-#### Detect abnormal behavior
+#### Detect Abnormal Behavior
 
-Sysdig falco
+In containerized environments, detecting abnormal or suspicious behavior is crucial for maintaining security and operational integrity. Utilizing external tools like Sysdig Falco and Tracee offers advanced monitoring capabilities, enabling teams to identify and respond to potential threats in real time.
+
+**Sysdig Falco** is an open-source tool designed for behavioral activity monitoring within containerized platforms. It leverages system calls from the Linux kernel to analyze the behavior of running containers and detects anomalous activity based on predefined rules. Falco can alert on violations such as unexpected network connections, changes to critical files, or unauthorized process spawning within containers. Its ruleset is highly customizable, allowing for the tailoring of detection mechanisms to fit specific environment needs or security policies. Alerts can be integrated with various endpoints like email, Slack, or a webhook, facilitating immediate response to detected threats.
+
+**Tracee** by Aqua Security is another powerful tool focusing on runtime security and forensics. It utilizes eBPF (extended Berkeley Packet Filter) technology to capture a wide range of system and application events with minimal overhead. Tracee comes with a set of built-in detection rules based on common attack patterns, providing out-of-the-box security insights. It can detect suspicious file operations, network activity, or process executions that deviate from normal behavior. Tracee's ability to provide detailed context about each event, including the command line arguments, environment variables, and process relationships, makes it an invaluable tool for forensic analysis and understanding the scope of a security incident.
 
 #### Register container transactions - history
 
