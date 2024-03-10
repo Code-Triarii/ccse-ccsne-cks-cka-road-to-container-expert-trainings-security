@@ -63,7 +63,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
         - [Docker sock](#docker-sock)
         - [Docker over TLS](#docker-over-tls)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -356,6 +356,8 @@ In containerized environments, detecting abnormal or suspicious behavior is cruc
 
 **Tracee** by Aqua Security is another powerful tool focusing on runtime security and forensics. It utilizes eBPF (extended Berkeley Packet Filter) technology to capture a wide range of system and application events with minimal overhead. Tracee comes with a set of built-in detection rules based on common attack patterns, providing out-of-the-box security insights. It can detect suspicious file operations, network activity, or process executions that deviate from normal behavior. Tracee's ability to provide detailed context about each event, including the command line arguments, environment variables, and process relationships, makes it an invaluable tool for forensic analysis and understanding the scope of a security incident.
 
+**Wazuh** is a versatile open-source platform designed for threat detection, integrity monitoring, incident response, and compliance. It provides a unified framework for monitoring and securing containerized environments, leveraging its capabilities to ensure comprehensive security coverage. Wazuh employs a combination of signature-based, anomaly detection, and behavioral analysis techniques to identify threats across the container lifecycle. It integrates with Docker and Kubernetes, monitoring logs, configurations, and network activity to detect anomalous behavior indicative of security incidents or misconfigurations.
+
 #### Register container transactions - history
 
 #### Monitor container resource consumption
@@ -375,11 +377,11 @@ In the context of security monitoring within Docker environments, understanding 
 Docker events can be categorized into several types, including but not limited to:
 
 - **Container Events**: These include creation, start, stop, kill, commit, pause, unpause, and destruction of containers. Monitoring these events helps in understanding the container lifecycle and detecting anomalous activities that might compromise containerized applications.
-  
+
 - **Image Events**: Events such as pull, push, tag, delete, and load of Docker images. These events are vital for tracking the source and integrity of images used within the environment.
-  
+
 - **Network Events**: Including the creation, connection, disconnection, and deletion of Docker networks. Such events are essential for auditing network configurations and isolating network-related security issues.
-  
+
 - **Volume Events**: Comprising the creation, mounting, unmounting, and deletion of Docker volumes. Monitoring these events is crucial for data persistence and security, ensuring sensitive data is not unintentionally exposed or lost.
 
 ###### Security Implications
@@ -387,11 +389,11 @@ Docker events can be categorized into several types, including but not limited t
 By monitoring Docker events, organizations can enhance their security posture in several ways:
 
 - **Detect Unauthorized Access**: Unusual container or image activities might indicate unauthorized access or an attempted breach. Early detection of such activities allows for rapid response and mitigation.
-  
+
 - **Audit and Compliance**: Docker event logs serve as a comprehensive audit trail that can be used to demonstrate compliance with security policies and regulatory requirements, facilitating audits and investigations.
-  
+
 - **Configuration Management**: Tracking events related to networks and volumes helps in ensuring that configurations do not diverge from best practices, reducing the attack surface and mitigating risks associated with misconfigurations.
-  
+
 - **Operational Visibility**: Monitoring Docker events provides visibility into the operational aspects of the Docker environment, enabling the identification of performance issues, optimization opportunities, and security enhancements.
 
 ###### Using `docker events`
@@ -404,8 +406,8 @@ docker events --filter 'type=container' --filter 'container=<container_name>'
 
 For security monitoring, it's advisable to integrate Docker event logs with a centralized logging or security information and event management (SIEM) system. This allows for the aggregation, analysis, and alerting on events across the Docker environment, facilitating proactive security monitoring and incident response.
 
-> [!IMPORTANT]
-> Docker daemon configuration allows to push the docker events to syslog by modifying the ``/etc/docker/daemon.json`` file.
+> \[!IMPORTANT\]
+> Docker daemon configuration allows to push the docker events to syslog by modifying the `/etc/docker/daemon.json` file.
 
 ##### Docker Logs
 
@@ -424,14 +426,14 @@ Docker primarily deals with two types of logs: **container logs** and **daemon l
 Monitoring Docker logs provides vital insights into:
 
 - **Application Behavior**: Understanding the output of containerized applications, including errors and warnings, which can indicate operational issues or potential security concerns.
-  
+
 - **Access Patterns**: Observing access logs (for applications that log access details to stdout/stderr) to detect anomalous patterns that might suggest unauthorized attempts to access the application.
 
 - **System Issues**: Docker daemon logs offer a window into the workings of the Docker host, including network configurations, image management, and container lifecycle events, which are essential for troubleshooting and ensuring the security of the Docker environment.
 
 ###### Log Management Practices
 
-Effective log management involves aggregating logs in a centralized logging system for ease of monitoring, analysis, and long-term storage. This practice enables more sophisticated analysis and alerting based on log data, aiding in prompt issue detection and resolution. Tools like ``Fluentd``, ``Logstash``, or proprietary logging solutions can be integrated with Docker to streamline log collection and management.
+Effective log management involves aggregating logs in a centralized logging system for ease of monitoring, analysis, and long-term storage. This practice enables more sophisticated analysis and alerting based on log data, aiding in prompt issue detection and resolution. Tools like `Fluentd`, `Logstash`, or proprietary logging solutions can be integrated with Docker to streamline log collection and management.
 
 ### Conclusion
 
