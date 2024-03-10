@@ -46,6 +46,24 @@ wget -O /usr/local/bin/snyk https://github.com/snyk/cli/releases/download/v1.120
 chmod +x /usr/local/bin/snyk
 ```
 
+### Hadolint
+
+> [!NOTE]
+> Hadolint can be installed, but it comes already prepared in a docker image that can be leveraged `ghcr.io/hadolint/hadolint`.
+
+Either way, for quickly being able to execute it outside of a container we can do this trick:
+
+In one terminal tab run:
+
+```bash
+# This will keep the container running because default CMD is ["/bin/hadolint" "-"] so if no entry is provided, will be waiting for that.
+docker run --rm -i --name hadolint ghcr.io/hadolint/hadolint
+```
+
+```bash
+sudo docker cp hadolint:/bin/hadolint /usr/local/bin/hadolint
+```
+
 ## Step 2: Configure Tools and Environment
 
 - Ensure Docker is running.
@@ -79,7 +97,7 @@ trivy image --format json --output trivy_report.json docker.io/library/bash:late
 clairctl --config /etc/clair/config.yaml report --host ${CLAIR_HOST} docker.io/library/bash:latest
 ```
 
-### Snyk
+### Using Snyk
 
 ```bash
 # Login to Snyk with you token (free account works for this)
@@ -88,6 +106,14 @@ snyk auth ${SNYK_TOKEN}
 # Analyze the target image
 snyk container test --json docker.io/library/bash:latest > output.json
 ```
+
+### Using Hadolint
+
+```bash
+docker run --rm -i ghcr.io/hadolint/hadolint
+```
+
+![Hadolint execution](../../../docs/img/hadolint-exec.png)
 
 ## Step 4: Analyze and Compare Results
 

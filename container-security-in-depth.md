@@ -11,7 +11,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
       - [Allowed sources](#allowed-sources)
     - [Minimize Image Layers](#minimize-image-layers)
       - [Multi-Stage Builds](#multi-stage-builds)
-      - [Distroless images](#distroless-images)
+      - [Distroless Images](#distroless-images)
       - [Images from scratch](#images-from-scratch)
       - [Install only required packages](#install-only-required-packages)
     - [Protect sensitive content - Secrets](#protect-sensitive-content---secrets)
@@ -54,7 +54,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
         - [Docker sock](#docker-sock)
         - [Docker over TLS](#docker-over-tls)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -116,7 +116,38 @@ Therefore, it is critical to be able to reduce it and limit only to the bare min
 
 #### Multi-Stage Builds
 
-#### Distroless images
+#### Distroless Images
+
+Distroless images offer a way to build more secure containerized applications by minimizing the attack surface. These images contain only the application and its runtime dependencies, omitting package managers, shells, and other utilities typically found in a standard Linux distribution. This reduction in size and complexity significantly decreases the potential for security vulnerabilities.
+
+Consider a Python application Dockerfile example that leverages distroless images for enhanced security:
+
+```Dockerfile
+# Build stage for compiling dependencies
+FROM python:3.9-slim AS build
+
+COPY requirements.txt .
+
+# Install only the necessary dependencies
+RUN apt-get update && \
+    apt-get install --no-install-suggests --no-install-recommends --yes \
+    build-essential libpython3-dev && \
+    python3 -m venv /venv && \
+    /venv/bin/pip install --upgrade pip && \
+    /venv/bin/pip install -r requirements.txt
+
+# Final stage using a distroless image
+FROM gcr.io/distroless/python3-debian11
+
+WORKDIR /app
+COPY --from=build /venv /venv
+COPY . .
+
+# Application startup command
+CMD ["/venv/bin/python", "app.py"]
+```
+
+This Dockerfile uses a multi-stage build process: the first stage installs the necessary dependencies using a slim base image, while the final stage uses a distroless image. By copying only the application and its runtime environment to the distroless image, it significantly reduces potential security risks and the overall image size, promoting the creation of more secure, production-ready container images.
 
 #### Images from scratch
 
@@ -144,14 +175,23 @@ ______________________________________________________________________
 
 #### Lint Dockerfile
 
-Hadolint
+Linting Dockerfiles is an essential practice for ensuring your container images are secure, efficient, and adhere to best practices. **Hadolint** is a standout tool in this space, integrating seamlessly into CI/CD pipelines to analyze Dockerfiles against a set of best practices. It not only identifies potential issues but also suggests fixes, helping improve the Dockerfile's quality.
+
+Another notable tool is **Dockle**, a container image linter that focuses on security and best practices. Dockle scans your container images for common pitfalls and security issues, providing insights and recommendations to enhance your container security posture.
+
+Other relevant Dockerfile linters include:
+
+- **Dockerfilelint**: This is an open-source tool that helps developers validate their Dockerfiles. It checks for syntax errors, inefficient coding practices, and potential security vulnerabilities.
+  
+- **Dive**: While primarily a tool for exploring a Docker image, Dive can be used indirectly to lint Dockerfiles by analyzing the layers and contents of an image built from a Dockerfile. It helps identify ways to make the image more efficient by reducing its size and removing unnecessary files or layers.
+
+Incorporating these tools into your development workflow can significantly improve the quality and security of your Docker images. By linting Dockerfiles with Hadolint, Dockle, and other similar tools, developers can adhere to best practices, minimize security vulnerabilities, and ensure their images are optimized for production.
 
 #### Perform SCA (CVE search) for image dependencies
 
-Clair
-Trivy
-Grype
-Syft
+Software Composition Analysis (SCA) is crucial for container security, identifying vulnerabilities in container image dependencies. Tools like **Clair** analyze images for known vulnerabilities, **Trivy** offers comprehensive scans across OS, middleware, and language-specific packages, **Grype** specializes in finding and managing security issues in container images, and **Syft** generates a detailed bill of materials (SBOM) for container images to track dependencies. Together, these tools enhance the security posture of containerized applications by ensuring dependencies are continuously monitored for vulnerabilities.
+
+For detailed example on how to use this tools, check [Static analysis of images challenge in this repo](./modules/09_static_analysis_of_images/solutions/README.md).
 
 #### Search for malware
 

@@ -23,6 +23,8 @@ This documentation aims to provide guidance, utilities and useful commands that 
       - [Security Considerations](#security-considerations)
       - [Tips for Remote Interaction](#tips-for-remote-interaction)
   - [Security tools](#security-tools)
+    - [Hadolint commands](#hadolint-commands)
+    - [Get all vulnerable IDs of fixed level](#get-all-vulnerable-ids-of-fixed-level)
     - [Trivy commands](#trivy-commands)
       - [Get all vulnerable IDs of fixed Severity](#get-all-vulnerable-ids-of-fixed-severity)
       - [Ignore specific results](#ignore-specific-results)
@@ -254,6 +256,16 @@ When enabling remote access to the Docker daemon, it's crucial to secure the com
 
 ## Security tools
 
+### Hadolint commands
+
+### Get all vulnerable IDs of fixed level
+
+```bash
+hadolint -f json --error DL3008 --error DL3009 --no-fail Dockerfile   | jq -r '.[] | select(.level=="warning") | .code'
+```
+
+![Hadolint tips](./docs/img/hadolint-tips.png)
+
 ### Trivy commands
 
 #### Get all vulnerable IDs of fixed Severity
@@ -262,7 +274,7 @@ When enabling remote access to the Docker daemon, it's crucial to secure the com
 cat trivy.json | jq -r '.Results[].Vulnerabilities[] | select(.Severity=="CRITICAL") | .VulnerabilityID'
 ```
 
-![Alt text](./docs/img/trivy-severity-filter.png)
+![Trivy severity filter](./docs/img/trivy-severity-filter.png)
 
 #### Ignore specific results
 
