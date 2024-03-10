@@ -1,4 +1,4 @@
-# Exercise X: Static Analysis of Docker Images for Vulnerabilities and Misconfigurations
+# Exercise 9: Static Analysis of Docker Images for Vulnerabilities and Misconfigurations
 
 ## 🎯 Challenge
 

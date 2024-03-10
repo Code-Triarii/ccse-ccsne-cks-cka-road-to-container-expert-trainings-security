@@ -1,0 +1,21 @@
+FROM alpine:3.18 as build
+
+WORKDIR /app
+
+RUN apk add --no-cache git
+
+RUN git clone https://github.com/aquasecurity/docker-bench.git
+
+FROM quay.io/projectquay/golang:1.20
+
+WORKDIR /app
+
+COPY --from=build /app/docker-bench /app/docker-bench
+
+ENV GOPATH="/root/go"
+
+RUN cd /app/docker-bench \
+    && go get github.com/aquasecurity/docker-bench\
+    && go build -o docker-bench . \
+    && mv docker-bench /usr/local/bin/docker-bench \
+    && chmod +x /usr/local/bin/docker-bench
