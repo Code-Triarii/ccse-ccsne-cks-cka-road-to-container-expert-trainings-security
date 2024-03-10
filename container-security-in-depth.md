@@ -50,6 +50,10 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
           - [Types of Events](#types-of-events)
           - [Security Implications](#security-implications)
           - [Using `docker events`](#using-docker-events)
+        - [Docker Logs](#docker-logs)
+          - [Log Location and Types](#log-location-and-types)
+          - [Security and Operational Insights](#security-and-operational-insights)
+          - [Log Management Practices](#log-management-practices)
     - [Conclusion](#conclusion)
   - [Daemon/Host Security](#daemonhost-security)
     - [Verify Docker CIS benchmark for daemon](#verify-docker-cis-benchmark-for-daemon)
@@ -395,6 +399,35 @@ docker events --filter 'type=container' --filter 'container=<container_name>'
 ```
 
 For security monitoring, it's advisable to integrate Docker event logs with a centralized logging or security information and event management (SIEM) system. This allows for the aggregation, analysis, and alerting on events across the Docker environment, facilitating proactive security monitoring and incident response.
+
+> [!IMPORTANT]
+> Docker daemon configuration allows to push the docker events to syslog by modifying the ``/etc/docker/daemon.json`` file.
+
+##### Docker Logs
+
+Docker logs are a fundamental resource for monitoring the activities and health of containers. Understanding where these logs are located, the types of logs available, and how to effectively manage and analyze them is essential for maintaining the operational integrity and security of Dockerized applications.
+
+###### Log Location and Types
+
+Docker primarily deals with two types of logs: **container logs** and **daemon logs**.
+
+- **Container Logs**: These capture the stdout and stderr streams from the containerized application. By default, Docker stores these logs in JSON files on the host system, typically located in `/var/lib/docker/containers/[container-id]/`. The exact path can vary depending on the Docker daemon's storage driver and configuration. Container logs are accessed using the `docker logs [container-id or name]` command.
+
+- **Daemon Logs**: The Docker daemon (`dockerd`) itself generates logs, which are crucial for diagnosing system-level issues, startup processes, and understanding the daemon's interactions with containers. The location of these logs varies by the host system's logging configuration—on systems using `systemd`, for example, daemon logs are managed by `journald` and can be accessed using `journalctl -u docker.service`.
+
+###### Security and Operational Insights
+
+Monitoring Docker logs provides vital insights into:
+
+- **Application Behavior**: Understanding the output of containerized applications, including errors and warnings, which can indicate operational issues or potential security concerns.
+  
+- **Access Patterns**: Observing access logs (for applications that log access details to stdout/stderr) to detect anomalous patterns that might suggest unauthorized attempts to access the application.
+
+- **System Issues**: Docker daemon logs offer a window into the workings of the Docker host, including network configurations, image management, and container lifecycle events, which are essential for troubleshooting and ensuring the security of the Docker environment.
+
+###### Log Management Practices
+
+Effective log management involves aggregating logs in a centralized logging system for ease of monitoring, analysis, and long-term storage. This practice enables more sophisticated analysis and alerting based on log data, aiding in prompt issue detection and resolution. Tools like ``Fluentd``, ``Logstash``, or proprietary logging solutions can be integrated with Docker to streamline log collection and management.
 
 ### Conclusion
 
