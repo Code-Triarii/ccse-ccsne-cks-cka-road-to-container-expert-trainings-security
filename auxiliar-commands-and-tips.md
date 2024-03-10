@@ -2,7 +2,7 @@
 
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
-- [Auxiliary Commands & Tips](#auxiliary-commands--tips)
+- [Auxiliary Commands \& Tips](#auxiliary-commands--tips)
   - [Linux helpers](#linux-helpers)
     - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
@@ -22,6 +22,11 @@ This documentation aims to provide guidance, utilities and useful commands that 
       - [Configuring the Docker CLI for Remote Access](#configuring-the-docker-cli-for-remote-access)
       - [Security Considerations](#security-considerations)
       - [Tips for Remote Interaction](#tips-for-remote-interaction)
+  - [Security tools](#security-tools)
+    - [Trivy commands](#trivy-commands)
+      - [Get all vulnerable IDs of fixed Severity](#get-all-vulnerable-ids-of-fixed-severity)
+      - [Ignore specific results](#ignore-specific-results)
+      - [Avoid exit code if vulnerabilities are found](#avoid-exit-code-if-vulnerabilities-are-found)
 
 ## Linux helpers
 
@@ -246,3 +251,63 @@ When enabling remote access to the Docker daemon, it's crucial to secure the com
   ```
 
 - `Monitoring and Logging:` Implement monitoring and logging for access to the remote Docker daemon to detect and respond to unauthorized access attempts.
+
+## Security tools
+
+### Trivy commands
+
+#### Get all vulnerable IDs of fixed Severity
+
+```bash
+cat trivy.json | jq -r '.Results[].Vulnerabilities[] | select(.Severity=="CRITICAL") | .VulnerabilityID'
+```
+
+![Alt text](./docs/img/trivy-severity-filter.png)
+
+#### Ignore specific results
+
+1. Create the trivy ignore file.
+
+```bash
+cat > .trivyignore <<EOL
+CVE-2023-6879
+CVE-2023-5841
+CVE-2023-5841
+CVE-2023-45853
+CVE-2023-45853
+EOL
+```
+
+2. Launch the scan in the same folder the `.trivyignore` has been created or use the `--ignorefile` option pointing to the location of your Trivy ignore file.
+
+As a test, I will show the same with `python:3.8`.
+
+- First we analyze the image as it is and the result is `364` as it could be seen in the output image.
+
+```bash
+trivy image python:3.8 -f json | jq -s 'map(.Results[].Vulnerabilities[].VulnerabilityID) | unique | length'
+```
+
+![Count of unique vuln IDs](./docs/img/trivy-output-1.png)
+
+- Then we create the `.trivyignore` file with the contents [Get all vulnerable IDs of fixed Severity](#get-all-vulnerable-ids-of-fixed-severity) command.
+- Then we analyze the `python:3.8` image again.
+
+```bash
+trivy image python:3.8 -f json | jq -s 'map(.Results[].Vulnerabilities[].VulnerabilityID) | unique | length'
+```
+
+![Count of unique vuln IDs 2](./docs/img/trivy-output-2.png)
+
+> \[!NOTE\]
+> If we remove the `unique` filter in the `jq` count, we will see exactly the 5 count difference between both analysis due to `.trivyignore` content.
+> **Notice the removal of `.trivyignore` in between the two executions**
+
+![Difference in trivy scans.](./docs/img/trivy-output-3.png)
+
+#### Avoid exit code if vulnerabilities are found
+
+```bash
+# Do not forget the option if you wan to avoid exit code error.
+--exit-code 0
+```

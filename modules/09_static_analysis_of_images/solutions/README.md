@@ -114,43 +114,54 @@ stages:
 #    - pip install -r requirements.txt
 #    - python manage.py check
 
+simple_test:
+  stage: build
+  script:
+    - echo "hola" > mock_file
+    - pwd
+    - docker run -v $(pwd):/test -w /test alpine:3.11 ls
+    - docker run --rm --name test -v $(pwd):/test -w /test alpine:3.11 cat mock_file
 
 build_and_push:
   stage: build
   before_script:
     - export DOCKER_HOST="unix:///var/run/docker.sock"
   script:
-   - docker build . -f Dockerfile -t ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
+   - docker build . -f Dockerfile -t ${harbor_url}/pygoat/pygoat:${CI_COMMIT_SHA}
    - docker login ${harbor_url} -u ${harbor_user} -p ${harbor_password}
-   - docker push ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
+   - docker push ${harbor_url}/pygoat/pygoat:${CI_COMMIT_SHA}
 
 image_testing_grype:
   stage: test
   before_script:
     - apk add --update && apk add curl
     - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-    - mkdir /opt/${CI_PIPELINE_ID}
+    - mkdir /opt/${CI_COMMIT_SHA}
   script:
     - docker login ${harbor_url} -u ${harbor_user} -p ${harbor_password}
-    - docker pull ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
-    - grype ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID} -o json -f high > grype.json
+    - docker pull ${harbor_url}/pygoat/pygoat:${CI_COMMIT_SHA}
+    - grype ${harbor_url}/pygoat/pygoat:${CI_COMMIT_SHA} -o json -f high > grype.json
   artifacts:
     paths:
       - grype.json
+    when: always
   allow_failure: true
 
 image_testing_trivy:
   stage: test
   before_script:
-    - mkdir /opt/${CI_PIPELINE_ID}
+    - mkdir /opt/${CI_COMMIT_SHA}
+  # Other option for login: https://docs.gitlab.com/ee/user/packages/container_registry/authenticate_with_container_registry.html#use-gitlab-cicd-to-authenticate
+  # docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker login ${harbor_url} -u ${harbor_user} -p ${harbor_password}
-    - docker pull ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
-    - docker save ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID} -o pygoat.tar
-    - docker run --rm -v $(pwd):/opt/${CI_PIPELINE_ID} aquasec/trivy:0.49.1 image --input /opt/${CI_PIPELINE_ID}/pygoat.tar -f json 1> trivy.json
+    - docker pull ${harbor_url}/pygoat/pygoat:${CI_COMMIT_SHA}
+    - docker save ${harbor_url}/pygoat/pygoat:${CI_COMMIT_SHA} -o pygoat.tar
+    - docker run --rm -v /root/.cache/:/root/.cache/ -v $(pwd):/opt/${CI_COMMIT_SHA} aquasec/trivy:0.49.1 image --input /opt/${CI_COMMIT_SHA}/pygoat.tar -f json 1> trivy.json
   artifacts:
     paths:
       - trivy.json
+    when: always
   allow_failure: true
 
 # image_testing_clair:
@@ -163,7 +174,7 @@ image_testing_trivy:
 #       ${clairctl_config}
 #       EOL
 #   script:
-#     - clairctl --config config.yaml report --host ${clair_host} ${harbor_url}/pygoat/pygoat:${CI_PIPELINE_ID}
+#     - clairctl --config config.yaml report --host ${clair_host} ${harbor_url}/pygoat/pygoat:${CI_COMMIT_SHA}
 #     - clairctl -h
 #   allow_failure: true
 
