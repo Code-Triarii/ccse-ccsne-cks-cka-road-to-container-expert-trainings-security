@@ -54,7 +54,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
         - [Docker sock](#docker-sock)
         - [Docker over TLS](#docker-over-tls)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -182,7 +182,7 @@ Another notable tool is **Dockle**, a container image linter that focuses on sec
 Other relevant Dockerfile linters include:
 
 - **Dockerfilelint**: This is an open-source tool that helps developers validate their Dockerfiles. It checks for syntax errors, inefficient coding practices, and potential security vulnerabilities.
-  
+
 - **Dive**: While primarily a tool for exploring a Docker image, Dive can be used indirectly to lint Dockerfiles by analyzing the layers and contents of an image built from a Dockerfile. It helps identify ways to make the image more efficient by reducing its size and removing unnecessary files or layers.
 
 Incorporating these tools into your development workflow can significantly improve the quality and security of your Docker images. By linting Dockerfiles with Hadolint, Dockle, and other similar tools, developers can adhere to best practices, minimize security vulnerabilities, and ensure their images are optimized for production.

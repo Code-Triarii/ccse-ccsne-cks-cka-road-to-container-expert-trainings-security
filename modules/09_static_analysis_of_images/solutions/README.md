@@ -48,7 +48,7 @@ chmod +x /usr/local/bin/snyk
 
 ### Hadolint
 
-> [!NOTE]
+> \[!NOTE\]
 > Hadolint can be installed, but it comes already prepared in a docker image that can be leveraged `ghcr.io/hadolint/hadolint`.
 
 Either way, for quickly being able to execute it outside of a container we can do this trick:
@@ -62,6 +62,26 @@ docker run --rm -i --name hadolint ghcr.io/hadolint/hadolint
 
 ```bash
 sudo docker cp hadolint:/bin/hadolint /usr/local/bin/hadolint
+```
+
+### Dockle
+
+Same as Hadolint, we can install the the utility following  as a package.
+However, we can leverage Docker for executing it.
+
+```bash
+VERSION=$(
+  curl --silent "https://api.github.com/repos/goodwithtech/dockle/releases/latest" | \
+  grep '"tag_name":' | \
+  sed -E 's/.*"v([^"]+)".*/\1/' \
+) && docker pull goodwithtech/dockle:v${VERSION}
+```
+
+```bash
+docker run -it --rm --name dockle --entrypoint sleep docker.io/goodwithtech/dockle:v0.4.14 infinity
+
+# In other TERMINAL TAB
+sudo docker cp dockle:/usr/bin/dockle /usr/local/bin/dockle
 ```
 
 ## Step 2: Configure Tools and Environment
@@ -114,6 +134,14 @@ docker run --rm -i ghcr.io/hadolint/hadolint
 ```
 
 ![Hadolint execution](../../../docs/img/hadolint-exec.png)
+
+### Using Dockle
+
+```bash
+dockle -f json -o dockle.json --exit-code 1 --exit-level "WARN" --username ${REGISTRY_USER} --password ${REGISTRY_PASSWORD} --insecure 172.20.140.18/pygoat/pygoat:33
+```
+
+![Dockle exec](../img/dockle-execution.png)
 
 ## Step 4: Analyze and Compare Results
 

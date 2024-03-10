@@ -2,7 +2,7 @@
 
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
-- [Auxiliary Commands \& Tips](#auxiliary-commands--tips)
+- [Auxiliary Commands & Tips](#auxiliary-commands--tips)
   - [Linux helpers](#linux-helpers)
     - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
