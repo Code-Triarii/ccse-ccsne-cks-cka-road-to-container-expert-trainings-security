@@ -46,6 +46,11 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
       - [Monitor container resource consumption](#monitor-container-resource-consumption)
       - [Ensure healthy containers](#ensure-healthy-containers)
       - [Utilize logging systems](#utilize-logging-systems)
+        - [Docker Events](#docker-events)
+          - [Types of Events](#types-of-events)
+          - [Security Implications](#security-implications)
+          - [Using `docker events`](#using-docker-events)
+    - [Conclusion](#conclusion)
   - [Daemon/Host Security](#daemonhost-security)
     - [Verify Docker CIS benchmark for daemon](#verify-docker-cis-benchmark-for-daemon)
     - [Ensure authenticated users in the host](#ensure-authenticated-users-in-the-host)
@@ -54,7 +59,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
         - [Docker sock](#docker-sock)
         - [Docker over TLS](#docker-over-tls)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -352,6 +357,48 @@ Sysdig falco
 DOS --> healthcheck
 
 #### Utilize logging systems
+
+##### Docker Events
+
+In the context of security monitoring within Docker environments, understanding and tracking Docker events is paramount. Docker provides a command, `docker events`, that streams real-time events related to Docker objects. These events encompass a wide range of activities, from container lifecycle changes to image operations, offering insights into the operations being performed within the Docker environment.
+
+###### Types of Events
+
+Docker events can be categorized into several types, including but not limited to:
+
+- **Container Events**: These include creation, start, stop, kill, commit, pause, unpause, and destruction of containers. Monitoring these events helps in understanding the container lifecycle and detecting anomalous activities that might compromise containerized applications.
+  
+- **Image Events**: Events such as pull, push, tag, delete, and load of Docker images. These events are vital for tracking the source and integrity of images used within the environment.
+  
+- **Network Events**: Including the creation, connection, disconnection, and deletion of Docker networks. Such events are essential for auditing network configurations and isolating network-related security issues.
+  
+- **Volume Events**: Comprising the creation, mounting, unmounting, and deletion of Docker volumes. Monitoring these events is crucial for data persistence and security, ensuring sensitive data is not unintentionally exposed or lost.
+
+###### Security Implications
+
+By monitoring Docker events, organizations can enhance their security posture in several ways:
+
+- **Detect Unauthorized Access**: Unusual container or image activities might indicate unauthorized access or an attempted breach. Early detection of such activities allows for rapid response and mitigation.
+  
+- **Audit and Compliance**: Docker event logs serve as a comprehensive audit trail that can be used to demonstrate compliance with security policies and regulatory requirements, facilitating audits and investigations.
+  
+- **Configuration Management**: Tracking events related to networks and volumes helps in ensuring that configurations do not diverge from best practices, reducing the attack surface and mitigating risks associated with misconfigurations.
+  
+- **Operational Visibility**: Monitoring Docker events provides visibility into the operational aspects of the Docker environment, enabling the identification of performance issues, optimization opportunities, and security enhancements.
+
+###### Using `docker events`
+
+The `docker events` command streams real-time events from the Docker daemon. To filter events of interest, various options can be used, such as `--filter` to narrow down the events based on criteria like event type, container name, or image name. For example, to monitor events related to a specific container:
+
+```bash
+docker events --filter 'type=container' --filter 'container=<container_name>'
+```
+
+For security monitoring, it's advisable to integrate Docker event logs with a centralized logging or security information and event management (SIEM) system. This allows for the aggregation, analysis, and alerting on events across the Docker environment, facilitating proactive security monitoring and incident response.
+
+### Conclusion
+
+Effectively monitoring Docker events is a critical component of securing containerized environments. By keeping a vigilant eye on the activities within Docker, organizations can detect and respond to security threats in real-time, maintain compliance, and ensure the smooth operation of their Dockerized applications.
 
 ______________________________________________________________________
 
