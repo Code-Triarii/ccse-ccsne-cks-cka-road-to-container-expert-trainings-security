@@ -39,6 +39,13 @@ cd clair
 docker-compose up -d
 ```
 
+### Snyk
+
+```bash
+wget -O /usr/local/bin/snyk https://github.com/snyk/cli/releases/download/v1.1205.0/snyk-linux
+chmod +x /usr/local/bin/snyk
+```
+
 ## Step 2: Configure Tools and Environment
 
 - Ensure Docker is running.
@@ -70,6 +77,16 @@ trivy image --format json --output trivy_report.json docker.io/library/bash:late
 
 ```bash
 clairctl --config /etc/clair/config.yaml report --host ${CLAIR_HOST} docker.io/library/bash:latest
+```
+
+### Snyk
+
+```bash
+# Login to Snyk with you token (free account works for this)
+snyk auth ${SNYK_TOKEN}
+
+# Analyze the target image
+snyk container test --json docker.io/library/bash:latest > output.json
 ```
 
 ## Step 4: Analyze and Compare Results
@@ -161,6 +178,22 @@ image_testing_trivy:
   artifacts:
     paths:
       - trivy.json
+    when: always
+  allow_failure: true
+
+image_testing_snyk:
+  stage: test
+  before_script:
+    - wget -O /usr/local/bin/snyk https://github.com/snyk/cli/releases/download/v1.1205.0/snyk-linux
+    - chmod +x /usr/local/bin/snyk
+  script:
+    - docker login ${harbor_url} -u ${harbor_user} -p ${harbor_password}
+    - docker pull ${harbor_url}/pygoat/pygoat:${CI_COMMIT_SHA}
+    - snyk auth ${SNYK_AUTH_TOKEN}
+    - snyk container test --json docker.io/library/bash:latest > snyk.json
+  artifacts:
+    paths:
+      - snyk.json
     when: always
   allow_failure: true
 
