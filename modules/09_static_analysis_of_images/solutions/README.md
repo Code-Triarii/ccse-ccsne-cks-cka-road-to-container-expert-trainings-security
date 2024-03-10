@@ -84,6 +84,12 @@ docker run -it --rm --name dockle --entrypoint sleep docker.io/goodwithtech/dock
 sudo docker cp dockle:/usr/bin/dockle /usr/local/bin/dockle
 ```
 
+### Syft
+
+```bash
+curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
+```
+
 ## Step 2: Configure Tools and Environment
 
 - Ensure Docker is running.
@@ -142,6 +148,12 @@ dockle -f json -o dockle.json --exit-code 1 --exit-level "WARN" --username ${REG
 ```
 
 ![Dockle exec](../img/dockle-execution.png)
+
+### Using Syft
+
+```bash
+syft scan 172.20.140.18/pygoat/pygoat:32 -o json | jq . > syft.json
+```
 
 ## Step 4: Analyze and Compare Results
 
