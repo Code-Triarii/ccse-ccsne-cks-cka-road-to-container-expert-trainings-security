@@ -6,16 +6,19 @@
 
 <!-- PROJECT LOGO -->
 
-# 📝 Road To Container - Security - Expert
+# 📝 Road To Container - Security - Expert - CCSE - CCSNE - CKS
 
 <!-- TECNOLOGIES -->
 
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Docker Badge](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff&style=flat)
+![Kubernetes Badge](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=fff&style=flat)
+![Ansible Badge](https://img.shields.io/badge/Ansible-E00?logo=ansible&logoColor=fff&style=flat)
+![Python Badge](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff&style=flat)
 
-This project serves as a preparation for the CCSE (Certified Container Security Expert) from Practical DevSecOps, CKS (Certified Kubernetes Security) from Linux foundation
+This project serves as a preparation for the CCSE (Certified Container Security Expert) and CCSNE from Practical DevSecOps, CKS (Certified Kubernetes Security) from Linux foundation
 and overall to get a good understanding of container management principles, security risks and hardening techniques. For sure including sample exercises, explanations, tips and more 💪
 
-[Report Bug](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues) · [Request Feature](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues)
+[Report Bug](https://github.com/Code-Triarii/road-to-container-expert-trainings-security/issues) · [Request Feature](https://github.com/Code-Triarii/road-to-container-expert-trainings-security/issues)
 
 </div>
 
@@ -23,7 +26,7 @@ and overall to get a good understanding of container management principles, secu
 
 ## 📚 Table of contents
 
-- [📝 Road To Container - Security - Expert](#-road-to-container---security---expert)
+- [📝 Road To Container - Security - Expert - CCSE - CCSNE - CKS](#-road-to-container---security---expert---ccse---ccsne---cks)
   - [📚 Table of contents](#-table-of-contents)
   - [💡 Purpose](#-purpose)
   - [🏗️ Project structure](#️-project-structure)
@@ -55,16 +58,17 @@ A quick tour on how the project is organized here:
 
 - [ ] Create automatic deployment of scenarios.
 - [x] Include theory and useful tips.
-- [ ] Create comprehensive guide with security measures for holistic container protection.
-- [ ] Complete the full CCSE path with scenarios and exercises including documentation for each of them.
+- [x] Create comprehensive guide with security measures for holistic container protection.
+- [x] Complete the full CCSE path with scenarios and exercises including documentation for each of them.
   - [x] Set docker registry V2 securely.
   - [x] Interact with docker API server using python Docker SDK
   - [x] Samples of interaction with Docker daemon through API rest.
   - [x] How to configure Docker Daemon over HTTPS.
-  - [ ] How to create a container from scratch.
-  - [ ] Holistic container analysis.
+  - [x] How to create a container from scratch.
+  - [x] Holistic container analysis.
+- [ ] 
 
-See the [open issues](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Code-Triarii/road-to-container-expert-trainings-security/issues) for a full list of proposed features (and known issues).
 
 [🔝 Back to top](#-road-to-container---security---expert)
 
