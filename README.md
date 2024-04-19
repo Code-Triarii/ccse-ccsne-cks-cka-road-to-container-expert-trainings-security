@@ -6,13 +6,14 @@
 
 <!-- PROJECT LOGO -->
 
-# 📝 Practical DevSecOps CCSE preparation
+# 📝 Road To Container - Security - Expert
 
 <!-- TECNOLOGIES -->
 
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-This project serves as a preparation for the CCSE (Certified Container Security Expert) certification of Practical DevSecOps organization, including sample exercises, explanations, tips and more 💪
+This project serves as a preparation for the CCSE (Certified Container Security Expert) from Practical DevSecOps, CKS (Certified Kubernetes Security) from Linux foundation
+and overall to get a good understanding of container management principles, security risks and hardening techniques. For sure including sample exercises, explanations, tips and more 💪
 
 [Report Bug](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues) · [Request Feature](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues)
 
@@ -22,10 +23,10 @@ This project serves as a preparation for the CCSE (Certified Container Security 
 
 ## 📚 Table of contents
 
-- [📝 Practical DevSecOps CCSE preparation](#-practical-devsecops-ccse-preparation)
+- [📝 Road To Container - Security - Expert](#-road-to-container---security---expert)
   - [📚 Table of contents](#-table-of-contents)
   - [💡 Purpose](#-purpose)
-  - [🏗️ Project structure](#%EF%B8%8F-project-structure)
+  - [🏗️ Project structure](#️-project-structure)
   - [📍 Roadmap](#-roadmap)
   - [📎 Contributing](#-contributing)
   - [📃 License](#-license)
@@ -65,7 +66,7 @@ A quick tour on how the project is organized here:
 
 See the [open issues](https://github.com/Code-Triarii/practical-devsecops-ccse-prep/issues) for a full list of proposed features (and known issues).
 
-[🔝 Back to top](#-practical-devsecops-ccse-preparation)
+[🔝 Back to top](#-road-to-container---security---expert)
 
 <!-- CONTRIBUTING -->
 
@@ -97,7 +98,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 5. Open a Pull Request
 
-[🔝 Back to top](#-practical-devsecops-ccse-preparation)
+[🔝 Back to top](#-road-to-container---security---expert)
 
 <!-- LICENSE -->
 
@@ -105,7 +106,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 Distributed under the `Apache 2.0` License. See `LICENSE` for more information.
 
-[🔝 Back to top](#-practical-devsecops-ccse-preparation)
+[🔝 Back to top](#-road-to-container---security---expert)
 
 <!-- CONTACT -->
 
@@ -129,7 +130,7 @@ Do not skip it, you will like it :smirk: :smirk: :smirk: :+1:
 
 Don't forget to give the project a star if you liked it! Thanks again! :star2: :yellow_heart:
 
-[🔝 Back to top](#-practical-devsecops-ccse-preparation)
+[🔝 Back to top](#-road-to-container---security---expert)
 
 <!-- ACKNOWLEDGMENTS -->
 
@@ -138,8 +139,9 @@ Don't forget to give the project a star if you liked it! Thanks again! :star2: :
 :100: :100: :100: For those that are curious about some of the resources or utilities and for sure thanking and giving credit to authors, we provide you a list of the most interesting ones (in our understanding) :100: :100: :100:
 
 - [Practical DevSecOps](https://www.practical-devsecops.com/) - to Practical DevSecOps for the amazing learning journey.
+- [Linux Foundation](https://trainingportal.linuxfoundation.org/courses/certified-kubernetes-security-specialist-cks) - for their lovely explanations and content.
 - [ChatGPT 4](https://chat.openai.com/) - for acceleratining the creation of scenarios and solutions.
 - [MITRE container attack matrix](https://attack.mitre.org/matrices/enterprise/containers/) - for proving good insights about how to exploit and leverage applications vulnerabilities hosted in containers.
 - [Excalidraw](https://excalidraw.com/) - for creating amazing diagrams in minutes.
 
-[🔝 Back to top](#-practical-devsecops-ccse-preparation)
+[🔝 Back to top](#-road-to-container---security---expert)
