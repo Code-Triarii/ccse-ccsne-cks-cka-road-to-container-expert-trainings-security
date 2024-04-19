@@ -2,7 +2,7 @@
 
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
-- [Auxiliary Commands & Tips](#auxiliary-commands--tips)
+- [Auxiliary Commands \& Tips](#auxiliary-commands--tips)
   - [Linux helpers](#linux-helpers)
     - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
@@ -29,6 +29,10 @@ This documentation aims to provide guidance, utilities and useful commands that 
       - [Get all vulnerable IDs of fixed Severity](#get-all-vulnerable-ids-of-fixed-severity)
       - [Ignore specific results](#ignore-specific-results)
       - [Avoid exit code if vulnerabilities are found](#avoid-exit-code-if-vulnerabilities-are-found)
+  - [Kubernetes commands](#kubernetes-commands)
+    - [Get information](#get-information)
+      - [Filter in table format](#filter-in-table-format)
+    - [Retrieve API server IP](#retrieve-api-server-ip)
 
 ## Linux helpers
 
@@ -323,3 +327,43 @@ trivy image python:3.8 -f json | jq -s 'map(.Results[].Vulnerabilities[].Vulnera
 # Do not forget the option if you wan to avoid exit code error.
 --exit-code 0
 ```
+
+## Kubernetes commands
+
+### Get information
+
+#### Filter in table format
+
+```bash
+kubectl get pods -n <ns> <pod-id> -o=custom-columns='NAME:metadata.name, NAMESPACE: metadata.namespace'
+
+E.g.
+kubectl get pods -n kube-system -l component=kube-apiserver -o=custom-columns='NAME:metadata.name, NAMESPACE:metadata.namespace, CONTAINER:spec.containers[].name'
+```
+
+### Retrieve API server IP
+
+```bash
+export CLUSTERNAME=$(kubectl config view --minify -o jsonpath='{.clusters[].name}')
+APISERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTERNAME\")].cluster.server}")
+```
+
+> \[!TIP\]
+>  `jsonpath` in this command is a query language for JSON, similar to XPath for XML. It allows you to filter and format the output of complex JSON structures.
+
+
+In this specific command:
+
+```markdown
+APISERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTERNAME\")].cluster.server}")
+```
+
+The `jsonpath` expression `{.clusters[?(@.name==\"$CLUSTERNAME\")].cluster.server}` is used to extract the server URL of the cluster whose name matches the value of `$CLUSTERNAME`.
+
+Here's a breakdown:
+
+- `.clusters`: This navigates to the `clusters` field in the JSON output.
+- `[?(@.name==\"$CLUSTERNAME\")]`: This filters the clusters array to only include the cluster where the `name` field matches the `$CLUSTERNAME` variable.
+- `.cluster.server`: This navigates to the `server` field of the `cluster` object of the filtered cluster.
+
+The result is the server URL of the cluster with the name `$CLUSTERNAME`. This value is then assigned to the `APISERVER` variable.

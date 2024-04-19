@@ -48,6 +48,11 @@ This documentation page aims to shortly summarize some of the most important the
       - [Security Contexts](#security-contexts)
     - [Defining Security Contexts](#defining-security-contexts)
     - [Key Security Context Settings](#key-security-context-settings)
+    - [Kubernetes Workload Prioritization](#kubernetes-workload-prioritization)
+      - [PriorityClasses](#priorityclasses)
+      - [Quality of Service (QoS)](#quality-of-service-qos)
+      - [Affinity and Anti-Affinity](#affinity-and-anti-affinity)
+      - [Tolerations](#tolerations)
     - [Kubernetes Networking](#kubernetes-networking)
       - [Commonly Used Kubernetes Network Plugins (CNIs)](#commonly-used-kubernetes-network-plugins-cnis)
 
@@ -613,7 +618,17 @@ A Kubernetes cluster consists of a set of worker machines, called nodes, that ru
 
     - `Scheduler (kube-scheduler):` It is responsible for distributing work or containers across multiple nodes. It looks for newly created Pods with no assigned node, and selects a node for them to run on.
 
-    - `Controller Manager (kube-controller-manager):` It runs controllers, which are the background threads that handle routine tasks in the cluster. Logically, each controller is a separate process, but to reduce complexity, they are all compiled into a single binary and run in a single process.
+    - `Controller Manager (kube-controller-manager):` The Controller Manager is a daemon that embeds the core control loops shipped with Kubernetes. In applications of robotics and automation, a control loop is a non-terminating loop that regulates the state of the system. In Kubernetes, a controller is a control loop that watches the shared state of the cluster through the `apiserver` and makes changes attempting to move the current state towards the desired state. Examples of controllers that ship with Kubernetes today are the replication controller, endpoints controller, namespace controller, and serviceaccounts controller.
+
+    The kube-controller-manager is a binary that runs all the controllers for the Kubernetes master. It's responsible for ensuring that the shared state of the cluster matches the users' declared intentions. The controllers it runs include:
+
+    - `Node Controller:` Responsible for noticing and responding when nodes go down.
+    - `Replication Controller:` Responsible for maintaining the correct number of pods for every replication controller object in the system.
+    - `Endpoints Controller:` Populates the Endpoints object (that is, joins Services & Pods).
+    - `Service Account & Token Controllers:` Create default accounts and API access tokens for new namespaces.
+    - `... and others.`
+
+    Each of these controllers is a separate process, but to reduce complexity, they are all compiled into a single binary and run in a single process. These controllers read the state of the cluster from the api-server and, upon state changes, make or request changes. They communicate with the API server to create, update, and delete resources.
 
     - `Cloud Controller Manager (cloud-controller-manager):` It runs controllers that interact with the underlying cloud providers. The cloud-controller-manager binary is an alpha feature introduced in Kubernetes release 1.6.
 
@@ -624,6 +639,8 @@ A Kubernetes cluster consists of a set of worker machines, called nodes, that ru
     - `Kube Proxy (kube-proxy):` It is a network proxy that runs on each node in your cluster, implementing part of the Kubernetes Service concept. kube-proxy maintains network rules on nodes. These network rules allow network communication to your Pods from network sessions inside or outside of your cluster.
 
     - `Container Runtime:` The software that is responsible for running containers. Kubernetes supports several runtimes: Docker, containerd, cri-o, rktlet and any implementation of the Kubernetes CRI (Container Runtime Interface).
+
+![Arch](docs/img/kubernetes-arch-in-depth.png)
 
 ______________________________________________________________________
 
@@ -879,7 +896,109 @@ In this example:
 
 By appropriately configuring security contexts, you can significantly limit the potential impact of a compromised container. For instance, running containers as a non-root user (where possible) is a security best practice, as it reduces the capabilities of malicious software or an attacker that manages to break into your container.
 
+### Kubernetes Workload Prioritization
 
+In Kubernetes, you can control the scheduling of your workloads based on their priority, quality of service, affinity, and tolerations. These features allow you to ensure that critical workloads are always scheduled first and are placed on the most suitable nodes.
+
+#### PriorityClasses
+
+PriorityClasses are non-namespaced objects that define a mapping from a priority class name to the integer value of the priority. Pods can have a priority class assigned which ensures that they are scheduled before lower-priority pods.
+
+Example:
+
+```yaml
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: high-priority
+value: 1000000
+globalDefault: false
+description: "This priority class should be used for high priority pods."
+```
+
+#### Quality of Service (QoS)
+
+Kubernetes uses Quality of Service (QoS) classes to make decisions about scheduling and eviction of Pods. QoS is used in the Kubernetes scheduler to make decisions about which pods to run, and in the kubelet to decide which pods to evict when resources are scarce. There are three QoS classes in Kubernetes: `Guaranteed`, `Burstable`, and `BestEffort`.
+
+- `Guaranteed`: Pods are considered top-priority and are guaranteed to not be killed until they exceed their limits, or if the system is under extreme memory pressure. To qualify for this class, every Container in the Pod must have a memory limit and a memory request, and they must be the same. Similarly, every Container must have a CPU limit and a CPU request, and they must be the same.
+- `Burstable`: Pods have some minimum guaranteed amount of resources, but can use more resources when available. To qualify for this class, at least one Container in the Pod must have a memory or CPU request. These pods are considered second priority and are the first to be killed if a node is out of resources and there are no more `BestEffort` pods.
+- `BestEffort`: Pods have no guaranteed amount of resources. These pods are considered the lowest priority. If a Pod doesn’t meet the criteria for any other class, it is given the `BestEffort` QoS class. They are the first to be killed if a node runs out of resources.
+
+The QoS class of any pod can be viewed by using the `kubectl describe pod` command. The QoS class is displayed in the output of the command. This can be useful for troubleshooting resource related issues in a cluster.
+
+#### Affinity and Anti-Affinity
+
+Affinity and anti-affinity are scheduling rules that Kubernetes uses to determine where to place pods. There are two types of affinity:
+
+- `Node Affinity`: This is similar to the `nodeSelector` field but allows you to specify rules rather than a single key-value pair. For example, you can specify that a pod should run on a node with a certain label, or not run on that node, depending on the rules you set.
+
+- `Pod Affinity and Anti-Affinity`: These allow you to specify rules about how pods should be placed relative to other pods. For example, you might have a service that requires a lot of resources and want to ensure that it doesn’t share a node with another resource-intensive service.
+
+Example:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: perico
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: security
+            operator: In
+            values:
+            - S1
+        topologyKey: topology.kubernetes.io/zone
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: security
+              operator: In
+              values:
+              - S2
+          topologyKey: topology.kubernetes.io/zone
+```
+
+#### Tolerations
+
+Tolerations are applied to pods and allow (but do not require) the pods to schedule onto nodes with matching taints. Taints are the opposite of tolerations—they allow a Node to repel a set of pods. Taints and tolerations work together to ensure that pods are not scheduled onto inappropriate nodes. A toleration "tolerates" a taint.
+
+Nodes can have taints applied to them, and pods that do not tolerate those taints will not be scheduled on those nodes. Conversely, pods that tolerate the taints will be scheduled on those nodes.
+
+Example:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: perico
+spec:
+  tolerations:
+  - key: "key1"
+    operator: "Equal"
+    value: "value1"
+    effect: "NoSchedule"
+  - key: "key2"
+    operator: "Exists"
+    effect: "NoExecute"
+    tolerationSeconds: 3600
+```
+
+In this example, the pod will tolerate the `NoSchedule` effect for the taint with key `key1` and value `value1`. It will also tolerate the `NoExecute` effect for any taint with the key `key2`, and if the `NoExecute` taint is applied to the node, the pod will only stay for 3600 seconds before being evicted.
 ______________________________________________________________________
 
 ### Kubernetes Networking
