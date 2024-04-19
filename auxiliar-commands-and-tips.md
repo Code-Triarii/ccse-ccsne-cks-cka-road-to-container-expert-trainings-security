@@ -30,9 +30,12 @@ This documentation aims to provide guidance, utilities and useful commands that 
       - [Ignore specific results](#ignore-specific-results)
       - [Avoid exit code if vulnerabilities are found](#avoid-exit-code-if-vulnerabilities-are-found)
   - [Kubernetes commands](#kubernetes-commands)
+    - [Configure autocompletion kubectl](#configure-autocompletion-kubectl)
     - [Get information](#get-information)
       - [Filter in table format](#filter-in-table-format)
-    - [Retrieve API server IP](#retrieve-api-server-ip)
+    - [Using JSONPath - Example: Retrieve API server IP](#using-jsonpath---example-retrieve-api-server-ip)
+    - [Retrieving the yaml object entirely](#retrieving-the-yaml-object-entirely)
+    - [Interacting with ETCD](#interacting-with-etcd)
 
 ## Linux helpers
 
@@ -330,6 +333,12 @@ trivy image python:3.8 -f json | jq -s 'map(.Results[].Vulnerabilities[].Vulnera
 
 ## Kubernetes commands
 
+### Configure autocompletion kubectl
+
+```bash
+kubectl completion bash >/etc/bash_completion.d/kubectl
+```
+
 ### Get information
 
 #### Filter in table format
@@ -341,7 +350,7 @@ E.g.
 kubectl get pods -n kube-system -l component=kube-apiserver -o=custom-columns='NAME:metadata.name, NAMESPACE:metadata.namespace, CONTAINER:spec.containers[].name'
 ```
 
-### Retrieve API server IP
+### Using JSONPath - Example: Retrieve API server IP
 
 ```bash
 export CLUSTERNAME=$(kubectl config view --minify -o jsonpath='{.clusters[].name}')
@@ -367,3 +376,26 @@ Here's a breakdown:
 - `.cluster.server`: This navigates to the `server` field of the `cluster` object of the filtered cluster.
 
 The result is the server URL of the cluster with the name `$CLUSTERNAME`. This value is then assigned to the `APISERVER` variable.
+
+### Retrieving the yaml object entirely
+
+```bash
+kubectl get pods -n kube-system -l component=etcd -o yaml
+```
+
+### Interacting with ETCD
+
+As mentioned, ETCD is the datastore available for all the cluster and its main purpose is store the information of the cluster (replicated) so the state is consistent.
+
+To interact with etcd there is the command `etcdctl` available.
+
+```bash
+export ETCDL_SERVER=$(kubectl get pods -n kube-system -l component=etcd -o json | jq .items[].spec.containers[0].command | grep listen-client-urls | cut -d '=' -f 2 | cut -d "," -f 2 | cut -d '"' -f 1)
+export ETCDL_POD=$(kubectl get pods -n kube-system -l component=etcd -o=jsonpath={'.items[0].metadata.name'})
+
+export ETCDL_COMMAND="get / --prefix --keys-only"
+export ETCDL_COMMAND="version"
+
+# Inside the container
+kubectl exec -it ${ETCDL_POD} -n kube-system -- sh -c "ETCDCTL_API=3 etcdctl --endpoints ${ETCDL_SERVER} --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt ${ETCDL_COMMAND}"
+```

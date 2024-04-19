@@ -29,7 +29,7 @@ and overall to get a good understanding of container management principles, secu
 - [📝 Road To Container - Security - Expert - CCSE - CCSNE - CKS](#-road-to-container---security---expert---ccse---ccsne---cks)
   - [📚 Table of contents](#-table-of-contents)
   - [💡 Purpose](#-purpose)
-  - [🏗️ Project structure](#%EF%B8%8F-project-structure)
+  - [🏗️ Project structure](#️-project-structure)
   - [📍 Roadmap](#-roadmap)
   - [📎 Contributing](#-contributing)
   - [📃 License](#-license)
@@ -50,7 +50,7 @@ A quick tour on how the project is organized here:
 
 - `docs`: contains the main .md files for documenting the project as well as the images used in the markdown for renderization.
 - `environment`: this folder includes the different automatic resources for setting up the environment required for the different exercises.
-- `modules` > `exercises`: this folder contains the module distribution based on the CCSE path and the different exercises created for preparation.
+- `modules` > `exercises`: this folder contains the different exercises created for preparation of certs as well as specific topis developed in depth.
 - `theorical concepts`: including important theory that supports the foundations understanding and good comprehension of the practical exercises [here](./concepts.md).
 - `auxiliar commands and tips`: section that contains one liners, useful executions and more [here](./auxiliar-commands-and-tips.md).
 
@@ -66,7 +66,7 @@ A quick tour on how the project is organized here:
   - [x] How to configure Docker Daemon over HTTPS.
   - [x] How to create a container from scratch.
   - [x] Holistic container analysis.
-- [ ] Include Kubernetes theory.
+- [x] Include Kubernetes theory.
 
 See the [open issues](https://github.com/Code-Triarii/road-to-container-expert-trainings-security/issues) for a full list of proposed features (and known issues).
 

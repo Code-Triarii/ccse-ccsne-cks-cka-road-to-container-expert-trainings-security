@@ -850,6 +850,8 @@ Kubernetes Objects are persistent entities in the Kubernetes system. Kubernetes 
 
 For more information and a complete list of Kubernetes Objects, refer to the [official Kubernetes documentation](https://kubernetes.io/docs/concepts/overview/working-with-objects/).
 
+> \[!TIP\]
+> To get an understanding of all the resources definitions available in your cluster, you can execute `kubectl api-resources -o wide`
 ______________________________________________________________________
 
 #### Security Contexts
