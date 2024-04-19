@@ -39,6 +39,17 @@ This documentation page aims to shortly summarize some of the most important the
     - [Docker Daemon/Host Security](#docker-daemonhost-security)
     - [Docker Registry Security](#docker-registry-security)
     - [Additional Measures](#additional-measures)
+  - [Kubernetes](#kubernetes)
+    - [Kubernetes Architecture](#kubernetes-architecture)
+      - [Kubernetes Cluster](#kubernetes-cluster)
+    - [Kubernetes Distributions](#kubernetes-distributions)
+    - [Kubernetes alternatives](#kubernetes-alternatives)
+      - [Kubernetes Objects](#kubernetes-objects)
+      - [Security Contexts](#security-contexts)
+    - [Defining Security Contexts](#defining-security-contexts)
+    - [Key Security Context Settings](#key-security-context-settings)
+    - [Kubernetes Networking](#kubernetes-networking)
+      - [Commonly Used Kubernetes Network Plugins (CNIs)](#commonly-used-kubernetes-network-plugins-cnis)
 
 ## Docker
 
@@ -583,3 +594,317 @@ Ensuring the security of Docker containers involves a multi-faceted approach, co
 By implementing these security measures, you will significantly enhance the security posture of your Docker environment, ensuring that containerized applications are protected against various threats.
 
 ______________________________________________________________________
+
+## Kubernetes
+
+### Kubernetes Architecture
+
+Kubernetes is an open-source platform designed to automate deploying, scaling, and operating application containers. It groups containers that make up an application into logical units for easy management and discovery. Here's an overview of Kubernetes' architecture:
+
+#### Kubernetes Cluster
+
+A Kubernetes cluster consists of a set of worker machines, called nodes, that run containerized applications. Every cluster has at least one worker node.
+
+1. `Master Node:` The machine that controls Kubernetes nodes. This is where all task assignments originate. The master node communicates with worker nodes via the Kubernetes API, which the master node exposes. The master node consists of several components:
+
+    - `API Server (kube-apiserver):` It is the front-end of the control plane and exposes the Kubernetes API. It is designed to scale horizontally, i.e., it scales by deploying more instances.
+
+    - `etcd:` Consistent and highly-available key-value store used as Kubernetes' backing store for all cluster data. It manages the configuration data of the cluster and represents the overall state of the cluster at any given point of time.
+
+    - `Scheduler (kube-scheduler):` It is responsible for distributing work or containers across multiple nodes. It looks for newly created Pods with no assigned node, and selects a node for them to run on.
+
+    - `Controller Manager (kube-controller-manager):` It runs controllers, which are the background threads that handle routine tasks in the cluster. Logically, each controller is a separate process, but to reduce complexity, they are all compiled into a single binary and run in a single process.
+
+    - `Cloud Controller Manager (cloud-controller-manager):` It runs controllers that interact with the underlying cloud providers. The cloud-controller-manager binary is an alpha feature introduced in Kubernetes release 1.6.
+
+2. `Worker/Slave Node:` These machines perform the requested tasks assigned by the master node. Each worker node runs a special component called the Kubelet, which is an agent for managing the node and communicating with the Kubernetes master. The worker nodes also run the container runtime, such as Docker, for managing the container lifecycle.
+
+    - `Kubelet:` An agent that runs on each node in the cluster. It makes sure that containers are running in a Pod. The kubelet takes a set of PodSpecs that are provided through various mechanisms and ensures that the containers described in those PodSpecs are running and healthy.
+
+    - `Kube Proxy (kube-proxy):` It is a network proxy that runs on each node in your cluster, implementing part of the Kubernetes Service concept. kube-proxy maintains network rules on nodes. These network rules allow network communication to your Pods from network sessions inside or outside of your cluster.
+
+    - `Container Runtime:` The software that is responsible for running containers. Kubernetes supports several runtimes: Docker, containerd, cri-o, rktlet and any implementation of the Kubernetes CRI (Container Runtime Interface).
+
+______________________________________________________________________
+
+### Kubernetes Distributions
+
+1. [kind (Kubernetes in Docker)](https://kind.sigs.k8s.io/) - kind lets you run Kubernetes clusters in Docker containers. It is primarily used for testing Kubernetes itself, but can also be used for local development or CI.
+2. [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/) - kubeadm helps you bootstrap a minimum viable Kubernetes cluster that conforms to best practices. It's a tool that works by provisioning and configuring the necessary components to form a compliant cluster.
+3. [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine) - GKE offers a managed environment within Google Cloud to run Kubernetes clusters. It handles much of the management and maintenance of the cluster infrastructure.
+4. [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/services/kubernetes-service/) - AKS is a managed Kubernetes service provided by Microsoft Azure that simplifies Kubernetes deployment, management, and operations.
+5. [Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/) - EKS is a managed Kubernetes service from Amazon Web Services that makes it easy to deploy, manage, and scale containerized applications using Kubernetes on AWS.
+6. [Linode Kubernetes Engine (LKE)](https://www.linode.com/products/kubernetes/) - LKE is a fully-managed Kubernetes container orchestration service provided by Linode, offering an easy deployment and management experience for scaling applications.
+
+### Kubernetes alternatives
+
+1. [OpenShift](https://www.openshift.com/) - OpenShift is a family of containerization software developed by Red Hat.
+
+2. [Docker Swarm](https://docs.docker.com/engine/swarm/) - Docker's own native clustering and orchestration solution.
+
+3. [Apache Mesos](http://mesos.apache.org/) - Apache Mesos abstracts CPU, memory, storage, and other compute resources away from machines (physical or virtual), enabling fault-tolerant and elastic distributed systems to easily be built and run effectively.
+
+______________________________________________________________________
+
+#### Kubernetes Objects
+
+Kubernetes Objects are persistent entities in the Kubernetes system. Kubernetes uses these entities to represent the state of your cluster. Here are some of the most common Kubernetes Objects:
+
+- `Pods:` The smallest and simplest unit in the Kubernetes object model that you create or deploy. A Pod represents a running process on your cluster. Each Pod is isolated by the IP address, PID, and more namespaces. Pods can have multiple containers.
+
+    Example:
+
+    ```yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: my-pod
+    spec:
+      containers:
+      - name: my-container
+        image: my-image
+    ```
+
+- `Services:` An abstract way to expose an application running on a set of Pods as a network service. It provides a single IP address and DNS name by which it can be accessed.
+
+    Example:
+
+    ```yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: my-service
+    spec:
+      selector:
+        app: perico
+      ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 9376
+    ```
+
+- `Volumes:` Provides persistent storage for a Pod. Kubernetes supports many types of volumes, such as NFS, Ceph, GlusterFS, local directory, etc.
+
+    Example:
+
+    ```yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: my-pod
+    spec:
+      containers:
+      - name: my-container
+        image: my-image
+        volumeMounts:
+        - mountPath: /opt
+          name: my-volume
+      volumes:
+      - name: my-volume
+        emptyDir: {}
+    ```
+
+- `Namespaces:` Provides scope for names. Names of resources need to be unique within a namespace, but not across namespaces. They are useful when multiple teams or projects are using the same cluster.
+
+    Example:
+
+    ```yaml
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: my-namespace
+    ```
+
+- `ReplicaSets:` Ensures that a specified number of pod replicas are running at any given time. However, they do not offer any sort of update strategy, as they are designed to be used with Pods that are expected to be replaced in a rolling update fashion. `ReplicaSets` are created from other replica controller definitions such as `Deployments` or `StatefulSets`
+
+    Example:
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: ReplicaSet
+    metadata:
+      name: my-replicaset
+    spec:
+      replicas: 3
+      selector:
+        matchLabels:
+          app: perico
+      template:
+        metadata:
+          labels:
+            app: perico
+        spec:
+          containers:
+          - name: my-container
+            image: my-image
+    ```
+
+- `Deployments:` Provides declarative updates for Pods and ReplicaSets. You describe a desired state in a Deployment, and the Deployment Controller changes the actual state to the desired state at a controlled rate.
+
+    Example:
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: my-deployment
+    spec:
+      replicas: 3
+      selector:
+        matchLabels:
+          app: perico
+      template:
+        metadata:
+          labels:
+            app: perico
+        spec:
+          containers:
+          - name: my-container
+            image: my-image
+    ```
+
+- `StatefulSets:` Manages the deployment and scaling of a set of Pods, and provides guarantees about the ordering and uniqueness of these Pods.
+
+    Example:
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      name: my-statefulset
+    spec:
+      serviceName: "my-service"
+      replicas: 3
+      selector:
+        matchLabels:
+          app: perico
+      template:
+        metadata:
+          labels:
+            app: perico
+        spec:
+          containers:
+          - name: my-container
+            image: my-image
+    ```
+
+- `DaemonSets:` Ensures that all (or some) Nodes run a copy of a Pod. As nodes are added to the cluster, Pods are added to them. As nodes are removed from the cluster, those Pods are garbage collected.
+
+    Example:
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: DaemonSet
+    metadata:
+      name: my-daemonset
+    spec:
+      selector:
+        matchLabels:
+          app: perico
+      template:
+        metadata:
+          labels:
+            app: perico
+        spec:
+          containers:
+          - name: my-container
+            image: my-image
+    ```
+
+- `Jobs:` Creates one or more Pods and ensures that a specified number of them successfully terminate.
+
+    Example:
+
+    ```yaml
+    apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: my-job
+    spec:
+      template:
+        spec:
+          containers:
+          - name: my-container
+            image: my-image
+          restartPolicy: OnFailure
+    ```
+
+- `Custom Resource Definitions (CRDs):` Allows you to create your own custom Kubernetes objects. A resource is an endpoint in the Kubernetes API that stores a collection of API objects of a certain kind.
+
+For more information and a complete list of Kubernetes Objects, refer to the [official Kubernetes documentation](https://kubernetes.io/docs/concepts/overview/working-with-objects/).
+
+______________________________________________________________________
+
+#### Security Contexts
+
+Security contexts define privilege and access control settings for a Pod or Container in Kubernetes. They are vital for managing the security aspects of your pods and containers by setting permissions and access controls that are enforced by the container runtime environment. Security contexts allow administrators to manage the security constraints that are applied at runtime, ensuring that containers operate under the defined security policies, which can include controlling access to resources or limiting potential damage in case an intrusion occurs.
+
+### Defining Security Contexts
+
+You can specify security contexts for a Pod or a Container. A Pod-level security context applies to all containers within the same Pod. If you specify both Pod-level and Container-level security contexts, the settings in the Container-level context override the Pod-level settings for the corresponding containers.
+
+Example:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+  containers:
+  - name: nginx
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+```
+
+In this example:
+
+- The `runAsUser` and `runAsGroup` fields dictate that the Pod runs with a user ID of 1000 and a group ID of 3000, respectively.
+- The `fsGroup` field specifies that file system groups should be set to 2000. This affects the ownership of volumes mounted into the Pod and can allow the container to write to the volume.
+- The Container-level security context for the nginx container specifically sets `allowPrivilegeEscalation` to false, preventing the container from gaining more privileges than its parent process.
+
+### Key Security Context Settings
+
+- **`runAsUser`**: Sets the UID with which the container will run.
+- **`runAsGroup`**: Sets the GID with which the container will run.
+- **`fsGroup`**: Sets the GID for file systems used by the container. By default it will be mounted as `root` and that could lead to privileges issues is using non-root user in the image of the container.
+- **`privileged`**: Determines if any container in a Pod can enable privileged mode, similar to the root user on a Linux machine.
+- **`readOnlyRootFilesystem`**: When set to true, this prevents containers from writing to the filesystem on the root partition.
+- **`allowPrivilegeEscalation`**: Controls whether a process can gain more privileges than its parent process. This directly affects the use of `setuid` and `setgid` bits as well as the `CAP_SYS_ADMIN` capability.
+
+By appropriately configuring security contexts, you can significantly limit the potential impact of a compromised container. For instance, running containers as a non-root user (where possible) is a security best practice, as it reduces the capabilities of malicious software or an attacker that manages to break into your container.
+
+
+______________________________________________________________________
+
+### Kubernetes Networking
+
+Kubernetes supports a flat network model, which means that every Pod can communicate with all others without NAT. By default, each Pod is assigned its own unique IP address. This design allows for easy service discovery and robust in-cluster communication but requires a network plugin to manage the IP assignment and handling.
+
+- **Cluster Networking:** This involves communication between different services within the same Kubernetes cluster. Pods need to communicate with each other and with the Kubernetes master. The network must allow for IP routing between Pods across nodes and must not require NAT for intra-cluster traffic.
+
+- **External Networking:** This type of networking deals with communication between services within the Kubernetes cluster and the external world. It can involve exposing certain services to the outside through various methods like NodePort, LoadBalancer, or Ingress.
+
+> \[!NOTE\]
+> Kubernetes does not come with a default network plugin. You must install a third-party network plugin.
+
+#### Commonly Used Kubernetes Network Plugins (CNIs)
+
+- **Calico:** An open-source networking and network security solution for containers, virtual machines, and native host-based workloads. Calico supports a variety of networking options including the ability to use both overlay and non-overlay networks.
+
+- **Flannel:** A simple and easy to configure layer 3 network fabric designed for Kubernetes. Flannel runs a small, simple daemon on each host that sets up a network overlay. It is very easy to set up and does not require complex configuration.
+
+- **Weave Net:** Provides a resilient and simple to use network for Kubernetes and Docker container deployments. It creates a virtual network that connects Docker containers deployed across multiple hosts and enables their automatic discovery.
+
+- **Cilium:** Leverages BPF (Berkeley Packet Filter), providing highly scalable and programmable networking and security for the container ecosystem. Cilium is particularly focused on providing visibility and security for microservice architectures.
+
+- **Canal:** Combines Flannel and Calico, providing networking from Flannel and network policy from Calico. It is a good choice for those who need simple networking combined with strong security.
+
+Each of these plugins has its own strengths and is suited for different types of environments and requirements. When choosing a network plugin, consider your specific needs in terms of performance, security, and network policies.
+
+For more comprehensive information and detailed guidance, you can check the [Kubernetes official documentation page](https://kubernetes.io/docs/home/).

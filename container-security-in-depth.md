@@ -2,6 +2,8 @@
 
 Ensuring the security of Docker environments involves a comprehensive approach, covering the security of images, containers, the Docker daemon, and Docker registry. This document expands on the key security measures, providing examples and details for implementing each control.
 
+This documentation includes security practices explained generally and with specific details for `Docker` and `Kubernetes`.
+
 - [Security](#security)
   - [Image Security](#image-security)
     - [Use Trusted Base Images](#use-trusted-base-images)
@@ -63,7 +65,7 @@ Ensuring the security of Docker environments involves a comprehensive approach, 
         - [Docker sock](#docker-sock)
         - [Docker over TLS](#docker-over-tls)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -285,6 +287,40 @@ for pid in "${!pid_container_map[@]}"; do
   fi
 done
 ```
+
+It is a good practice that containers run only with the `permissions` needed. For this reason is important to avoid using `unconfined` as default profile.
+
+Example of limiting profile:
+
+- Default allow of all system calls.
+- Explicit denial of syscalls included in ``names`` list.
+
+```json
+{
+    "defaultAction": "SCMP_ACT_ALLOW",
+    "syscalls": [
+        {
+            "names": ["mkdir","rmdir","chown","chmod","kill"],
+            "action": "SCMP_ACT_ERRNO",
+            "args": []
+        }
+  ]
+}
+```
+
+```bash
+docker run -it --name container-name --security-opt seccomp=<profile-name>.json <container-image>
+```
+
+Possible `Actions`:
+
+| Action        | Description                                        |
+| ------------- | -------------------------------------------------- |
+| `SCMP_ACT_KILL` | Kill with a exit status of SIGSYS                  |
+| `SCMP_ACT_TRAP` | Send a SIGSYS signal without executing the syscall |
+| `SCMP_ACT_ERRNO`| Receive a return value of errno when it calls a syscall |
+| `SCMP_ACT_TRACE`| Invoke a ptracer to make a decision or set errno to -ENOSYS |
+| `SCMP_ACT_ALLOW`| Allow executing the syscall                        |
 
 #### Restrict AppArmor unconfined
 
