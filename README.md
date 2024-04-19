@@ -51,12 +51,14 @@ A quick tour on how the project is organized here:
 - `docs`: contains the main .md files for documenting the project as well as the images used in the markdown for renderization.
 - `environment`: this folder includes the different automatic resources for setting up the environment required for the different exercises.
 - `modules` > `exercises`: this folder contains the different exercises created for preparation of certs as well as specific topis developed in depth.
-- `theorical concepts`: including important theory that supports the foundations understanding and good comprehension of the practical exercises [here](./concepts.md).
-- `auxiliar commands and tips`: section that contains one liners, useful executions and more [here](./auxiliar-commands-and-tips.md).
+- `theorical concepts`: including important theory that supports the foundations understanding and good comprehension of the practical exercises:
+  - [**Concepts**](concepts.md) - Explaining architecture, main objects, alternatives, issues, etc.
+  - [**Container Security In Depth**](container-security-in-depth.md) - Targeting missconfigurations, security issues and how to address those.
+  - [**Auxiliar Commands and Tips**](auxiliar-commands-and-tips.md) - Helpers for agility executing tasks in containers environment for `Docker` and `Kubernetes`.
 
 ## 📍 Roadmap
 
-- [ ] Create automatic deployment of scenarios.
+- [x] Create automatic deployment of scenarios.
 - [x] Include theory and useful tips.
 - [x] Create comprehensive guide with security measures for holistic container protection.
 - [x] Complete the full CCSE path with scenarios and exercises including documentation for each of them.
