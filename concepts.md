@@ -53,6 +53,7 @@ This documentation page aims to shortly summarize some of the most important the
       - [Quality of Service (QoS)](#quality-of-service-qos)
       - [Affinity and Anti-Affinity](#affinity-and-anti-affinity)
       - [Tolerations](#tolerations)
+    - [Scheduling Workflow](#scheduling-workflow)
     - [Kubernetes Networking](#kubernetes-networking)
       - [Commonly Used Kubernetes Network Plugins (CNIs)](#commonly-used-kubernetes-network-plugins-cnis)
 
@@ -1001,6 +1002,28 @@ spec:
 ```
 
 In this example, the pod will tolerate the `NoSchedule` effect for the taint with key `key1` and value `value1`. It will also tolerate the `NoExecute` effect for any taint with the key `key2`, and if the `NoExecute` taint is applied to the node, the pod will only stay for 3600 seconds before being evicted.
+
+### Scheduling Workflow
+
+The Kubernetes scheduler is responsible for placing pods onto nodes. It performs this task by following a specific workflow that involves several stages:
+
+1. **Filtering**: The scheduler filters out nodes that do not meet the requirements of the pod. This could be due to resource constraints, taints and tolerations, affinity and anti-affinity rules, and other factors. The remaining nodes are considered feasible to host the pod.
+
+2. **Scoring**: Each of the remaining nodes is then scored based on a set of criteria. These criteria include how well the pod fits on the node, whether the pod's requirements match the node's labels, the node's resource availability, and more. Each node is given a score between 0 and 100 for each criterion, and these scores are then combined to form a total score for each node.
+
+3. **Selection**: The node with the highest total score is selected to host the pod. If there are multiple nodes with the same highest score, one of them is chosen at random.
+
+Here's a simplified example of how the scoring might work:
+
+```text
+Node A: Score 80 (high resource availability, matches pod's affinity rules)
+Node B: Score 70 (medium resource availability, does not match pod's affinity rules)
+Node C: Score 90 (high resource availability, matches pod's affinity rules, less network latency)
+
+In this case, Node C would be chosen to host the pod.
+```
+
+This workflow ensures that pods are placed on the most suitable nodes in the cluster, taking into account the current state of the cluster and the specific requirements of each pod.
 ______________________________________________________________________
 
 ### Kubernetes Networking
