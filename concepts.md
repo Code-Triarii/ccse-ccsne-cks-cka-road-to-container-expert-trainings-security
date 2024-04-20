@@ -57,6 +57,7 @@ This documentation page aims to shortly summarize some of the most important the
     - [Kubernetes Networking](#kubernetes-networking)
       - [Commonly Used Kubernetes Network Plugins (CNIs)](#commonly-used-kubernetes-network-plugins-cnis)
       - [Cluster Networking](#cluster-networking)
+      - [Kube-proxy](#kube-proxy)
 
 ## Docker
 
@@ -1040,6 +1041,12 @@ Kubernetes supports a flat network model, which means that every Pod can communi
 
 #### Commonly Used Kubernetes Network Plugins (CNIs)
 
+In the context of the Cloud Native Computing Foundation (CNCF) and Kubernetes, a Container Network Interface (CNI) is a specification and a set of tools to configure networking interfaces in Linux containers. Kubernetes uses CNI as an interface between network providers and Kubernetes networking.
+
+CNIs are responsible for allocating IP addresses to pods, handling routing on the host, and managing DNS. They provide the network plumbing under the hood of Kubernetes and ensure that all components can communicate with each other correctly.
+
+Here are some commonly used Kubernetes network plugins:
+
 - **Calico:** An open-source networking and network security solution for containers, virtual machines, and native host-based workloads. Calico supports a variety of networking options including the ability to use both overlay and non-overlay networks.
 
 - **Flannel:** A simple and easy to configure layer 3 network fabric designed for Kubernetes. Flannel runs a small, simple daemon on each host that sets up a network overlay. It is very easy to set up and does not require complex configuration.
@@ -1065,3 +1072,15 @@ Cluster networking involves communication between different services within the 
 - **Shared localhost interface inside pods:** Each pod in a Kubernetes cluster shares a network namespace, which means that they share a localhost interface. This means that processes running in different containers of the same pod can communicate with each other over localhost (127.0.0.1). This is useful for sidecar patterns where one container might need to communicate with another container running in the same pod.
 
 Remember, Kubernetes does not come with a default network plugin. You must install a third-party network plugin to manage the IP assignment and handling.
+
+#### Kube-proxy
+
+Kube-proxy is a key component of any Kubernetes cluster and is responsible for managing network communication inside the cluster. It operates at the network transport level (i.e., TCP, UDP) and can thus forward or proxy traffic to appropriate pods based on their IP and port.
+
+- **Role:** Kube-proxy maintains network rules on nodes. These network rules allow network communication to your Pods from network sessions inside or outside of your cluster.
+
+- **Working:** Kube-proxy uses the operating system's packet filtering layer if available, and falls back to forwarding traffic itself if necessary. It ensures that the networking environment is predictable and accessible, and that it isolates the pods from each other.
+
+- **Services:** Kube-proxy is responsible for routing service traffic to appropriate back-end pods. When a service is created within Kubernetes, it is assigned a virtual IP address. This IP is tied to a port on each node running kube-proxy. Any traffic that hits this port/IP combo is routed to one of the pods backing the service.
+
+Remember, kube-proxy is not responsible for managing container-to-container traffic within the same pod. This is handled by the shared network namespace of the pod.

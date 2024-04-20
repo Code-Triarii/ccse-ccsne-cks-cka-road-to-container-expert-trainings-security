@@ -38,6 +38,7 @@ This documentation aims to provide guidance, utilities and useful commands that 
     - [Using JSONPath - Example: Retrieve API server IP](#using-jsonpath---example-retrieve-api-server-ip)
     - [Retrieving the yaml object entirely](#retrieving-the-yaml-object-entirely)
     - [Interacting with ETCD](#interacting-with-etcd)
+    - [Expose Replica Controller](#expose-replica-controller)
 
 ## Linux helpers
 
@@ -373,6 +374,7 @@ alias kn='f() { [ "$1" ] && kubecolor config set-context --current --namespace $
 alias deploy='kubectl get deploy'
 alias pods='kubectl get pod'
 alias ktaint="kubectl get nodes -o custom-columns='NAME:.metadata.name,TAINTS:.spec.taints'"
+complete -F __start_kubectl k
 ```
 
 ### Get information
@@ -435,3 +437,40 @@ export ETCDL_COMMAND="version"
 # Inside the container
 kubectl exec -it ${ETCDL_POD} -n kube-system -- sh -c "ETCDCTL_API=3 etcdctl --endpoints ${ETCDL_SERVER} --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt ${ETCDL_COMMAND}"
 ```
+
+### Expose Replica Controller
+
+1. Example deployment:
+
+```bash
+kubectl create -f https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/application/deployment.yaml --dry-run -o json | jq '.metadata.name = "my-nginx"' | kubectl create -f -
+```
+
+Options explained:
+
+- `kubectl create -f <file>`: This command is used to create resources in Kubernetes from a file. In this case, the file is being fetched directly from a URL.
+
+- `https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/application/deployment.yaml`: This is the URL of the file that contains the Kubernetes resource definitions. It's hosted on the Kubernetes website's GitHub repository.
+
+- `--dry-run`: This option allows you to see what the command would do without actually applying any changes. It's useful for testing and validating your commands.
+
+- `-o json`: This option changes the output format to JSON. By default, `kubectl` commands output in a human-readable format, but JSON is easier to manipulate programmatically.
+
+- `| jq '.metadata.name = "my-nginx"'`: This part of the command uses the `jq` tool to modify the JSON output from the previous command. It's changing the `name` field in the `metadata` section of the resource definition to "my-nginx".
+
+- `| kubectl create -f -`: This part of the command takes the output from the previous command (the modified JSON) and uses it as the input file for another `kubectl create` command. The `-f -` part tells `kubectl` to read the file from standard input (which is the output of the previous command).
+
+2. Getting the container port if defined (in this case we know, but for further reference):
+
+```bash
+k get deployments.apps my-nginx -o=jsonpath='{.spec.template.spec.containers[].ports[].containerPort}'
+```
+
+> \[!TIP\]
+> If the pod template has several containers defined, or the container exposes several ports --> `-o=jsonpath='{.spec.template.spec.containers[*].ports[*].containerPort}'`
+
+```bash
+kubectl expose deployment my-nginx --port=80 --targetPort=80 --type=ClusterIP --name=my-nginx-svc
+```
+
+![SVC expose](modules/12_container_hacking_techniques/img/04-svc-expose.png)
