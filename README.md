@@ -29,7 +29,7 @@ and overall to get a good understanding of container management principles, secu
 - [📝 Road To Container - Security - Expert - CCSE - CCSNE - CKS](#-road-to-container---security---expert---ccse---ccsne---cks)
   - [📚 Table of contents](#-table-of-contents)
   - [💡 Purpose](#-purpose)
-  - [🏗️ Project structure](#%EF%B8%8F-project-structure)
+  - [🏗️ Project structure](#️-project-structure)
   - [📍 Roadmap](#-roadmap)
   - [📎 Contributing](#-contributing)
   - [📃 License](#-license)
@@ -56,7 +56,20 @@ A quick tour on how the project is organized here:
   - `Kubernetes:Kind` - For quick testing and exercises in local machine only requiring docker.
   - `Kubernetes: Single Node Kubeadm` - If you have a VM, just create a single node cluster for testing. **Prepared for ubuntu 22.04. Other systems require minor tweaking** (e.g. changing sources references.)
 
-- `modules` > `exercises`: this folder contains the different exercises created for preparation of certs as well as specific topis developed in depth.
+- [`modules`](./modules/): this folder contains the different exercises created for preparation of certs as well as specific topis developed in depth.
+  
+  - `00_set_docker_v2_registry`: This module provides instructions to set up a Docker Registry V2 securely using self-signed certificates and configure the Docker daemon to trust this registry.
+  - `01_docker_python_sdk`: This module provides a Python script for Docker management, allowing listing all Docker images and containers, and running a new container with specific configurations using the Docker SDK for Python.
+  - `02_interacting_with_API_server`: This module provides exercises to interact with the API server, enhancing your understanding of API operations in a containerized environment.
+  - `03_analyze_docker_sock`: This module provides a deep dive into Docker socket analysis, helping you understand potential security risks and how to mitigate them.
+  - `04_expose_docker_api_https`: This module guides you through the process of exposing the Docker API over HTTPS, ensuring secure communication with the Docker daemon.
+  - `06_deploy_and_configure_harbor`: This module provides detailed instructions for deploying and configuring Harbor, a secure container image registry.
+  - `07_sign_image_cosign`: This module provides detailed instructions for implementing code-signing for Docker images using Cosign, enhancing the security of your container images.
+  - `08_docker_image_encryption`: This module provides a guide to encrypt Docker images, adding an extra layer of security to your containerized applications.
+  - `09_static_analysis_of_images`: This module provides instructions for conducting static analysis of Docker images using tools like Grype, Trivy, and Clair, helping you identify and mitigate vulnerabilities.
+  - `10_checking_compliance_cis`: This module provides a guide to audit Docker configurations to ensure compliance with the Center for Internet Security (CIS) Docker Benchmark using Docker-Bench.
+  - `11_discovery_techniques`: This module provides techniques to discover the attack surface of a container environment to identify possible breaches and act upon to secure it.
+  - `12_container_hacking_techniques`: This module provides techniques to attack and exploit security missconfigurations in containerized environments.
 
 - `theorical concepts`: including important theory that supports the foundations understanding and good comprehension of the practical exercises:
 
