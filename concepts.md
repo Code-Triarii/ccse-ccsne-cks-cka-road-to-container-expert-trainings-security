@@ -617,33 +617,33 @@ A Kubernetes cluster consists of a set of worker machines, called nodes, that ru
 
 1. `Master Node:` The machine that controls Kubernetes nodes. This is where all task assignments originate. The master node communicates with worker nodes via the Kubernetes API, which the master node exposes. The master node consists of several components:
 
-    - `API Server (kube-apiserver):` It is the front-end of the control plane and exposes the Kubernetes API. It is designed to scale horizontally, i.e., it scales by deploying more instances.
+   - `API Server (kube-apiserver):` It is the front-end of the control plane and exposes the Kubernetes API. It is designed to scale horizontally, i.e., it scales by deploying more instances.
 
-    - `etcd:` Consistent and highly-available key-value store used as Kubernetes' backing store for all cluster data. It manages the configuration data of the cluster and represents the overall state of the cluster at any given point of time.
+   - `etcd:` Consistent and highly-available key-value store used as Kubernetes' backing store for all cluster data. It manages the configuration data of the cluster and represents the overall state of the cluster at any given point of time.
 
-    - `Scheduler (kube-scheduler):` It is responsible for distributing work or containers across multiple nodes. It looks for newly created Pods with no assigned node, and selects a node for them to run on.
+   - `Scheduler (kube-scheduler):` It is responsible for distributing work or containers across multiple nodes. It looks for newly created Pods with no assigned node, and selects a node for them to run on.
 
-    - `Controller Manager (kube-controller-manager):` The Controller Manager is a daemon that embeds the core control loops shipped with Kubernetes. In applications of robotics and automation, a control loop is a non-terminating loop that regulates the state of the system. In Kubernetes, a controller is a control loop that watches the shared state of the cluster through the `apiserver` and makes changes attempting to move the current state towards the desired state. Examples of controllers that ship with Kubernetes today are the replication controller, endpoints controller, namespace controller, and serviceaccounts controller.
+   - `Controller Manager (kube-controller-manager):` The Controller Manager is a daemon that embeds the core control loops shipped with Kubernetes. In applications of robotics and automation, a control loop is a non-terminating loop that regulates the state of the system. In Kubernetes, a controller is a control loop that watches the shared state of the cluster through the `apiserver` and makes changes attempting to move the current state towards the desired state. Examples of controllers that ship with Kubernetes today are the replication controller, endpoints controller, namespace controller, and serviceaccounts controller.
 
-    The kube-controller-manager is a binary that runs all the controllers for the Kubernetes master. It's responsible for ensuring that the shared state of the cluster matches the users' declared intentions. The controllers it runs include:
+   The kube-controller-manager is a binary that runs all the controllers for the Kubernetes master. It's responsible for ensuring that the shared state of the cluster matches the users' declared intentions. The controllers it runs include:
 
-    - `Node Controller:` Responsible for noticing and responding when nodes go down.
-    - `Replication Controller:` Responsible for maintaining the correct number of pods for every replication controller object in the system.
-    - `Endpoints Controller:` Populates the Endpoints object (that is, joins Services & Pods).
-    - `Service Account & Token Controllers:` Create default accounts and API access tokens for new namespaces.
-    - `... and others.`
+   - `Node Controller:` Responsible for noticing and responding when nodes go down.
+   - `Replication Controller:` Responsible for maintaining the correct number of pods for every replication controller object in the system.
+   - `Endpoints Controller:` Populates the Endpoints object (that is, joins Services & Pods).
+   - `Service Account & Token Controllers:` Create default accounts and API access tokens for new namespaces.
+   - `... and others.`
 
-    Each of these controllers is a separate process, but to reduce complexity, they are all compiled into a single binary and run in a single process. These controllers read the state of the cluster from the api-server and, upon state changes, make or request changes. They communicate with the API server to create, update, and delete resources.
+   Each of these controllers is a separate process, but to reduce complexity, they are all compiled into a single binary and run in a single process. These controllers read the state of the cluster from the api-server and, upon state changes, make or request changes. They communicate with the API server to create, update, and delete resources.
 
-    - `Cloud Controller Manager (cloud-controller-manager):` It runs controllers that interact with the underlying cloud providers. The cloud-controller-manager binary is an alpha feature introduced in Kubernetes release 1.6.
+   - `Cloud Controller Manager (cloud-controller-manager):` It runs controllers that interact with the underlying cloud providers. The cloud-controller-manager binary is an alpha feature introduced in Kubernetes release 1.6.
 
 2. `Worker/Slave Node:` These machines perform the requested tasks assigned by the master node. Each worker node runs a special component called the Kubelet, which is an agent for managing the node and communicating with the Kubernetes master. The worker nodes also run the container runtime, such as Docker, for managing the container lifecycle.
 
-    - `Kubelet:` An agent that runs on each node in the cluster. It makes sure that containers are running in a Pod. The kubelet takes a set of PodSpecs that are provided through various mechanisms and ensures that the containers described in those PodSpecs are running and healthy.
+   - `Kubelet:` An agent that runs on each node in the cluster. It makes sure that containers are running in a Pod. The kubelet takes a set of PodSpecs that are provided through various mechanisms and ensures that the containers described in those PodSpecs are running and healthy.
 
-    - `Kube Proxy (kube-proxy):` It is a network proxy that runs on each node in your cluster, implementing part of the Kubernetes Service concept. kube-proxy maintains network rules on nodes. These network rules allow network communication to your Pods from network sessions inside or outside of your cluster.
+   - `Kube Proxy (kube-proxy):` It is a network proxy that runs on each node in your cluster, implementing part of the Kubernetes Service concept. kube-proxy maintains network rules on nodes. These network rules allow network communication to your Pods from network sessions inside or outside of your cluster.
 
-    - `Container Runtime:` The software that is responsible for running containers. Kubernetes supports several runtimes: Docker, containerd, cri-o, rktlet and any implementation of the Kubernetes CRI (Container Runtime Interface).
+   - `Container Runtime:` The software that is responsible for running containers. Kubernetes supports several runtimes: Docker, containerd, cri-o, rktlet and any implementation of the Kubernetes CRI (Container Runtime Interface).
 
 ![Arch](docs/img/kubernetes-arch-in-depth.png)
 
@@ -686,182 +686,182 @@ Kubernetes Objects are persistent entities in the Kubernetes system. Kubernetes 
 
 - `Pods:` The smallest and simplest unit in the Kubernetes object model that you create or deploy. A Pod represents a running process on your cluster. Each Pod is isolated by the IP address, PID, and more namespaces. Pods can have multiple containers.
 
-    Example:
+  Example:
 
-    ```yaml
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      name: my-pod
-    spec:
-      containers:
-      - name: my-container
-        image: my-image
-    ```
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: my-pod
+  spec:
+    containers:
+    - name: my-container
+      image: my-image
+  ```
 
 - `Services:` An abstract way to expose an application running on a set of Pods as a network service. It provides a single IP address and DNS name by which it can be accessed.
 
-    Example:
+  Example:
 
-    ```yaml
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: my-service
-    spec:
-      selector:
-        app: perico
-      ports:
-        - protocol: TCP
-          port: 80
-          targetPort: 9376
-    ```
+  ```yaml
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: my-service
+  spec:
+    selector:
+      app: perico
+    ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 9376
+  ```
 
 - `Volumes:` Provides persistent storage for a Pod. Kubernetes supports many types of volumes, such as NFS, Ceph, GlusterFS, local directory, etc.
 
-    Example:
+  Example:
 
-    ```yaml
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      name: my-pod
-    spec:
-      containers:
-      - name: my-container
-        image: my-image
-        volumeMounts:
-        - mountPath: /opt
-          name: my-volume
-      volumes:
-      - name: my-volume
-        emptyDir: {}
-    ```
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: my-pod
+  spec:
+    containers:
+    - name: my-container
+      image: my-image
+      volumeMounts:
+      - mountPath: /opt
+        name: my-volume
+    volumes:
+    - name: my-volume
+      emptyDir: {}
+  ```
 
 - `Namespaces:` Provides scope for names. Names of resources need to be unique within a namespace, but not across namespaces. They are useful when multiple teams or projects are using the same cluster.
 
-    Example:
+  Example:
 
-    ```yaml
-    apiVersion: v1
-    kind: Namespace
-    metadata:
-      name: my-namespace
-    ```
+  ```yaml
+  apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: my-namespace
+  ```
 
 - `ReplicaSets:` Ensures that a specified number of pod replicas are running at any given time. However, they do not offer any sort of update strategy, as they are designed to be used with Pods that are expected to be replaced in a rolling update fashion. `ReplicaSets` are created from other replica controller definitions such as `Deployments` or `StatefulSets`
 
-    Example:
+  Example:
 
-    ```yaml
-    apiVersion: apps/v1
-    kind: ReplicaSet
-    metadata:
-      name: my-replicaset
-    spec:
-      replicas: 3
-      selector:
-        matchLabels:
+  ```yaml
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    name: my-replicaset
+  spec:
+    replicas: 3
+    selector:
+      matchLabels:
+        app: perico
+    template:
+      metadata:
+        labels:
           app: perico
-      template:
-        metadata:
-          labels:
-            app: perico
-        spec:
-          containers:
-          - name: my-container
-            image: my-image
-    ```
+      spec:
+        containers:
+        - name: my-container
+          image: my-image
+  ```
 
 - `Deployments:` Provides declarative updates for Pods and ReplicaSets. You describe a desired state in a Deployment, and the Deployment Controller changes the actual state to the desired state at a controlled rate.
 
-    Example:
+  Example:
 
-    ```yaml
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: my-deployment
-    spec:
-      replicas: 3
-      selector:
-        matchLabels:
+  ```yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: my-deployment
+  spec:
+    replicas: 3
+    selector:
+      matchLabels:
+        app: perico
+    template:
+      metadata:
+        labels:
           app: perico
-      template:
-        metadata:
-          labels:
-            app: perico
-        spec:
-          containers:
-          - name: my-container
-            image: my-image
-    ```
+      spec:
+        containers:
+        - name: my-container
+          image: my-image
+  ```
 
 - `StatefulSets:` Manages the deployment and scaling of a set of Pods, and provides guarantees about the ordering and uniqueness of these Pods.
 
-    Example:
+  Example:
 
-    ```yaml
-    apiVersion: apps/v1
-    kind: StatefulSet
-    metadata:
-      name: my-statefulset
-    spec:
-      serviceName: "my-service"
-      replicas: 3
-      selector:
-        matchLabels:
+  ```yaml
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: my-statefulset
+  spec:
+    serviceName: "my-service"
+    replicas: 3
+    selector:
+      matchLabels:
+        app: perico
+    template:
+      metadata:
+        labels:
           app: perico
-      template:
-        metadata:
-          labels:
-            app: perico
-        spec:
-          containers:
-          - name: my-container
-            image: my-image
-    ```
+      spec:
+        containers:
+        - name: my-container
+          image: my-image
+  ```
 
 - `DaemonSets:` Ensures that all (or some) Nodes run a copy of a Pod. As nodes are added to the cluster, Pods are added to them. As nodes are removed from the cluster, those Pods are garbage collected.
 
-    Example:
+  Example:
 
-    ```yaml
-    apiVersion: apps/v1
-    kind: DaemonSet
-    metadata:
-      name: my-daemonset
-    spec:
-      selector:
-        matchLabels:
+  ```yaml
+  apiVersion: apps/v1
+  kind: DaemonSet
+  metadata:
+    name: my-daemonset
+  spec:
+    selector:
+      matchLabels:
+        app: perico
+    template:
+      metadata:
+        labels:
           app: perico
-      template:
-        metadata:
-          labels:
-            app: perico
-        spec:
-          containers:
-          - name: my-container
-            image: my-image
-    ```
+      spec:
+        containers:
+        - name: my-container
+          image: my-image
+  ```
 
 - `Jobs:` Creates one or more Pods and ensures that a specified number of them successfully terminate.
 
-    Example:
+  Example:
 
-    ```yaml
-    apiVersion: batch/v1
-    kind: Job
-    metadata:
-      name: my-job
-    spec:
-      template:
-        spec:
-          containers:
-          - name: my-container
-            image: my-image
-          restartPolicy: OnFailure
-    ```
+  ```yaml
+  apiVersion: batch/v1
+  kind: Job
+  metadata:
+    name: my-job
+  spec:
+    template:
+      spec:
+        containers:
+        - name: my-container
+          image: my-image
+        restartPolicy: OnFailure
+  ```
 
 - `Custom Resource Definitions (CRDs):` Allows you to create your own custom Kubernetes objects. A resource is an endpoint in the Kubernetes API that stores a collection of API objects of a certain kind.
 
@@ -869,6 +869,7 @@ For more information and a complete list of Kubernetes Objects, refer to the [of
 
 > \[!TIP\]
 > To get an understanding of all the resources definitions available in your cluster, you can execute `kubectl api-resources -o wide`
+
 ______________________________________________________________________
 
 #### Security Contexts
@@ -1040,6 +1041,7 @@ In this case, Node C would be chosen to host the pod.
 ```
 
 This workflow ensures that pods are placed on the most suitable nodes in the cluster, taking into account the current state of the cluster and the specific requirements of each pod.
+
 ______________________________________________________________________
 
 ### Kubernetes Networking
@@ -1106,6 +1108,7 @@ Kubernetes Services, often referred to as "K8s Services", are an abstraction tha
 - **Common DNS:** When a service is created within a Kubernetes cluster, it is automatically assigned a unique DNS name. This allows for easy discovery of services within the cluster, and allows pods to use familiar DNS lookup techniques to find service endpoints.
 
 - **Types:** There are four types of services in Kubernetes:
+
   - **ClusterIP:** Exposes the service on a cluster-internal IP. Choosing this value makes the service only reachable from within the cluster.
   - **NodePort:** Exposes the service on each Node’s IP at a static port. A ClusterIP service, to which the NodePort service routes, is automatically created.
   - **LoadBalancer:** Exposes the service externally using a cloud provider’s load balancer. NodePort and ClusterIP services, to which the external load balancer routes, are automatically created.

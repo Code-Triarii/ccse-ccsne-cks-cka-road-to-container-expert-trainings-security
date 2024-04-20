@@ -2,7 +2,7 @@
 
 - [Container Hacking Techniques](#container-hacking-techniques)
   - [Docker](#docker)
-    - [Leveraging unsecure mount](#leveraging-unsecure-mount)
+    - [Leveraging insecure mount](#leveraging-insecure-mount)
     - [Exploiting common missconfigurations - deepce.sh](#exploiting-common-missconfigurations---deepcesh)
   - [Kubernetes](#kubernetes)
     - [Retrieving secrets](#retrieving-secrets)
@@ -13,7 +13,7 @@ Check [Container Security In Depth](../../container-security-in-depth.md) for un
 
 ## Docker
 
-### Leveraging unsecure mount
+### Leveraging insecure mount
 
 As explained in [container-security-in-depth.md](../../container-security-in-depth.md), Docker group is sensitive and must be highly restricted, combined with secure policies restricting the mounts.
 
@@ -23,7 +23,7 @@ If not properly configured, this can be exploited by mounting the whole host fil
 docker run -v /:/mnt --rm -it alpine chroot /mnt sh
 ```
 
-![Unsecure mount](img/00-unsecure-mount.png)
+![insecure mount](img/00-insecure-mount.png)
 
 ### Exploiting common missconfigurations - deepce.sh
 
@@ -41,7 +41,7 @@ deepce.sh -e DOCKER
 
 ![Deepce](img/01-deepce-execution.png)
 
-Following screenshot showcase possible exploitable paths to leverage access to the system. The last step is executing the exploit mentioned in [#leveraging-unsecure-mount](#leveraging-unsecure-mount).
+Following screenshot showcase possible exploitable paths to leverage access to the system. The last step is executing the exploit mentioned in [#leveraging-insecure-mount](#leveraging-insecure-mount).
 
 ## Kubernetes
 
@@ -65,7 +65,6 @@ for secret in $(kubectl get secrets --all-namespaces -o jsonpath="{range .items[
   done
 done
 ```
-
 
 Get all volumes mounted from secret in host:
 

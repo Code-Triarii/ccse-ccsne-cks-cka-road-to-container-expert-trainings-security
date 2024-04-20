@@ -65,7 +65,7 @@ This documentation includes security practices explained generally and with spec
         - [Docker sock](#docker-sock)
         - [Docker over TLS](#docker-over-tls)
       - [Docker group protection](#docker-group-protection)
-      - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
+      - [Implement A&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor)
@@ -293,7 +293,7 @@ It is a good practice that containers run only with the `permissions` needed. Fo
 Example of limiting profile:
 
 - Default allow of all system calls.
-- Explicit denial of syscalls included in ``names`` list.
+- Explicit denial of syscalls included in `names` list.
 
 ```json
 {
@@ -314,13 +314,13 @@ docker run -it --name container-name --security-opt seccomp=<profile-name>.json 
 
 Possible `Actions`:
 
-| Action        | Description                                        |
-| ------------- | -------------------------------------------------- |
-| `SCMP_ACT_KILL` | Kill with a exit status of SIGSYS                  |
-| `SCMP_ACT_TRAP` | Send a SIGSYS signal without executing the syscall |
-| `SCMP_ACT_ERRNO`| Receive a return value of errno when it calls a syscall |
-| `SCMP_ACT_TRACE`| Invoke a ptracer to make a decision or set errno to -ENOSYS |
-| `SCMP_ACT_ALLOW`| Allow executing the syscall                        |
+| Action           | Description                                                 |
+| ---------------- | ----------------------------------------------------------- |
+| `SCMP_ACT_KILL`  | Kill with a exit status of SIGSYS                           |
+| `SCMP_ACT_TRAP`  | Send a SIGSYS signal without executing the syscall          |
+| `SCMP_ACT_ERRNO` | Receive a return value of errno when it calls a syscall     |
+| `SCMP_ACT_TRACE` | Invoke a ptracer to make a decision or set errno to -ENOSYS |
+| `SCMP_ACT_ALLOW` | Allow executing the syscall                                 |
 
 #### Restrict AppArmor unconfined
 

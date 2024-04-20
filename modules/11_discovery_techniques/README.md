@@ -4,7 +4,6 @@
   - [Networking](#networking)
     - [Discover Docker Daemon API - nmap](#discover-docker-daemon-api---nmap)
 
-
 If not securely restricted, there are several techniques to discover the attack surface of a container environment to identify possible breaches and act upon to secure it.
 
 ## Networking

@@ -29,7 +29,7 @@ and overall to get a good understanding of container management principles, secu
 - [📝 Road To Container - Security - Expert - CCSE - CCSNE - CKS](#-road-to-container---security---expert---ccse---ccsne---cks)
   - [📚 Table of contents](#-table-of-contents)
   - [💡 Purpose](#-purpose)
-  - [🏗️ Project structure](#️-project-structure)
+  - [🏗️ Project structure](#%EF%B8%8F-project-structure)
   - [📍 Roadmap](#-roadmap)
   - [📎 Contributing](#-contributing)
   - [📃 License](#-license)
@@ -49,14 +49,20 @@ If you are learning about container security and willing to obtain the CCSE cert
 A quick tour on how the project is organized here:
 
 - `docs`: contains the main .md files for documenting the project as well as the images used in the markdown for renderization.
+
 - [`environment`](./environment): this folder includes the different automatic resources for setting up the environment required for the different exercises.
+
   - `Docker: gitlab CE` - Ansible playbook for setting up gitlab (including automatic registration of the runner) for docker (using docker-compose). Useful for pipeline exercises.
   - `Kubernetes:Kind` - For quick testing and exercises in local machine only requiring docker.
+  - `Kubernetes: Single Node Kubeadm` - If you have a VM, just create a single node cluster for testing. **Prepared for ubuntu 22.04. Other systems require minor tweaking** (e.g. changing sources references.)
+
 - `modules` > `exercises`: this folder contains the different exercises created for preparation of certs as well as specific topis developed in depth.
+
 - `theorical concepts`: including important theory that supports the foundations understanding and good comprehension of the practical exercises:
+
   - [**Concepts**](concepts.md) - Explaining architecture, main objects, alternatives, issues, etc.
   - [**Container Security In Depth**](container-security-in-depth.md) - Targeting missconfigurations, security issues and how to address those.
-  - [**Auxiliar Commands and Tips**](auxiliar-commands-and-tips.md) - Helpers for agility executing tasks in containers environment for `Docker` and `Kubernetes`.
+  - [**Auxiliary Commands and Tips**](Auxiliary-commands-and-tips.md) - Helpers for agility executing tasks in containers environment for `Docker` and `Kubernetes`.
 
 > \[!IMPORTANT\]
 > For kubernetes exercises, if own an aws account, you can leverage my own repository [Creation of aws cluster with Docker-Ansible](https://github.com/paf-triarii/aws-kubeadm-simple-cluster-training). This will spin for you the required infrastructure for having a kubeadm cluster from scratch in aws environment, creating all the associated infrastructure and configuring the nodes. You will need only `Docker` and **valid aws credentials** to execute it! It is prepared for several regions covering including all eu-west, eu-south-2, eu-central-1. **The playbook has a simple entrypoint in Docker linked to two ansible playbooks. After deployment, you can comment the first one and use the second one to "reset" to default state the cluster as many times as you want - Feel free to 'break' without consequences**.

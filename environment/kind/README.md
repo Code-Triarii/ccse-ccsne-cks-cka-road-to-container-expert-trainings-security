@@ -25,6 +25,7 @@ sudo mv kind /usr/local/bin
 ```bash
 kind create cluster
 ```
+
 ![Cluster Created](../../docs/img/kind-cluster.png)
 
 > \[!NOTE\]
@@ -42,7 +43,7 @@ EOL
 kind create cluster --config config.yaml
 ```
 
-2. Swith to the kind context for interacting with the cluster.
+2. Switch to the kind context for interacting with the cluster.
 
 ```bash
 kubectl config set-context kind-kind
