@@ -60,6 +60,9 @@ This documentation page aims to shortly summarize some of the most important the
       - [Cluster Networking](#cluster-networking)
       - [Kube-proxy](#kube-proxy)
     - [Kubernetes Services](#kubernetes-services)
+  - [Kubernetes Utils](#kubernetes-utils)
+    - [Helm (v3)](#helm-v3)
+    - [Kustomize](#kustomize)
 
 ## Docker
 
@@ -1164,3 +1167,47 @@ spec:
 ```
 
 This Service YAML creates a Service object named `my-service` that routes traffic to the `nginx` application. The Service exposes the `nginx` application at an external IP address that is not shown. The Service routes incoming requests on its port `80` to the `9376` port on the `nginx` Pods.
+
+## Kubernetes Utils
+
+### Helm (v3)
+
+Helm is a package manager for Kubernetes that allows developers and operators to more easily package, configure, and deploy applications and services onto Kubernetes clusters.
+
+Helm v3 is the latest version of Helm and it has some significant changes compared to Helm v2. The most notable change is the removal of Tiller. In Helm v3, the Helm client directly interacts with the Kubernetes API server to install, upgrade, query, and remove Kubernetes resources.
+
+Helm uses a packaging format called charts. A chart is a collection of files that describe a related set of Kubernetes resources. Charts are created as files laid out in a particular directory tree. They can be packaged into versioned archives to be deployed.
+
+For example, a simple Helm chart directory structure might look like this:
+
+```
+mychart/
+  Chart.yaml
+  values.yaml
+  charts/
+  templates/
+```
+
+The `Chart.yaml` file contains basic information about the chart. The `values.yaml` file contains default values for a chart's configurable parameters. The `charts/` directory can contain other charts that this chart depends on. The `templates/` directory contains template files that generate Kubernetes manifest files when the chart is deployed.
+
+### Kustomize
+
+Kustomize is a standalone tool to customize Kubernetes objects through a kustomization file. Kustomize provides a solution for customizing resources without editing the original YAML files. It adds a layer between the raw YAML files for Kubernetes resources and the kubectl command, allowing you to customize your resources in a structured way.
+
+Kustomize uses a YAML file called `kustomization.yaml`. This file allows you to generate resources from source files, set cross-cutting fields for resources, compose and customize collections of resources, and more.
+
+For example, a simple `kustomization.yaml` might look like this:
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- deployment.yaml
+- service.yaml
+
+commonLabels:
+  app: my-app
+```
+
+This `kustomization.yaml` file specifies two resources, `deployment.yaml` and `service.yaml`, and adds a common label `app: my-app` to both of them. When you run `kubectl apply -k .`, Kustomize generates a customized set of resources and kubectl applies them to the cluster.
