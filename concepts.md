@@ -42,9 +42,10 @@ This documentation page aims to shortly summarize some of the most important the
   - [Kubernetes](#kubernetes)
     - [Kubernetes Architecture](#kubernetes-architecture)
       - [Kubernetes Cluster](#kubernetes-cluster)
+    - [Container Runtime Interface (CRI)](#container-runtime-interface-cri)
     - [Kubernetes Distributions](#kubernetes-distributions)
     - [Kubernetes alternatives](#kubernetes-alternatives)
-      - [Kubernetes Objects](#kubernetes-objects)
+    - [Kubernetes Objects](#kubernetes-objects)
       - [Security Contexts](#security-contexts)
     - [Defining Security Contexts](#defining-security-contexts)
     - [Key Security Context Settings](#key-security-context-settings)
@@ -58,6 +59,7 @@ This documentation page aims to shortly summarize some of the most important the
       - [Commonly Used Kubernetes Network Plugins (CNIs)](#commonly-used-kubernetes-network-plugins-cnis)
       - [Cluster Networking](#cluster-networking)
       - [Kube-proxy](#kube-proxy)
+    - [Kubernetes Services](#kubernetes-services)
 
 ## Docker
 
@@ -645,6 +647,18 @@ A Kubernetes cluster consists of a set of worker machines, called nodes, that ru
 
 ![Arch](docs/img/kubernetes-arch-in-depth.png)
 
+### Container Runtime Interface (CRI)
+
+The Container Runtime Interface (CRI) is a plugin interface which enables Kubernetes to use a wide variety of container runtimes, without the need to recompile. It provides a standard interface for communication between the Kubernetes kubelet service and the container runtime.
+
+- **CRI-O:** CRI-O is an implementation of the Kubernetes CRI to enable using OCI (Open Container Initiative) compatible runtimes. It is a lightweight alternative to Docker as a runtime for Kubernetes. It allows Kubernetes to use any OCI-compliant runtime as the container runtime for running Pods. CRI-O is the default CRI for Kubernetes.
+
+- **Docker:** Docker is a platform that allows you to develop, ship, and run applications in containers. It uses containerd as the container runtime to run containers. Docker was the original container runtime for Kubernetes, but it is being deprecated in favor of runtimes that are more focused on simplicity, robustness, and portability.
+
+- **containerd:** containerd is a high-level container runtime by itself. It's available as a daemon for Linux and Windows, which can manage the complete container lifecycle of its host system: image transfer and storage, container execution and supervision, low-level storage, and network attachments.
+
+Remember, the choice of CRI can be important depending on the specific needs of your applications and the performance characteristics of your cluster.
+
 ______________________________________________________________________
 
 ### Kubernetes Distributions
@@ -666,7 +680,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-#### Kubernetes Objects
+### Kubernetes Objects
 
 Kubernetes Objects are persistent entities in the Kubernetes system. Kubernetes uses these entities to represent the state of your cluster. Here are some of the most common Kubernetes Objects:
 
@@ -1084,3 +1098,66 @@ Kube-proxy is a key component of any Kubernetes cluster and is responsible for m
 - **Services:** Kube-proxy is responsible for routing service traffic to appropriate back-end pods. When a service is created within Kubernetes, it is assigned a virtual IP address. This IP is tied to a port on each node running kube-proxy. Any traffic that hits this port/IP combo is routed to one of the pods backing the service.
 
 Remember, kube-proxy is not responsible for managing container-to-container traffic within the same pod. This is handled by the shared network namespace of the pod.
+
+### Kubernetes Services
+
+Kubernetes Services, often referred to as "K8s Services", are an abstraction that defines a logical set of Pods and a policy by which to access them. Services enable a loose coupling between dependent Pods.
+
+- **Common DNS:** When a service is created within a Kubernetes cluster, it is automatically assigned a unique DNS name. This allows for easy discovery of services within the cluster, and allows pods to use familiar DNS lookup techniques to find service endpoints.
+
+- **Types:** There are four types of services in Kubernetes:
+  - **ClusterIP:** Exposes the service on a cluster-internal IP. Choosing this value makes the service only reachable from within the cluster.
+  - **NodePort:** Exposes the service on each Node’s IP at a static port. A ClusterIP service, to which the NodePort service routes, is automatically created.
+  - **LoadBalancer:** Exposes the service externally using a cloud provider’s load balancer. NodePort and ClusterIP services, to which the external load balancer routes, are automatically created.
+  - **ExternalName:** Maps the service to the contents of the externalName field by returning a CNAME record with its value.
+
+- **Selectors:** Kubernetes services use selectors to determine which pods are part of their set. When a pod is added to the cluster that matches a service's selector, the service will automatically start routing traffic to that pod. Similarly, if a pod is removed from the cluster that matches a service's selector, the service will automatically stop routing traffic to that pod.
+
+Remember, services match a set of pods using labels and selectors, a pattern that allows greater flexibility than fixed pod references.
+
+Example:
+
+```yaml
+# Deployment YAML
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 9376
+```
+
+This Deployment YAML creates a Deployment object that spins up three replicas of the application, which are defined using a `Pod` template. The `Pod` template specifies that the Pods run one container, `nginx`, which runs the `nginx` Docker Hub image at version `1.14.2`.
+
+```yaml
+# Service YAML
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+  type: LoadBalancer
+```
+
+This Service YAML creates a Service object named `my-service` that routes traffic to the `nginx` application. The Service exposes the `nginx` application at an external IP address that is not shown. The Service routes incoming requests on its port `80` to the `9376` port on the `nginx` Pods.
