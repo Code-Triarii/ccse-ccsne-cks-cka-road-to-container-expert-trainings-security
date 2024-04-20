@@ -57,7 +57,7 @@ A quick tour on how the project is organized here:
   - [**Auxiliar Commands and Tips**](auxiliar-commands-and-tips.md) - Helpers for agility executing tasks in containers environment for `Docker` and `Kubernetes`.
 
 > \[!IMPORTANT\]
-> For kubernetes exercises, if own an aws account, you can leverage my own repository [Creation of aws cluster with Docker-Ansible](https://github.com/paf-triarii/aws-kubeadm-simple-cluster-training). This will spin for you the required infrastructure for having a kubeadm cluster from scratch in aws environment, creating all the associated infrastructure and configuring the nodes. You will need only `Docker` and **valid aws credentials** to execute it! It is prepared for several regions covering including all eu-west, eu-south-2, eu-central-1.
+> For kubernetes exercises, if own an aws account, you can leverage my own repository [Creation of aws cluster with Docker-Ansible](https://github.com/paf-triarii/aws-kubeadm-simple-cluster-training). This will spin for you the required infrastructure for having a kubeadm cluster from scratch in aws environment, creating all the associated infrastructure and configuring the nodes. You will need only `Docker` and **valid aws credentials** to execute it! It is prepared for several regions covering including all eu-west, eu-south-2, eu-central-1. **The playbook has a simple entrypoint in Docker linked to two ansible playbooks. After deployment, you can comment the first one and use the second one to "reset" to default state the cluster as many times as you want - Feel free to 'break' without consequences**.
 
 ## 📍 Roadmap
 

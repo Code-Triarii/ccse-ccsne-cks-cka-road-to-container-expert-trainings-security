@@ -56,6 +56,7 @@ This documentation page aims to shortly summarize some of the most important the
     - [Scheduling Workflow](#scheduling-workflow)
     - [Kubernetes Networking](#kubernetes-networking)
       - [Commonly Used Kubernetes Network Plugins (CNIs)](#commonly-used-kubernetes-network-plugins-cnis)
+      - [Cluster Networking](#cluster-networking)
 
 ## Docker
 
@@ -1052,3 +1053,15 @@ Kubernetes supports a flat network model, which means that every Pod can communi
 Each of these plugins has its own strengths and is suited for different types of environments and requirements. When choosing a network plugin, consider your specific needs in terms of performance, security, and network policies.
 
 For more comprehensive information and detailed guidance, you can check the [Kubernetes official documentation page](https://kubernetes.io/docs/home/).
+
+#### Cluster Networking
+
+Cluster networking involves communication between different services within the same Kubernetes cluster. Pods need to communicate with each other and with the Kubernetes master. The network must allow for IP routing between Pods across nodes and must not require NAT for intra-cluster traffic.
+
+- **Pod IPs:** Every pod in a Kubernetes cluster is assigned a unique IP address, which is used for communication within the cluster. This IP is not accessible outside the cluster, and is only relevant within the cluster. Pods can communicate with each other directly using these IPs, without the need for a proxy or a load balancer.
+
+- **Service IPs:** Services in Kubernetes are a way to group a set of pods together and provide network connectivity to these pods without exposing the actual private IP address of each pod. Each service is assigned a unique IP address that remains constant for the lifetime of the service. Any traffic that is sent to the service IP is transparently forwarded to the appropriate pod IP.
+
+- **Shared localhost interface inside pods:** Each pod in a Kubernetes cluster shares a network namespace, which means that they share a localhost interface. This means that processes running in different containers of the same pod can communicate with each other over localhost (127.0.0.1). This is useful for sidecar patterns where one container might need to communicate with another container running in the same pod.
+
+Remember, Kubernetes does not come with a default network plugin. You must install a third-party network plugin to manage the IP assignment and handling.

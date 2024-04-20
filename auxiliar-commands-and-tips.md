@@ -31,6 +31,8 @@ This documentation aims to provide guidance, utilities and useful commands that 
       - [Avoid exit code if vulnerabilities are found](#avoid-exit-code-if-vulnerabilities-are-found)
   - [Kubernetes commands](#kubernetes-commands)
     - [Configure autocompletion kubectl](#configure-autocompletion-kubectl)
+    - [Installing kubecolor](#installing-kubecolor)
+    - [Setting kubernetes shortnames](#setting-kubernetes-shortnames)
     - [Get information](#get-information)
       - [Filter in table format](#filter-in-table-format)
     - [Using JSONPath - Example: Retrieve API server IP](#using-jsonpath---example-retrieve-api-server-ip)
@@ -337,6 +339,40 @@ trivy image python:3.8 -f json | jq -s 'map(.Results[].Vulnerabilities[].Vulnera
 
 ```bash
 kubectl completion bash >/etc/bash_completion.d/kubectl
+```
+
+### Installing kubecolor
+
+```bash
+wget https://github.com/hidetatz/kubecolor/releases/download/v0.0.25/kubecolor_0.0.25_Linux_x86_64.tar.gz -O kubecolor.tar.gz
+tar xzfv kubecolor.tar.gz
+rm LICENSE README.md
+sudo mv kubecolor /usr/local/bin
+sudo chmod +x /usr/local/bin/kubecolor
+```
+
+### Setting kubernetes shortnames
+
+```bash
+# ${HOME}/.bashrc
+alias kubectl="kubecolor"
+alias kd="kubectl describe"
+alias kdel="kubectl delete"
+alias kget="kubectl get"
+alias ke="kubectl edit"
+alias ka="kubectl apply"
+alias kaf="kubectl apply -f"
+alias klogs="kubectl logs"
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias k='kubecolor'
+alias kg='kubecolor get'
+alias kd='kubecolor describe'
+alias kn='f() { [ "$1" ] && kubecolor config set-context --current --namespace $1;}; f'
+alias deploy='kubectl get deploy'
+alias pods='kubectl get pod'
+alias ktaint="kubectl get nodes -o custom-columns='NAME:.metadata.name,TAINTS:.spec.taints'"
 ```
 
 ### Get information
