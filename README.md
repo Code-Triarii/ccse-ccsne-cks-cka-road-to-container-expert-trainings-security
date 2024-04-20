@@ -173,5 +173,7 @@ Don't forget to give the project a star if you liked it! Thanks again! :star2: :
 - [ChatGPT 4](https://chat.openai.com/) - for acceleratining the creation of scenarios and solutions.
 - [MITRE container attack matrix](https://attack.mitre.org/matrices/enterprise/containers/) - for proving good insights about how to exploit and leverage applications vulnerabilities hosted in containers.
 - [Excalidraw](https://excalidraw.com/) - for creating amazing diagrams in minutes.
+- [Kubernetes Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/quick-reference/) - For quickly launching commands.
+- [AquaSec Blog](https://www.aquasec.com/blog/mitre-attack-framework-for-containers/)
 
 [🔝 Back to top](#-road-to-container---security---expert---ccse---ccsne---cks)

