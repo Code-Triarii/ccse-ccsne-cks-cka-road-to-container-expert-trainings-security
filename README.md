@@ -49,7 +49,9 @@ If you are learning about container security and willing to obtain the CCSE cert
 A quick tour on how the project is organized here:
 
 - `docs`: contains the main .md files for documenting the project as well as the images used in the markdown for renderization.
-- `environment`: this folder includes the different automatic resources for setting up the environment required for the different exercises.
+- [`environment`](./environment): this folder includes the different automatic resources for setting up the environment required for the different exercises.
+  - `Docker: gitlab CE` - Ansible playbook for setting up gitlab (including automatic registration of the runner) for docker (using docker-compose). Useful for pipeline exercises.
+  - `Kubernetes:Kind` - For quick testing and exercises in local machine only requiring docker.
 - `modules` > `exercises`: this folder contains the different exercises created for preparation of certs as well as specific topis developed in depth.
 - `theorical concepts`: including important theory that supports the foundations understanding and good comprehension of the practical exercises:
   - [**Concepts**](concepts.md) - Explaining architecture, main objects, alternatives, issues, etc.
