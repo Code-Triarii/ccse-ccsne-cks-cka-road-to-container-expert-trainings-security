@@ -51,7 +51,6 @@ If a user has access to the pod, it is not complicated to obtain the values.
 
 Here I register some discovery techniques:
 
-
 ```bash
 for secret in $(kubectl get secrets --all-namespaces -o jsonpath="{range .items[*]}{.metadata.name}:{.metadata.namespace}{'\n'}{end}");do
   name=$(echo ${secret} | cut -d ":" -f 1)

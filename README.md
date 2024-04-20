@@ -56,6 +56,9 @@ A quick tour on how the project is organized here:
   - [**Container Security In Depth**](container-security-in-depth.md) - Targeting missconfigurations, security issues and how to address those.
   - [**Auxiliar Commands and Tips**](auxiliar-commands-and-tips.md) - Helpers for agility executing tasks in containers environment for `Docker` and `Kubernetes`.
 
+> \[!IMPORTANT\]
+> For kubernetes exercises, if own an aws account, you can leverage my own repository [Creation of aws cluster with Docker-Ansible](https://github.com/paf-triarii/aws-kubeadm-simple-cluster-training). This will spin for you the required infrastructure for having a kubeadm cluster from scratch in aws environment, creating all the associated infrastructure and configuring the nodes. You will need only `Docker` and **valid aws credentials** to execute it! It is prepared for several regions covering including all eu-west, eu-south-2, eu-central-1.
+
 ## 📍 Roadmap
 
 - [x] Create automatic deployment of scenarios.
