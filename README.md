@@ -15,8 +15,14 @@
 ![Ansible Badge](https://img.shields.io/badge/Ansible-E00?logo=ansible&logoColor=fff&style=flat)
 ![Python Badge](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff&style=flat)
 
-This project serves as a preparation for the CCSE (Certified Container Security Expert) and CCSNE from Practical DevSecOps, CKS (Certified Kubernetes Security) from Linux foundation
-and overall to get a good understanding of container management principles, security risks and hardening techniques. For sure including sample exercises, explanations, tips and more 💪
+The main purpose of this repository is to be guiding for anyone interested in becoming a `CONTAINER SECURITY EXPERT` while learning all the bases from the container management perspective.
+
+This project serves as a preparation for the `CCSE` (Certified Container Security Expert) and `CCSNE` from Practical DevSecOps and `CKS` (Certified Kubernetes Security) from Linux foundation
+and overall to get a good understanding of container management principles, security risks and hardening techniques.
+
+**What will you find here?**: Comprehensive coverage of container management and security strategies for container environments. For sure including sample environment preparations, sample exercises, explanations, tips and more 💪
+
+If you are learning about container security and willing the mentioned certifications, this is your place 🫶.
 
 [Report Bug](https://github.com/Code-Triarii/road-to-container-expert-trainings-security/issues) · [Request Feature](https://github.com/Code-Triarii/road-to-container-expert-trainings-security/issues)
 
@@ -28,7 +34,6 @@ and overall to get a good understanding of container management principles, secu
 
 - [📝 Road To Container - Security - Expert - CCSE - CCSNE - CKS](#-road-to-container---security---expert---ccse---ccsne---cks)
   - [📚 Table of contents](#-table-of-contents)
-  - [💡 Purpose](#-purpose)
   - [🏗️ Project structure](#️-project-structure)
   - [📍 Roadmap](#-roadmap)
   - [📎 Contributing](#-contributing)
@@ -37,12 +42,6 @@ and overall to get a good understanding of container management principles, secu
   - [🔍 Acknowledgments](#-acknowledgments)
 
 <!-- PROJECT DETAILS -->
-
-## 💡 Purpose
-
-The main purpose of this repository is to be guiding for anyone interested in obtaining the CCSE certification. Explaining in detail exercises, including automations for quickly setting up a testing environment and more.
-
-If you are learning about container security and willing to obtain the CCSE certification, this is your place.
 
 ## 🏗️ Project structure
 
