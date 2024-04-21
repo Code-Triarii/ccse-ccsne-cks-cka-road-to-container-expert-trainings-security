@@ -40,7 +40,10 @@ This documentation includes security practices explained generally and with spec
       - [Use read-only file systems](#use-read-only-file-systems)
       - [Manage mounts permissions](#manage-mounts-permissions)
     - [Limit container resources](#limit-container-resources)
-    - [Use security profiles](#use-security-profiles)
+    - [Use Security Profiles](#use-security-profiles)
+      - [Seccomp](#seccomp)
+      - [AppArmor](#apparmor)
+      - [OPA Gatekeeper](#opa-gatekeeper)
     - [Monitor container activities](#monitor-container-activities)
       - [Detect Abnormal Behavior](#detect-abnormal-behavior)
       - [Register container transactions - history](#register-container-transactions---history)
@@ -67,7 +70,7 @@ This documentation includes security practices explained generally and with spec
       - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
     - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
-      - [AppArmor](#apparmor)
+      - [AppArmor](#apparmor-1)
       - [SeLinux](#selinux)
       - [Ubnutu hardening](#ubnutu-hardening)
       - [Ansible DevSec Hardening framework](#ansible-devsec-hardening-framework)
@@ -414,9 +417,55 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Use security profiles
+### Use Security Profiles
 
-Seccomp
+Security profiles provide an added layer of security enforcement by restricting the actions that containers can perform in the Docker and Kubernetes environments.
+
+#### Seccomp
+
+Seccomp (Secure Computing Mode) is a Linux kernel feature that can be used to restrict the system calls a process can make. In Docker and Kubernetes, you can use a seccomp profile to limit the system calls a container can make.
+
+For Docker, you can specify a seccomp profile like this:
+
+```bash
+docker run --security-opt seccomp=/path/to/seccomp/profile.json -it ubuntu bash
+```
+
+In Kubernetes, you can specify a seccomp profile using the `seccomp.security.alpha.kubernetes.io/pod` and `container.seccomp.security.alpha.kubernetes.io/...` annotations.
+
+#### AppArmor
+
+AppArmor (Application Armor) is a Linux kernel security module that allows the system administrator to restrict programs' capabilities with per-program profiles. 
+
+For Docker, you can specify an AppArmor profile like this:
+
+```bash
+docker run --security-opt apparmor=your_apparmor_profile -it ubuntu bash
+```
+
+In Kubernetes, you can specify an AppArmor profile using the `container.apparmor.security.beta.kubernetes.io/...` annotation.
+
+#### OPA Gatekeeper
+
+OPA Gatekeeper is an open-source project that provides a first-class integration between Open Policy Agent (OPA) and Kubernetes. It enforces policies executed by OPA as a dynamic admission controller in a Kubernetes cluster.
+
+> \[!IMPORTANT\]
+> Having a set of centralized managed policies in Kubernetes is a **super win!**. If carefully defined, this allows to implement majority of security required controls and have a centralized management of the different policies and conditions under those policies are applied.
+
+For example, you can use OPA Gatekeeper to enforce that all images must come from a certain registry:
+
+```rego
+package kubernetes.admission
+
+deny[msg] {
+    input.request.kind.kind == "Pod"
+    image := input.request.object.spec.containers[_].image
+    not startswith(image, "company.official.repo")
+    msg := sprintf("image '%v' comes from a disallowed registry", [image])
+}
+```
+
+This policy will deny any Pod that tries to run a container with an image that does not come from `company.official.repo`.
 
 ______________________________________________________________________
 
