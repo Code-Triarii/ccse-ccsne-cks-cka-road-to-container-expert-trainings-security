@@ -56,6 +56,9 @@ A quick tour on how the project is organized here:
   - `Kubernetes:Kind` - For quick testing and exercises in local machine only requiring docker.
   - `Kubernetes: Single Node Kubeadm` - If you have a VM, just create a single node cluster for testing. **Prepared for ubuntu 22.04. Other systems require minor tweaking** (e.g. changing sources references.)
 
+> \[!IMPORTANT\]
+> For kubernetes exercises, if own an aws account, you can leverage my own repository [Creation of aws cluster with Docker-Ansible](https://github.com/paf-triarii/aws-kubeadm-simple-cluster-training). This will spin for you the required infrastructure for having a kubeadm cluster from scratch in aws environment, creating all the associated infrastructure and configuring the nodes. You will need only `Docker` and **valid aws credentials** to execute it! It is prepared for several regions covering including all eu-west, eu-south-2, eu-central-1. **The playbook has a simple entrypoint in Docker linked to two ansible playbooks. After deployment, you can comment the first one and use the second one to "reset" to default state the cluster as many times as you want - Feel free to 'break' without consequences**.
+
 - [`modules`](./modules/): this folder contains the different exercises created for preparation of certs as well as specific topis developed in depth.
   
   - `00_set_docker_v2_registry`: This module provides instructions to set up a Docker Registry V2 securely using self-signed certificates and configure the Docker daemon to trust this registry.
@@ -76,9 +79,6 @@ A quick tour on how the project is organized here:
   - [**Concepts**](concepts.md) - Explaining architecture, main objects, alternatives, issues, etc.
   - [**Container Security In Depth**](container-security-in-depth.md) - Targeting missconfigurations, security issues and how to address those.
   - [**Auxiliary Commands and Tips**](Auxiliary-commands-and-tips.md) - Helpers for agility executing tasks in containers environment for `Docker` and `Kubernetes`.
-
-> \[!IMPORTANT\]
-> For kubernetes exercises, if own an aws account, you can leverage my own repository [Creation of aws cluster with Docker-Ansible](https://github.com/paf-triarii/aws-kubeadm-simple-cluster-training). This will spin for you the required infrastructure for having a kubeadm cluster from scratch in aws environment, creating all the associated infrastructure and configuring the nodes. You will need only `Docker` and **valid aws credentials** to execute it! It is prepared for several regions covering including all eu-west, eu-south-2, eu-central-1. **The playbook has a simple entrypoint in Docker linked to two ansible playbooks. After deployment, you can comment the first one and use the second one to "reset" to default state the cluster as many times as you want - Feel free to 'break' without consequences**.
 
 ## 📍 Roadmap
 
