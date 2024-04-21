@@ -34,8 +34,8 @@ This documentation includes security practices explained generally and with spec
       - [Do Not Permit Privileged Containers](#do-not-permit-privileged-containers)
       - [Restrict SecComp unconfined](#restrict-seccomp-unconfined)
       - [Restrict AppArmor unconfined](#restrict-apparmor-unconfined)
-    - [Ensure network segmentation and enforce isolation practices](#ensure-network-segmentation-and-enforce-isolation-practices)
-      - [Avoid sharing host network](#avoid-sharing-host-network)
+    - [Ensure Network Segmentation and Enforce Isolation Practices](#ensure-network-segmentation-and-enforce-isolation-practices)
+      - [Avoid Sharing Host Network](#avoid-sharing-host-network)
     - [Manage volumes securely](#manage-volumes-securely)
       - [Use read-only file systems](#use-read-only-file-systems)
       - [Manage mounts permissions](#manage-mounts-permissions)
@@ -385,21 +385,57 @@ docker ps -aq | xargs docker inspect | jq -c '.[] | select(.AppArmorProfile=="")
 
 ______________________________________________________________________
 
-### Ensure network segmentation and enforce isolation practices
+### Ensure Network Segmentation and Enforce Isolation Practices
 
-#### Avoid sharing host network
+Network segmentation and isolation are critical components of container security. They limit the communication between containers to only what is necessary, reducing the potential attack surface.
 
-Containers are isolated by default using the `Bridge` network. It is a good practice to keep those things that way to avoid expanding the capability of an attacker to perform lateral movement if the container is compromised.
+#### Avoid Sharing Host Network
+
+By default, Docker isolates containers from each other and from the host using a network driver called `bridge`. This creates a private network inside the host where each container gets its own network namespace. It's a good practice to maintain this isolation to prevent an attacker from performing lateral movement if a container is compromised.
+
+Sharing the host network with a container means that the container uses the same network stack as the host, effectively giving it full visibility of all network interfaces on the host. This could potentially increase the resources that an attacker can exploit if the container is compromised.
 
 As you can see in the following illustration, sharing the host network automatically provides visibility with all host interfaces that could potentially increase the resources that an attacker can exploit.
 
 ![Container with host network](./docs/img/csid-container-host-network.png)
 
-With this command you can check for containers running in network host:
+You can check for containers running in the host network with this command:
 
 ```bash
 docker ps -aq | xargs docker inspect  | jq -c '.[] | select(.NetworkSettings.Networks.host != null) | {id: .Id, name: .Name, network: "host", network_id:.NetworkSettings.Networks.host.NetworkID}'
 ```
+
+In a Kubernetes environment, the principle of network segmentation and isolation is just as important. Kubernetes supports a variety of network plugins to manage pod networking, and some of them provide network policy capabilities that allow you to control the network traffic to and from your pods.
+
+For example, `Calico` is a popular network plugin for Kubernetes that provides network policy capabilities. With Calico, you can define network policies that control the traffic to and from your pods based on IP address, port, and protocol. This allows you to enforce network segmentation and isolation at the pod level.
+
+`Istio` is another tool that can be used to enforce network segmentation (**`At L7`**) and isolation in a Kubernetes environment. Istio is a service mesh that provides traffic management, policy enforcement, and telemetry collection for your microservices. With Istio, you can define traffic routing rules and access policies that control the communication between your services.
+
+> \[!NOTE\]
+> There is integration available between Istio and Calico that can improve the experience of configuring it in a kubernetes cluster. [Calico - Istio Integration](https://docs.tigera.io/calico/latest/getting-started/kubernetes/hardway/istio-integration)
+
+In addition to network plugins and service meshes, Kubernetes also provides built-in network policies that you can use to control the network traffic to and from your pods. These network policies allow you to specify which pods can communicate with each other and which network ports they can use.
+
+Here's an example of a Kubernetes network policy that only allows traffic from pods in the same namespace:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector: {}
+```
+
+This policy selects all pods in the namespace (due to the empty `podSelector`) and denies all ingress and egress traffic by default. It then allows ingress traffic from any pod in the same namespace.
+
+Remember, network segmentation and isolation are not just about blocking traffic. They're also about allowing the necessary traffic to flow freely. Always consider the communication needs of your applications when designing your network policies.
 
 ______________________________________________________________________
 
@@ -556,7 +592,23 @@ Monitoring Docker logs provides vital insights into:
 
 ###### Log Management Practices
 
-Effective log management involves aggregating logs in a centralized logging system for ease of monitoring, analysis, and long-term storage. This practice enables more sophisticated analysis and alerting based on log data, aiding in prompt issue detection and resolution. Tools like `Fluentd`, `Logstash`, or proprietary logging solutions can be integrated with Docker to streamline log collection and management.
+Effective log management is crucial for maintaining the security and stability of both Docker and Kubernetes environments. It involves aggregating logs from various sources into a centralized logging system for ease of monitoring, analysis, and long-term storage. This practice enables more sophisticated analysis and alerting based on log data, aiding in prompt issue detection and resolution.
+
+Some popular log aggregation systems:
+
+- `Fluentd`: An open-source data collector for unified logging layers, which can be integrated with Docker and Kubernetes.
+- `Logstash`: A server-side data processing pipeline that ingests data from multiple sources, transforms it, and then sends it to a "stash" like Elasticsearch.
+- `Elasticsearch`: A search and analytics engine that is often used together with Logstash and Kibana, forming the ELK Stack.
+- `Kibana`: A data visualization dashboard for Elasticsearch. It provides visualization capabilities on top of the content indexed on an Elasticsearch cluster.
+- `Prometheus`: An open-source systems monitoring and alerting toolkit that can scrape metrics from different sources.
+- `Grafana`: A multi-platform open-source analytics and interactive visualization web application that provides charts, graphs, and alerts for the web when connected to supported data sources.
+
+> \[!IMPORTANT\]
+> In addition to aggregating logs, it's important to back up your logs to protect against data loss or tampering. Regular backups can help ensure that you have access to historical log data when you need it, even if your primary log storage is compromised.
+
+In a Kubernetes environment, you can use sidecar containers to collect and forward logs from each pod to your log aggregation system. This allows you to centralize logs from all of your applications, regardless of where they're running in your cluster.
+
+Remember, effective log management is not just about collecting logs - it's also about making sense of them. Use tools and practices that help you analyze your logs and extract meaningful insights from them. This will help you detect and respond to security threats in real-time, maintain compliance, and ensure the smooth operation of your Dockerized and Kubernetes applications.
 
 ### Conclusion
 
