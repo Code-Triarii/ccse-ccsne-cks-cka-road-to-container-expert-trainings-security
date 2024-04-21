@@ -157,6 +157,7 @@ deny[msg] {
     msg := sprintf("image '%v' comes from a disallowed registry", [image])
 }
 ```
+
 ______________________________________________________________________
 
 ### Minimize Image Layers

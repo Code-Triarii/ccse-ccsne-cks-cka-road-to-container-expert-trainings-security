@@ -7,6 +7,7 @@
     - [Kube-hunter - finding cluster missconfigurations](#kube-hunter---finding-cluster-missconfigurations)
     - [Kube-shark - Network discovery](#kube-shark---network-discovery)
     - [Checks inside a compromised Pod](#checks-inside-a-compromised-pod)
+    - [Sniff - Tshark](#sniff---tshark)
 
 If not securely restricted, there are several techniques to discover the attack surface of a container environment to identify possible breaches and act upon to secure it.
 
@@ -89,3 +90,44 @@ Assuming the pod has been compromised by any vulnerability in the application la
   - `cat /proc/1/status`
   - `capsh --decode=0000000000003000`. Being `0000000000003000` the id of the caps obtained from previous command.
   - `capsh --print`
+
+
+### Sniff - Tshark
+
+> \[!TIP\]
+> For more details check [Reference GitHub sniff project](https://github.com/eldadru/ksniff).
+
+Requirements:
+
+- Make sure `krew` (plugin manager is available). Check [Auxiliar Commands and Tips - Enable Krew](../../auxiliar-commands-and-tips.md#install-krew-plugin-manager-for-kubectl) for instructions on how to install it.
+- Ensure `tshark` is available on your system.
+
+```bash
+# For ubuntu --> sudo su
+add-apt-repository -y ppa:wireshark-dev/stable
+apt update
+apt install tshark -y
+```
+
+> \[!CAUTION\]
+> It is **highly encouraged to NOT allow non-root users to capture network packages**. This option will be prompted to you when launching installation commands aforementioned.
+
+Now you are ready to install `sniff` with `krew`.
+
+```bash
+kubectl krew install sniff
+```
+
+> \[!TIP\]
+> Include in your path `.krew` folder so kubectl can access the plugins. Command: `echo 'export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"' >> ${HOME}/.bashrc`
+
+Launch sniffer for specific pod:
+
+```bash
+kubectl sniff main-nginx-cdfc9869c-8crv9 -n demo -p  -o - | tshark -x -r -
+```
+
+> \[!CAUTION\]
+> Do not miss option `-p`. This will wait for the pod to start. [Reference Issue - GitHub](https://github.com/eldadru/ksniff/issues/64)
+
+![Sniff](img/sniff.png)

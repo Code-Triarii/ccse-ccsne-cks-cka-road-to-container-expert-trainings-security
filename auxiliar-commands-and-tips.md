@@ -32,6 +32,7 @@ This documentation aims to provide guidance, utilities and useful commands that 
   - [Kubernetes commands](#kubernetes-commands)
     - [Configure autocompletion kubectl](#configure-autocompletion-kubectl)
     - [Installing kubecolor](#installing-kubecolor)
+    - [Install Krew plugin manager for kubectl](#install-krew-plugin-manager-for-kubectl)
     - [Setting kubernetes shortnames](#setting-kubernetes-shortnames)
     - [Get information](#get-information)
       - [Filter in table format](#filter-in-table-format)
@@ -351,6 +352,24 @@ tar xzfv kubecolor.tar.gz
 rm LICENSE README.md
 sudo mv kubecolor /usr/local/bin
 sudo chmod +x /usr/local/bin/kubecolor
+```
+
+### Install Krew plugin manager for kubectl
+
+> \[!TIP\]
+> For more details, check [Krew installation Guide](https://krew.sigs.k8s.io/docs/user-guide/setup/install/)
+
+```bash
+(
+  set -x; cd "$(mktemp -d)" &&
+  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+  KREW="krew-${OS}_${ARCH}" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+  tar zxvf "${KREW}.tar.gz" &&
+  ./"${KREW}" install krew
+)
+sudo mv ${HOME}/.krew/bin/kubectl-krew /usr/local/bin
 ```
 
 ### Setting kubernetes shortnames
