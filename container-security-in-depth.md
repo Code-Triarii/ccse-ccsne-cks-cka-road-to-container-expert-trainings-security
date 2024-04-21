@@ -69,12 +69,17 @@ This documentation includes security practices explained generally and with spec
       - [Docker group protection](#docker-group-protection)
       - [Implement A\&A protection for Docker](#implement-aa-protection-for-docker)
     - [Monitor processes](#monitor-processes)
-    - [Apply hardening techniques to host](#apply-hardening-techniques-to-host)
+    - [Apply Hardening Techniques to Host](#apply-hardening-techniques-to-host)
       - [AppArmor](#apparmor-1)
-      - [SeLinux](#selinux)
-      - [Ubnutu hardening](#ubnutu-hardening)
-      - [Ansible DevSec Hardening framework](#ansible-devsec-hardening-framework)
-    - [Regularly update and patch host and its technologies](#regularly-update-and-patch-host-and-its-technologies)
+      - [SELinux](#selinux)
+      - [Ubuntu Hardening](#ubuntu-hardening)
+      - [OpenSCAP](#openscap)
+      - [Ansible DevSec Hardening Framework](#ansible-devsec-hardening-framework)
+    - [Regularly Update and Patch Host and Its Technologies](#regularly-update-and-patch-host-and-its-technologies)
+      - [System Packages](#system-packages)
+      - [CRI Specific Packages](#cri-specific-packages)
+      - [Kubernetes Components](#kubernetes-components)
+      - [Kubernetes Update Strategy](#kubernetes-update-strategy)
   - [Docker Registry security](#docker-registry-security)
     - [Harden the registry](#harden-the-registry)
       - [Set-up TLS](#set-up-tls)
@@ -684,21 +689,108 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Apply hardening techniques to host
+### Apply Hardening Techniques to Host
+
+Hardening your host system is a crucial step in securing your containerized applications. This involves applying a series of configurations and controls to reduce the system's attack surface and improve its resistance to attacks.
 
 #### AppArmor
 
-#### SeLinux
+AppArmor (Application Armor) is a Linux kernel security module that allows the system administrator to restrict programs' capabilities with per-program profiles. Profiles can allow or deny access to various system resources such as file permissions, network access, raw socket access, and more.
 
-#### Ubnutu hardening
+To use AppArmor, you first need to install it and then create or apply profiles for each program you want to restrict. Profiles are stored in `/etc/apparmor.d/`.
 
-OpenSCAP
+#### SELinux
 
-#### Ansible DevSec Hardening framework
+SELinux (Security-Enhanced Linux) is a Linux kernel security module that provides a mechanism for supporting access control security policies. It includes mandatory access controls (MAC) that restrict users and processes to perform only allowed actions.
 
+SELinux can operate in three modes: 
+
+- Enforcing: SELinux policy is enforced and denials are logged.
+- Permissive: SELinux policy is not enforced but denials are logged.
+- Disabled: SELinux is turned off.
+
+You can check the current mode with `getenforce` command and set it with `setenforce` command.
+
+#### Ubuntu Hardening
+
+Ubuntu, like other Linux distributions, comes with several built-in mechanisms for system hardening:
+
+- User Account Control: Ensure that users operate with the least amount of privileges necessary by using standard accounts instead of accounts with administrative privileges.
+- Firewall: Use `ufw` (Uncomplicated Firewall) to manage your firewall rules and restrict incoming and outgoing traffic.
+- Automatic Updates: Enable automatic updates to ensure your system is always up-to-date with the latest security patches.
+- Fail2ban: Install and configure Fail2ban to protect against brute-force attacks.
+
+#### OpenSCAP
+
+OpenSCAP (Open Security Content Automation Protocol) is an open-source framework for SCAP (Security Content Automation Protocol), a line of standards managed by NIST. It provides multiple tools to assist administrators and auditors with assessment, measurement, and enforcement of security baselines.
+
+You can use OpenSCAP to automatically audit your system and ensure it complies with certain security standards like PCI-DSS, STIG, and others.
+
+#### Ansible DevSec Hardening Framework
+
+The DevSec Hardening Framework is a project that provides a set of Ansible roles for system hardening. It includes configurations for various parts of your system, including:
+
+- Linux OS
+- SSH
+- MySQL
+- NGINX
+
+You can use these roles to automate the process of hardening your systems, ensuring a consistent application of security configurations across your infrastructure.
 ______________________________________________________________________
 
-### Regularly update and patch host and its technologies
+### Regularly Update and Patch Host and Its Technologies
+
+Regular updates and patches are crucial for maintaining the security of your host system and the technologies running on it. This includes not only the operating system itself but also the Container Runtime Interface (CRI) specific packages, Kubernetes components, and any other software installed on the host.
+
+#### System Packages
+
+System packages form the foundation of your host system. They include the kernel, libraries, and utilities that your system and applications rely on. Regularly updating these packages ensures that you benefit from the latest security patches, bug fixes, and feature enhancements.
+
+On a Linux system, you can use package managers like `apt` or `yum` to update your system packages:
+
+```bash
+# For Debian-based systems
+sudo apt-get update
+sudo apt-get upgrade
+
+# For Red Hat-based systems
+sudo yum update
+```
+
+#### CRI Specific Packages
+
+The Container Runtime Interface (CRI) is a plugin interface defined in Kubernetes that allows the kubelet to use different container runtimes, without the need to recompile. Examples of CRI specific packages include Docker, containerd, and CRI-O. These packages should also be regularly updated to their latest stable versions to ensure optimal security and performance.
+
+For example, to update Docker you can use:
+
+```bash
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+```
+
+#### Kubernetes Components
+
+Kubernetes components such as kubelet, kubectl, kubeadm, and others should also be regularly updated. This ensures that your Kubernetes environment benefits from the latest features, bug fixes, and security patches.
+
+You can update Kubernetes components using `kubeadm`:
+
+```bash
+sudo apt-get update
+sudo apt-get upgrade kubeadm kubelet kubectl
+sudo systemctl restart kubelet
+```
+
+#### Kubernetes Update Strategy
+
+When updating Kubernetes, it's important to follow a proper update strategy. This typically involves updating the control plane components first (kube-apiserver, etcd, kube-scheduler, kube-controller-manager), followed by worker nodes.
+
+Kubernetes supports several update strategies for applications running on it, including Rolling updates and Blue/Green deployments. These strategies allow you to update your applications with zero downtime.
+
+Rolling updates gradually replace old pods with new ones. If the update process encounters an error, Kubernetes can automatically roll back to the previous stable state.
+
+Blue/Green deployments involve running two environments (Blue and Green) side-by-side, with one serving live traffic and the other idle. When you update your application, you deploy the new version to the idle environment, test it, and then switch the live traffic to it.
+
+Remember, regular updates and patches are a key part of maintaining the security and stability of your systems. Always test updates in a staging environment before deploying them to production to ensure they don't introduce new issues.
 
 ______________________________________________________________________
 

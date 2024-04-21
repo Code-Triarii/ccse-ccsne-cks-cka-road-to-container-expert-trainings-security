@@ -17,7 +17,7 @@
 
 </div>
 
-The main purpose of this repository is to be guiding for anyone interested in becoming a `CONTAINER SECURITY EXPERT` while learning all the bases from the container management perspective.
+The main purpose of this repository is to be guiding for anyone interested in becoming a **`CONTAINER SECURITY EXPERT`** while learning all the bases from the container management perspective.
 
 This project serves as a preparation for the `CCSE` (Certified Container Security Expert) and `CCSNE` from Practical DevSecOps and `CKS` (Certified Kubernetes Security) from Linux foundation
 and overall to get a good understanding of container management principles, security risks and hardening techniques.
