@@ -179,5 +179,6 @@ Don't forget to give the project a star if you liked it! Thanks again! :star2: :
 - [Kubernetes Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/quick-reference/) - For quickly launching commands.
 - [AquaSec Blog](https://www.aquasec.com/blog/mitre-attack-framework-for-containers/)
 - [OWASP Kubernetes Top 10](https://owasp.org/www-project-kubernetes-top-ten/) - for insightful instructions about Kubernetes security missconfigurations.
+- [Kubernetes the hard way](https://github.com/kelseyhightower/kubernetes-the-hard-way) - for the deep level understanding of all components set up and relationships beyond theory!
 
 [🔝 Back to top](#-road-to-container---security---expert---ccse---ccsne---cks)

@@ -8,6 +8,7 @@
     - [Kube-shark - Network discovery](#kube-shark---network-discovery)
     - [Checks inside a compromised Pod](#checks-inside-a-compromised-pod)
     - [Sniff - Tshark](#sniff---tshark)
+    - [CyberArk Kubiscan for RBAC missconfigurations](#cyberark-kubiscan-for-rbac-missconfigurations)
 
 If not securely restricted, there are several techniques to discover the attack surface of a container environment to identify possible breaches and act upon to secure it.
 
@@ -131,3 +132,41 @@ kubectl sniff main-nginx-cdfc9869c-8crv9 -n demo -p  -o - | tshark -x -r -
 > Do not miss option `-p`. This will wait for the pod to start. [Reference Issue - GitHub](https://github.com/eldadru/ksniff/issues/64)
 
 ![Sniff](img/sniff.png)
+
+### CyberArk Kubiscan for RBAC missconfigurations
+
+CyberArk makes some interesting contributions to the open source community no doubt. This is one of those: [Kubiscan - GitHub](https://github.com/cyberark/KubiScan).
+
+As the documentation states, it requires in the system to have python3, python3-pip and the pip requirements installed.
+
+I particularly do not like that approach of installing python dependencies with pip due to conflicts. Therefore, I will explain the option to do it with Docker.
+
+1. Clone the repo and build the image:
+
+```bash
+git clone https://github.com/cyberark/KubiScan.git kubiscan
+docker build kubiscan -f kubiscan/Dockerfile -t kubiscan:1.0
+```
+
+2. Run the built image to chec the options:
+
+```bash
+KUBISCAN="docker run -it -v "${HOME}/.kube":/home/kubiscan/.kube:ro -e CONF_PATH=/config --network host kubiscan:1.0 python3 /opt/kubiscan/KubiScan.py --kube-config home/kubiscan/.kube/config"
+${KUBISCAN} -h
+```
+
+3. Run the scan for privileged roles:
+
+```bash
+${KUBISCAN} -rs
+```
+
+![Kube-scan](img/kube-scan.png)
+
+3. Get pods with privileged service accounts.
+
+```bash
+${KUBISCAN} -rp
+```
+
+![alt text](img/kube-scan-pods-priv.png)
