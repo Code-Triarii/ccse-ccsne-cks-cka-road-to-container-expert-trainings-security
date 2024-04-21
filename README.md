@@ -175,5 +175,6 @@ Don't forget to give the project a star if you liked it! Thanks again! :star2: :
 - [Excalidraw](https://excalidraw.com/) - for creating amazing diagrams in minutes.
 - [Kubernetes Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/quick-reference/) - For quickly launching commands.
 - [AquaSec Blog](https://www.aquasec.com/blog/mitre-attack-framework-for-containers/)
+- [OWASP Kubernetes Top 10](https://owasp.org/www-project-kubernetes-top-ten/) - for insightful instructions about Kubernetes security missconfigurations.
 
 [🔝 Back to top](#-road-to-container---security---expert---ccse---ccsne---cks)

@@ -2,7 +2,7 @@
 
 This documentation aims to provide guidance, utilities and useful commands that could be leveraged in certification preparation and exam exercises for agility.
 
-- [Auxiliary Commands & Tips](#auxiliary-commands--tips)
+- [Auxiliary Commands \& Tips](#auxiliary-commands--tips)
   - [Linux helpers](#linux-helpers)
     - [Create a file inline with cat](#create-a-file-inline-with-cat)
   - [Docker commands](#docker-commands)
@@ -39,6 +39,7 @@ This documentation aims to provide guidance, utilities and useful commands that 
     - [Retrieving the yaml object entirely](#retrieving-the-yaml-object-entirely)
     - [Interacting with ETCD](#interacting-with-etcd)
     - [Expose Replica Controller](#expose-replica-controller)
+    - [Getting own kubernetes permissions](#getting-own-kubernetes-permissions)
 
 ## Linux helpers
 
@@ -473,3 +474,9 @@ kubectl expose deployment my-nginx --port=80 --targetPort=80 --type=ClusterIP --
 ```
 
 ![SVC expose](modules/12_container_hacking_techniques/img/04-svc-expose.png)
+
+### Getting own kubernetes permissions
+
+```bash
+kubectl auth can-i --list
+```

@@ -153,3 +153,22 @@ curl --insecure https://172.31.41.69:10250/logs/amazon/ssm/errors.log
 ```
 
 To fix this a proper authorization strategy must be present in kubelet configuration (`/var/lib/kubelet/config.yaml`)
+
+> \[!TIP\]
+> Check this repository for more user-friendly interaction with kubelet API. [Cyberark kubeletctl](https://github.com/cyberark/kubeletctl)
+
+```bash
+sudo sh -c "curl -L https://github.com/cyberark/kubeletctl/releases/download/v1.9/kubeletctl_linux_amd64 -o /usr/local/bin/kubeletctl && chmod a+x /usr/local/bin/kubeletctl"
+```
+
+1. Getting pods:
+
+```bash
+kubeletctl pods --server 172.31.41.69
+```
+
+2. Exec a command inside the container.
+
+```bash
+kubeletctl run "<command-inside-container>" -p <pod-id> -c <container-name> -n <namespace>  --server 172.31.41.69
+```
