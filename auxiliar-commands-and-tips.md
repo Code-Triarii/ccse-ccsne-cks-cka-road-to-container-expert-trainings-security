@@ -391,6 +391,8 @@ alias k='kubecolor'
 alias kg='kubecolor get'
 alias kd='kubecolor describe'
 alias kn='f() { [ "$1" ] && kubecolor config set-context --current --namespace $1;}; f'
+alias kcg='kubectl config view -o=jsonpath={".contexts[*].name"}'
+alias kc='f() { [ "$1" ] && kubecolor config use-context $1; }; f'
 alias deploy='kubectl get deploy'
 alias pods='kubectl get pod'
 alias ktaint="kubectl get nodes -o custom-columns='NAME:.metadata.name,TAINTS:.spec.taints'"
