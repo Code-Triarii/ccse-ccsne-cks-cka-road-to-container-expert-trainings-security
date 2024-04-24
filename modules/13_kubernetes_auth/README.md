@@ -123,7 +123,7 @@ chmod +x kauth.sh
 export KAUTH_CLIENT_SECRET="<your-client-secret>"
 
 # Make sure to set the options that match your configuration.
-./kauth.sh --url https://172.20.140.18:8443 --user devops --client_id kubernetes --check
+./kauth.sh --url https://172.20.140.18:8443 --user devops --client_id kubernetes --ca_cert /home/perico/Keycloak-Docker-Compose/ca.pem --check
 ```
 
 ![Verify token retrieval](img/14-verify-token-retrieval.png)
@@ -144,8 +144,8 @@ export KAUTH_CLIENT_SECRET="<your-client-secret>"
     - --oidc-groups-claim=groups
     - --oidc-client-id=kubernetes
     - --oidc-ca-file=/root/oidc/ca.pem
-    - --oidc-groups-prefix=-
-    - --oidc-username-prefix=-
+    - --oidc-groups-prefix=
+    - --oidc-username-prefix=
     ### End of insert
     image: registry.k8s.io/kube-apiserver:v1.27.13
     imagePullPolicy: IfNotPresent
@@ -173,16 +173,16 @@ export KAUTH_CLIENT_SECRET="<your-client-secret>"
 ```
 
 > \[!IMPORTANT\]
-> I decided to add `-` in the prefix of the group and the username, but this could be omitted and then it will take automatically the prefix of the issuer URL.
+> I decided to add `'empty` prefix of the group and the username, but this could be omitted and then it will take automatically the prefix of the issuer URL.
 
-4. Wait for the api-server pod to restart.
+1. Wait for the api-server pod to restart.
 
 ##### Connect with kauth.sh
 
-1. Configure kubectl with kauth
+1. Configure kubectl with kauth. The `ca.pem` is the one automatically generated in Keycloak set-up.
 
 ```bash
-./kauth.sh --url https://172.20.140.18:8443 --user devops --client_id kubernetes
+./kauth.sh --url https://172.20.140.18:8443 --user devops --client_id kubernetes --ca_cert /home/perico/Keycloak-Docker-Compose/ca.pem
 ```
 
 2. Test getting the pods.
@@ -207,6 +207,9 @@ kubectl config set-context $(kubectl config current-context) --user=kubernetes-a
 ```bash
 kubectl create clusterrolebinding --clusterrole=cluster-admin --group=k8s-administrator oidc-admin
 ```
+
+> \[!TIP\]
+> Notice that the user used is matching (by default) the `sub` claim of the token. If you want something more clear to the sight, you can set an additional value to the api server command such as this one `--oidc-username-claim=email`
 
 ---
 
