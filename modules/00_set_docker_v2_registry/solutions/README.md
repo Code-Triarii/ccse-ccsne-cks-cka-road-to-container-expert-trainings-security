@@ -22,8 +22,8 @@ All challenges come with an ansible playbook that allows to set-up the solution 
 
 ### Requirements
 
-- [x] Ansible installed in the system.
-- [x] Docker pip installed in the system.
+- [x] Ansible installed in the system. `pip install ansible ansible-lint`
+- [x] Docker pip installed in the system. `pip install docker`
 
 ### Step 1: Execute ansible playbook
 
