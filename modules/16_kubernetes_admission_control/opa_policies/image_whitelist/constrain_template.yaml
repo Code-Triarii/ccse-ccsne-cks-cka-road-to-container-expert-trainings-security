@@ -1,0 +1,54 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8swhitelistedimages # These must match the constrains name, the kind in crd definition and also the package name
+spec:
+  crd:
+    spec:
+      names:
+        kind: k8swhitelistedimages
+      validation:
+        openAPIV3Schema:
+          type: object
+          # The properties are like 'parameters' to the function. Here the schema is defined
+          # In this case an array of str containing the pattern for the whitelisted images.
+          properties:
+            images:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        # Declare the package name
+        package k8swhitelistedimages
+
+        # Define a set of whitelisted images from the input parameters
+        whitelisted_images = {images |
+            images = input.parameters.images[_]
+        }
+
+        # Check if the image string matches any of the patterns in the whitelisted images
+        images_whitelisted(str, patterns) {
+            # [_] represents the wildcard operator, which allows us to iterate over the patterns
+            image_matches(str, patterns[_])
+        }
+
+        # Check if the image string contains the pattern
+        image_matches(str, pattern) {
+            contains(str, pattern)
+        }
+
+        # Define a violation rule that generates a message when a pod uses an image that is not whitelisted
+        violation[{"msg": msg}] {
+          # Get the pod object from the input review
+          input.review.object
+          # Get the image used by each container in the pod
+          image := input.review.object.spec.containers[_].image
+          # Get the name of the pod
+          name := input.review.object.metadata.name
+          # Check if the image is not whitelisted
+          not images_whitelisted(image, whitelisted_images)
+          # Generate a message indicating the violation
+          msg := sprintf("pod %q has invalid image %q. Please, contact your DevOps. Follow the whitelisted images %v", [name, image, whitelisted_images])
+        }

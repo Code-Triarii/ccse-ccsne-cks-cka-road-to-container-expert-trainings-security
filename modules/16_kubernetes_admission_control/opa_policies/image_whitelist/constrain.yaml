@@ -1,0 +1,14 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: k8swhitelistedimages # The name must match the ConstraintTemplate name
+metadata:
+  name: only-allowed-images
+spec:
+  match:
+    kinds:
+      - apiGroups: ["*"]
+        kinds:
+          - Pod
+    namespaces:
+      - "demo"
+  parameters:
+    images: ["docker.io/library", "pedroarias1015/"]
