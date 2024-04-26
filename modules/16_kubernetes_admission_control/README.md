@@ -8,7 +8,8 @@
         - [Use case 2: mutating pods to remove privilege containers](#use-case-2-mutating-pods-to-remove-privilege-containers)
     - [Kyverno](#kyverno)
       - [Getting started with Kyverno](#getting-started-with-kyverno)
-    - [Custom validation and mutating webhook.](#custom-validation-and-mutating-webhook)
+        - [Use case 1: Whitelisted repositories](#use-case-1-whitelisted-repositories)
+        - [Use case 2: Mutating - Non-privileged containers](#use-case-2-mutating---non-privileged-containers)
 
 Admission Controllers are a powerful feature in Kubernetes that are used to govern how clusters are used and to enforce certain policies. They are part of the kube-apiserver and intercept requests to the Kubernetes API server prior to persistence of the object, but after the request is authenticated and authorized.
 
@@ -211,5 +212,102 @@ Both OPA Gatekeeper and Kyverno provide a robust way to manage and enforce polic
 
 #### Getting started with Kyverno
 
+To install kyverno, we are going to leverage the helm chart available at the Artifact Hub.
 
-### Custom validation and mutating webhook.
+1. Add the repo and update.
+
+```bash
+helm repo add kyverno https://kyverno.github.io/kyverno/
+helm repo update
+```
+
+> \[!TIP\]
+> Kyverno has another chart `kyverno/kyverno-policies` that implements Pod security standards to reach a high level of security across workload. Deserve that you take a look at it 😉
+
+2. Install the chart setting up desired number of replicas:
+
+```bash
+kubectl create ns kyverno
+
+kubectl config set-context --current --namespace kyverno
+
+helm install kyverno kyverno/kyverno  \
+--set admissionController.replicas=3 \
+--set backgroundController.replicas=2 \
+--set cleanupController.replicas=2 \
+--set reportsController.replicas=2
+```
+
+![Kyverno install](img/kyverno-install.png)
+
+##### Use case 1: Whitelisted repositories
+
+We are going to reproduce the same behavior that we managed to obtain with OPA, with kyverno simply by creating the following resource:
+
+```yaml
+apiVersion: kyverno.io/v1
+# If is we want this to be cluster-wide then ClusterPolicy and remove namespace.
+# In this case we are only applying it to namespace demo.
+kind: Policy
+metadata:
+  name: whitelist-image
+  namespace: demo
+spec:
+  validationFailureAction: Enforce
+  # This preserves any workloads not matching the policy, created before the policy (a non-compliant existing pod won't be removed.)
+  background: false
+  rules:
+  - name: check-container-image
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    validate:
+      message: Images must be either from docker.io/library or pedroarias1015
+      # anyPattern determines that if any of those patterns comply, then the rule validates.
+      anyPattern:
+        - spec:
+            containers:
+            - image: "docker.io/library/*"
+        - spec:
+            containers:
+            - image: "pedroarias1015/*"
+```
+
+![Kyverno sample 1](img/kyverno.gif)
+
+##### Use case 2: Mutating - Non-privileged containers
+
+Same as we did with OPA, we are going to stablish the same behavior with kyverno `mutate` policy to change privileged to `false`.
+
+```yaml
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: non-privileged-containers
+  namespace: demo
+spec:
+  rules:
+  - name: modify-privileged-containers
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    mutate:
+      patchStrategicMerge:
+      # Add the annotation to the pod
+        metadata:
+          annotations:
+            "kyverno.io/mutated-modify-privileged-containers": "true"
+        spec:
+          containers:
+          # Anchor meaning all containers (if name = "*")
+            - (name): "*"
+              # Sets the securityContext to non-privileged
+              securityContext:
+                privileged: false
+```
+
+![kyverno mutate](img/kyverno2.gif)

@@ -1,0 +1,24 @@
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: whitelist-image
+  namespace: demo
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+  - name: check-container-image
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    validate:
+      message: Images must be either from docker.io/library or pedroarias1015
+      anyPattern:
+        - spec:
+            containers:
+            - image: "docker.io/library/*"
+        - spec:
+            containers:
+            - image: "pedroarias1015/*"

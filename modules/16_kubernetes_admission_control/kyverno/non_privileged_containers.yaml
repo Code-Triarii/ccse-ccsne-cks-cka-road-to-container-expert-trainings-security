@@ -1,0 +1,26 @@
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: non-privileged-containers
+  namespace: demo
+spec:
+  rules:
+  - name: modify-privileged-containers
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    mutate:
+      patchStrategicMerge:
+      # Add the annotation to the pod
+        metadata:
+          annotations:
+            "kyverno.io/mutated-modify-privileged-containers": "true"
+        spec:
+          containers:
+          # Anchor meaning all containers (if name = "*")
+            - (name): "*"
+              # Sets the securityContext to non-privileged
+              securityContext:
+                privileged: false
