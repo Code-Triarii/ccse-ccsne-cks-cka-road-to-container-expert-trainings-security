@@ -8,6 +8,8 @@ spec:
       - apiGroups: ["*"]
         kinds:
           - Pod
+          - Deployment
+          - StatefulSet
     namespaces:
       - "demo"
   parameters:

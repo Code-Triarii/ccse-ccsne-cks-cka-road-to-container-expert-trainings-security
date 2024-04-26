@@ -2,6 +2,8 @@ apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
   name: k8swhitelistedimages # These must match the constrains name, the kind in crd definition and also the package name
+  annotations:
+    metadata.gatekeeper.sh/title: "Whitelisted Images"
 spec:
   crd:
     spec:
@@ -23,20 +25,12 @@ spec:
         # Declare the package name
         package k8swhitelistedimages
 
+        import data.lib.whitelist_images.images_whitelisted
+        import data.lib.whitelist_images.image_matches
+
         # Define a set of whitelisted images from the input parameters
         whitelisted_images = {images |
             images = input.parameters.images[_]
-        }
-
-        # Check if the image string matches any of the patterns in the whitelisted images
-        images_whitelisted(str, patterns) {
-            # [_] represents the wildcard operator, which allows us to iterate over the patterns
-            image_matches(str, patterns[_])
-        }
-
-        # Check if the image string contains the pattern
-        image_matches(str, pattern) {
-            contains(str, pattern)
         }
 
         # Define a violation rule that generates a message when a pod uses an image that is not whitelisted
@@ -44,7 +38,7 @@ spec:
           # Get the pod object from the input review
           input.review.object
           # Get the image used by each container in the pod
-          image := input.review.object.spec.containers[_].image
+          image := possible_images[_]
           # Get the name of the pod
           name := input.review.object.metadata.name
           # Check if the image is not whitelisted
@@ -52,3 +46,38 @@ spec:
           # Generate a message indicating the violation
           msg := sprintf("pod %q has invalid image %q. Please, contact your DevOps. Follow the whitelisted images %v", [name, image, whitelisted_images])
         }
+
+        # For a pod
+        possible_images[image] {
+          image := input.review.object.spec.containers[_].image
+        }
+
+        # For deployment or statefulsets
+        possible_images[image] {
+          image := input.review.object.spec.template.spec.containers[_].image
+        }
+
+        # For pod init container
+        possible_images[image] {
+          image := input.review.object.spec.initContainers[_].image
+        }
+
+        # For deployment or statefulsets init container
+        possible_images[image] {
+          image := input.review.object.spec.template.spec.initContainers[_].image
+        }
+
+      libs: 
+        - |
+          package lib.whitelist_images
+
+          # Check if the image string matches any of the patterns in the whitelisted images
+          images_whitelisted(str, patterns) {
+              # [_] represents the wildcard operator, which allows us to iterate over the patterns
+              image_matches(str, patterns[_])
+          }
+
+          # Check if the image string contains the pattern
+          image_matches(str, pattern) {
+              contains(str, pattern)
+          }
