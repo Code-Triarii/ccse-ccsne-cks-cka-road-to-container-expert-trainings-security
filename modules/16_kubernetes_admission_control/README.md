@@ -157,7 +157,7 @@ spec:
     images: ["docker.io/library", "pedroarias1015/"]
 ```
 
-![Showcase OPA](img/opa_whitelist.gif)
+![Showcase OPA](img/opa.gif)
 
 ##### Use case 1: whitelist of repositories
 
