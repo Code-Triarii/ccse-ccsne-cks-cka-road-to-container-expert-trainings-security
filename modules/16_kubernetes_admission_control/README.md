@@ -5,6 +5,7 @@
     - [Open Policy Agent (OPA) / OPA Gatekeeper](#open-policy-agent-opa--opa-gatekeeper)
       - [Getting started with OPA Gatekeeper](#getting-started-with-opa-gatekeeper)
         - [Use case 1: whitelist of repositories](#use-case-1-whitelist-of-repositories)
+        - [Use case 2: mutating pods to remove privilege containers](#use-case-2-mutating-pods-to-remove-privilege-containers)
     - [Kyverno](#kyverno)
       - [Getting started with Kyverno](#getting-started-with-kyverno)
     - [Custom validation and mutating webhook.](#custom-validation-and-mutating-webhook)
@@ -73,6 +74,8 @@ OPA, from the perspective of the usage, basically is focused in two Kubernetes o
 - `Constrains`: These are the instantiation of the functions (`ConstrainTemplates`) passing the required properties for enabling the policy.
 
 To showcase how OPA can be configured, I am going to explain a set of sample scenarios using the **single master node (2 workers) cluster**. You can use the one that suites you best from the [environment](../../environment) or any cluster you may have available to interact with.
+
+##### Use case 1: whitelist of repositories
 
 1. Firstly we create the ConstrainTemplate.
 
@@ -159,9 +162,40 @@ spec:
 
 ![Showcase OPA](img/opa.gif)
 
-##### Use case 1: whitelist of repositories
+##### Use case 2: mutating pods to remove privilege containers
 
+OPA Gatekeeper project allows several types of mutation. All types available are listed in [Official Documentation - Mutation](https://open-policy-agent.github.io/gatekeeper/website/docs/mutation)
 
+In this case, we are going to leverage mutating webhook configuration to force all containers in the "demo" namespace to be set as `privileged=false`.
+
+For this we just need to create the `Assing` kind from `mutations.gatekeeper.sh/v1`.
+
+```yaml
+apiVersion: mutations.gatekeeper.sh/v1
+kind: Assign
+metadata:
+  name: demo-privileged
+spec:
+# Specifies to which resources the mutation applies
+  applyTo:
+  - groups: [""]
+    kinds: ["Pod"]
+    versions: ["v1"]
+  match:
+    scope: Namespaced
+    kinds:
+    - apiGroups: ["*"]
+      kinds: ["Pod"]
+    # Limits to demo namespace
+    namespaces: ["demo"]
+  # The mutation is applied to the securityContext field of the container
+  location: "spec.containers[name: *].securityContext.privileged"
+  parameters:
+    assign:
+      value: false
+```
+
+![Mutating](img/opa2.gif)
 
 ---
 

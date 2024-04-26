@@ -1,0 +1,22 @@
+apiVersion: mutations.gatekeeper.sh/v1
+kind: Assign
+metadata:
+  name: demo-privileged
+spec:
+# Specifies to which resources the mutation applies
+  applyTo:
+  - groups: [""]
+    kinds: ["Pod"]
+    versions: ["v1"]
+  match:
+    scope: Namespaced
+    kinds:
+    - apiGroups: ["*"]
+      kinds: ["Pod"]
+    # Limits to demo namespace
+    namespaces: ["demo"]
+  # The mutation is applied to the securityContext field of the container
+  location: "spec.containers[name: *].securityContext.privileged"
+  parameters:
+    assign:
+      value: false
